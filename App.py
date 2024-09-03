@@ -6,28 +6,29 @@ import random
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, Float, ForeignKey
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 import sqlalchemy
+from auth0_component import login_button
 import os
 from dotenv import load_dotenv
 
-# Page configuration
+# Configuración de la página
 st.set_page_config(
     page_title="Pasto Verde",
     page_icon="🌿",
     layout="wide"
 )
 
-# Apply color theme
-COLOR_PRIMARY = "#4CAF50"
-COLOR_SECONDARY = "#8BC34A"
-COLOR_BACKGROUND = "#E8F5E9"
+# Aplicar tema de color
+COLOR_PRIMARIO = "#4CAF50"
+COLOR_SECUNDARIO = "#8BC34A"
+COLOR_FONDO = "#E8F5E9"
 
 st.markdown(f"""
     <style>
     .stApp {{
-        background-color: {COLOR_BACKGROUND};
+        background-color: {COLOR_FONDO};
     }}
     .stButton>button {{
-        background-color: {COLOR_PRIMARY};
+        background-color: {COLOR_PRIMARIO};
         color: white;
     }}
     .stTextInput>div>div>input {{
@@ -36,20 +37,22 @@ st.markdown(f"""
     </style>
     """, unsafe_allow_html=True)
 
-# Main title
+# Título principal
 st.title("🌿 Pasto Verde")
-st.sidebar.success("Select a page above.")
+st.sidebar.success("Seleccione una página arriba.")
 
-# Load environment variables
+# Cargar variables de entorno
 load_dotenv()
+AUTH0_CLIENT_ID = st.secrets["auth0"]["AUTH0_CLIENT_ID"]
+AUTH0_DOMAIN = st.secrets["auth0"]["AUTH0_DOMAIN"]
+AUTH0_CALLBACK_URL = os.getenv("AUTH0_CALLBACK_URL")
 
-# Database configuration
-DATABASE_URL = st.secrets["database"]["url"]
-engine = create_engine(DATABASE_URL, echo=True)
-Base = declarative_base()
+# Configuración de SQLAlchemy
+Base = sqlalchemy.orm.declarative_base()
+engine = create_engine(st.secrets["database"]["url"], echo=True)
 Session = sessionmaker(bind=engine)
 
-# SQLAlchemy models
+# Modelos de SQLAlchemy
 class Usuario(Base):
     __tablename__ = 'usuarios'
     id = Column(String, primary_key=True)
@@ -90,69 +93,81 @@ class Pedido(Base):
     producto = relationship("Producto")
 
 Base.metadata.create_all(engine, checkfirst=True)
-print("Database tables created successfully (or already exist).")
+print("Tablas de base de datos creadas con éxito (o ya existen).")
 
-# Helper functions
-def generate_order_id():
+# Funciones auxiliares
+def generar_id_pedido():
     return f"PED-{random.randint(10000, 99999)}"
 
-# Authentication function (placeholder)
-def authenticate():
-    # Implement your authentication logic here
-    # For now, we'll use a simple placeholder
-    if 'user' not in st.session_state:
-        st.session_state.user = None
+# Función de autenticación
+def autenticacion_auth0():
+    if 'usuario' not in st.session_state:
+        st.session_state.usuario = None
     
-    if st.session_state.user is None:
-        username = st.sidebar.text_input("Username")
-        password = st.sidebar.text_input("Password", type="password")
-        if st.sidebar.button("Login"):
-            # Here you would typically check the credentials
-            # For this example, we'll just set a dummy user
-            st.session_state.user = {"name": username, "email": f"{username}@example.com"}
-            st.success(f"Welcome, {username}!")
-            st.experimental_rerun()
-    return st.session_state.user
+    if st.session_state.usuario is None:
+        opcion_auth = st.sidebar.radio("Elija una acción", ["🔑 Iniciar sesión", "📄 Términos y Condiciones"])
+        if opcion_auth == "🔑 Iniciar sesión":
+            info_usuario = login_button(AUTH0_CLIENT_ID, domain=AUTH0_DOMAIN)
+            if info_usuario:
+                session = Session()
+                usuario = session.query(Usuario).filter_by(email=info_usuario['email']).first()
+                if not usuario:
+                    usuario = Usuario(
+                        id=info_usuario['sub'],
+                        nombre=info_usuario['name'],
+                        email=info_usuario['email'],
+                        direccion=''
+                    )
+                    session.add(usuario)
+                    session.commit()
+                st.session_state.usuario = usuario
+                st.success(f"¡Bienvenido, {usuario.nombre}!")
+                st.experimental_rerun()
+    return st.session_state.usuario
 
-# Main function
+# Función principal
 def main():
-    user = authenticate()
-    if user:
-        menu_items = [
-            "🏠 Home",
-            "🌱 Products",
-            "🔄 Subscriptions",
-            "🛒 Orders",
-            "👤 Profile",
-            "📞 Support"
+    usuario = autenticacion_auth0()
+    if usuario:
+        if 'pagina_actual' not in st.session_state:
+            st.session_state.pagina_actual = "🏠 Inicio"
+        
+        # Elementos del menú
+        elementos_menu = [
+            "🏠 Inicio",
+            "🌱 Productos",
+            "🔄 Suscripciones",
+            "🛒 Pedidos",
+            "👤 Perfil",
+            "📞 Soporte"
         ]
         
-        st.sidebar.title("Menu")
-        selection = st.sidebar.radio("Go to", menu_items)
+        st.sidebar.title("Menú")
+        seleccion = st.sidebar.radio("Ir a", elementos_menu)
         
-        if selection == "🏠 Home":
-            st.header("Welcome to Pasto Verde")
-            st.write("Discover our premium and eco-friendly grass products for pets!")
+        if seleccion == "🏠 Inicio":
+            st.header("Bienvenido a Pasto Verde")
+            st.write("¡Descubre nuestros productos de pasto premium y ecológico para mascotas!")
         
-        elif selection == "🌱 Products":
-            st.header("Our Products")
-            # Add product listing logic here
+        elif seleccion == "🌱 Productos":
+            st.header("Nuestros Productos")
+            # Añadir lógica de listado de productos y pedidos aquí
         
-        elif selection == "🔄 Subscriptions":
-            st.header("Manage Your Subscriptions")
-            # Add subscription management logic here
+        elif seleccion == "🔄 Suscripciones":
+            st.header("Gestiona Tus Suscripciones")
+            # Añadir lógica de gestión de suscripciones aquí
         
-        elif selection == "🛒 Orders":
-            st.header("Your Orders")
-            # Add order history and tracking logic here
+        elif seleccion == "🛒 Pedidos":
+            st.header("Tus Pedidos")
+            # Añadir historial de pedidos y lógica de seguimiento aquí
         
-        elif selection == "👤 Profile":
-            st.header("Your Profile")
-            # Add user profile management here
+        elif seleccion == "👤 Perfil":
+            st.header("Tu Perfil")
+            # Añadir gestión de perfil de usuario aquí
         
-        elif selection == "📞 Support":
-            st.header("Customer Support")
-            # Add support features, FAQ, and contact information here
+        elif seleccion == "📞 Soporte":
+            st.header("Soporte al Cliente")
+            # Añadir características de soporte, FAQ e información de contacto aquí
 
 if __name__ == "__main__":
     main()
