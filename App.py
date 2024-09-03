@@ -3,9 +3,9 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 import random
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, Float, ForeignKey
+from sqlalchemy  import create_engine, Column, Integer, String, DateTime,ForeignKey
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
-import sqlalchemy
+import sqlalchemy import Float
 from auth0_component import login_button
 import os
 from dotenv import load_dotenv
