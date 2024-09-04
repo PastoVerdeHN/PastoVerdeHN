@@ -72,7 +72,7 @@ En Pasto Verde, valoramos tu confianza en nosotros. Si tienes alguna pregunta o 
     st.write("Last updated: September 04, 2024")
 
     if st.button("Return to Home"):
-        st.switch_page("App.py")
+        st.switch_page("App/App.py")
 
 if __name__ == "__main__":
     main()
