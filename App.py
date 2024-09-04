@@ -90,7 +90,11 @@ def auth0_authentication():
                 st.error("Auth0 configuration not found. Please set AUTH0_CLIENT_ID and AUTH0_DOMAIN in Streamlit secrets.")
                 return None
 
-            user_info = login_button(AUTH0_CLIENT_ID, domain=AUTH0_DOMAIN)
+            user_info = login_button(
+                AUTH0_CLIENT_ID, 
+                domain=AUTH0_DOMAIN,
+                redirect_uri="http://localhost:8501/callback"  # Adjust this if you're not running locally
+            )
             
             if user_info:
                 session = Session()
@@ -109,11 +113,18 @@ def auth0_authentication():
                 
                 st.session_state.user = user
                 st.success(f"Bienvenido, {user.name}!")
-                st.experimental_rerun()
+                # Instead of st.experimental_rerun(), we'll use a flag to trigger a refresh
+                st.session_state.trigger_refresh = True
         elif auth_choice == "📄 Terms and Conditions":
             st.sidebar.markdown("# Terms and Conditions")
             st.sidebar.markdown("Please read our terms and conditions here.")
             # Add your terms and conditions content here
+
+    # Check if we need to refresh the page
+    if st.session_state.get('trigger_refresh', False):
+        st.session_state.trigger_refresh = False
+        st.empty()  # This will clear the current page
+        st.rerun()  # This is the new way to rerun the script
 
     return st.session_state.user
 
