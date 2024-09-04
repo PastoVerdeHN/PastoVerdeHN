@@ -157,8 +157,7 @@ def main():
         st.write("Please log in to access Pasto Verde services")
 
     st.sidebar.markdown("---")
-    st.sidebar.markdown("[Terms and Conditions]"(/App/Pages
-/Terms_and_Conditions.py)")
+    st.sidebar.markdown("[Terms and Conditions](/App/Pages/Terms_and_Conditions.py)")
 
 def home_page():
     st.write(f"Welcome to Pasto Verde, {st.session_state.user.name}! 🌿")
