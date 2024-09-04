@@ -27,7 +27,18 @@ load_dotenv()
 
 # Database setup
 Base = declarative_base()
-engine = create_engine(st.secrets["database"]["url"], echo=True)
+
+# Try to get the database URL from Streamlit secrets, fall back to environment variable if not found
+try:
+    database_url = st.secrets["database"]["url"]
+except KeyError:
+    database_url = os.getenv("DATABASE_URL")
+
+if not database_url:
+    st.error("Database URL not found. Please set it in Streamlit secrets or as an environment variable.")
+    st.stop()
+
+engine = create_engine(database_url, echo=True)
 Session = sessionmaker(bind=engine)
 
 # SQLAlchemy models
@@ -69,28 +80,40 @@ def auth0_authentication():
         st.session_state.user = None
 
     if st.session_state.user is None:
-        user_info = login_button(
-            auth0_client_id=st.secrets["auth0"]["AUTH0_CLIENT_ID"],
-            domain=st.secrets["auth0"]["AUTH0_DOMAIN"],
-        )
+        auth_choice = st.sidebar.radio("Choose action", ["🔑 Entrar", "📄 Terms and Conditions"])
         
-        if user_info:
-            session = Session()
-            user = session.query(User).filter_by(email=user_info['email']).first()
-            if not user:
-                user = User(
-                    id=user_info['sub'],
-                    name=user_info['name'],
-                    email=user_info['email'],
-                    type='customer',
-                    address=''
-                )
-                session.add(user)
-                session.commit()
+        if auth_choice == "🔑 Entrar":
+            try:
+                AUTH0_CLIENT_ID = st.secrets["auth0"]["AUTH0_CLIENT_ID"]
+                AUTH0_DOMAIN = st.secrets["auth0"]["AUTH0_DOMAIN"]
+            except KeyError:
+                st.error("Auth0 configuration not found. Please set AUTH0_CLIENT_ID and AUTH0_DOMAIN in Streamlit secrets.")
+                return None
+
+            user_info = login_button(AUTH0_CLIENT_ID, domain=AUTH0_DOMAIN)
             
-            st.session_state.user = user
-            st.success(f"Welcome, {user.name}!")
-            st.experimental_rerun()
+            if user_info:
+                session = Session()
+                user = session.query(User).filter_by(email=user_info['email']).first()
+                if not user:
+                    # Create a new user if they don't exist in your database
+                    user = User(
+                        id=user_info['sub'],
+                        name=user_info['name'],
+                        email=user_info['email'],
+                        type='customer',  # Default type, can be updated later
+                        address=''  # Can be updated later
+                    )
+                    session.add(user)
+                    session.commit()
+                
+                st.session_state.user = user
+                st.success(f"Bienvenido, {user.name}!")
+                st.experimental_rerun()
+        elif auth_choice == "📄 Terms and Conditions":
+            st.sidebar.markdown("# Terms and Conditions")
+            st.sidebar.markdown("Please read our terms and conditions here.")
+            # Add your terms and conditions content here
 
     return st.session_state.user
 
@@ -124,12 +147,11 @@ def main():
             st.success("Logged out successfully.")
             st.experimental_rerun()
 
-        st.sidebar.markdown("---")
-        st.sidebar.markdown("[Terms and Conditions](/Terms_and_Conditions)")
     else:
         st.write("Please log in to access Pasto Verde services")
-        st.sidebar.markdown("---")
-        st.sidebar.markdown("[Terms and Conditions](/Terms_and_Conditions)")
+
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("[Terms and Conditions](/Terms_and_Conditions)")
 
 def home_page():
     st.write(f"Welcome to Pasto Verde, {st.session_state.user.name}! 🌿")
