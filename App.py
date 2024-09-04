@@ -147,45 +147,11 @@ def main():
         menu_items[st.session_state.current_page]()
 
         if st.sidebar.button("🚪 Log Out"):
-            st.session_state.user = None
-            st.session_state.auth_status = None
+            # Clear the session state
+            for key in list(st.session_state.keys()):
+                del st.session_state[key]
             st.success("Logged out successfully.")
-
-    else:
-        st.write("Please log in to access Pasto Verde services")
-
-    st.sidebar.markdown("---")
-    st.sidebar.markdown("[Terms and Conditions](/Terms_and_Conditions)")
-
-def main():
-    st.title("🌿 Pasto Verde - Pet Grass Delivery")
-    user = auth0_authentication()
-
-    if user:
-        if 'current_page' not in st.session_state:
-            st.session_state.current_page = "🏠 Home"
-
-        menu_items = {
-            "🏠 Home": home_page,
-            "🛒 Order Now": place_order,
-            "📦 My Orders": display_user_orders,
-            "🗺️ Delivery Map": display_map,
-            "ℹ️ About Us": about_us,
-        }
-        if user.type == 'admin':
-            menu_items["📊 Admin Dashboard"] = admin_dashboard
-
-        cols = st.columns(len(menu_items))
-        for i, (emoji_label, func) in enumerate(menu_items.items()):
-            if cols[i].button(emoji_label):
-                st.session_state.current_page = emoji_label
-
-        menu_items[st.session_state.current_page]()
-
-        if st.sidebar.button("🚪 Log Out"):
-            st.session_state.user = None
-            st.success("Logged out successfully.")
-            st.experimental_rerun()
+            st.rerun()
 
     else:
         st.write("Please log in to access Pasto Verde services")
