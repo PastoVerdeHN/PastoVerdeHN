@@ -237,14 +237,6 @@ Opciones de entrega convenientes
 Empaque ecológico
 ¡Mascotas felices, dueños felices!
 Únete a nosotros para hacer que el día de tu mascota sea un poco más verde y mucho más divertido.
-
-    🌿 Why choose Pasto Verde?
-    - Fresh, pesticide-free grass
-    - Convenient delivery options
-    - Eco-friendly packaging
-    - Happy pets, happy owners!
-
-    Join us in making your pet's day a little greener and a lot more fun!
     """)
 
 def admin_dashboard():
