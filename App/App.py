@@ -15,6 +15,9 @@ from geopy.exc import GeocoderTimedOut, GeocoderServiceError
 import os
 from dotenv import load_dotenv
 from auth0_component import login_button
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from Pages.Terms_and_Conditions import main as terms_and_conditions_main
 
 st.set_page_config(
     page_title="Pasto Verde - Pet Grass Delivery",
