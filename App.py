@@ -134,7 +134,7 @@ def main():
             "🛒 Order Now": place_order,
             "📦 My Orders": display_user_orders,
             "🗺️ Delivery Map": display_map,
-            "ℹ️ Acerca de Pasto Verde": about_us,
+            "ℹ️ About us": about_us,
         }
         if user.type == 'admin':
             menu_items["📊 Admin Dashboard"] = admin_dashboard
@@ -226,7 +226,7 @@ def display_map():
     folium_static(m)
 
 def about_us():
-    st.subheader("ℹ️ Acerca de Pasto Verde")
+    st.subheader("ℹ️ About us")
     st.write("""
 En Pasto Verde, creemos que cada mascota merece un toque de naturaleza en su vida diaria. Nuestra misión es llevar pasto fresco y exuberante directamente a tu puerta, brindando a tus amigos peludos una experiencia natural y placentera.
 
