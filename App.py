@@ -226,11 +226,17 @@ def display_map():
     folium_static(m)
 
 def about_us():
-    st.subheader("ℹ️ About Pasto Verde")
+    st.subheader("ℹ️ Acerca de Pasto Verde")
     st.write("""
-    At Pasto Verde, we believe that every pet deserves a touch of nature in their daily lives. 
-    Our mission is to bring fresh, lush grass directly to your doorstep, providing your furry friends 
-    with a natural and enjoyable experience.
+En Pasto Verde, creemos que cada mascota merece un toque de naturaleza en su vida diaria. Nuestra misión es llevar pasto fresco y exuberante directamente a tu puerta, brindando a tus amigos peludos una experiencia natural y placentera.
+
+🌿 ¿Por qué elegir Pasto Verde?
+
+Pasto fresco, libre de pesticidas
+Opciones de entrega convenientes
+Empaque ecológico
+¡Mascotas felices, dueños felices!
+Únete a nosotros para hacer que el día de tu mascota sea un poco más verde y mucho más divertido.
 
     🌿 Why choose Pasto Verde?
     - Fresh, pesticide-free grass
