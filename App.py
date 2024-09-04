@@ -78,6 +78,8 @@ def generate_order_id():
 def auth0_authentication():
     if 'user' not in st.session_state:
         st.session_state.user = None
+    if 'auth_status' not in st.session_state:
+        st.session_state.auth_status = None
 
     if st.session_state.user is None:
         auth_choice = st.sidebar.radio("Choose action", ["🔑 Entrar", "📄 Terms and Conditions"])
@@ -96,37 +98,64 @@ def auth0_authentication():
                 redirect_uri="http://localhost:8501/callback"  # Adjust this if you're not running locally
             )
             
-            if user_info:
+            if user_info and st.session_state.auth_status != "authenticated":
                 session = Session()
                 user = session.query(User).filter_by(email=user_info['email']).first()
                 if not user:
-                    # Create a new user if they don't exist in your database
                     user = User(
                         id=user_info['sub'],
                         name=user_info['name'],
                         email=user_info['email'],
-                        type='customer',  # Default type, can be updated later
-                        address=''  # Can be updated later
+                        type='customer',
+                        address=''
                     )
                     session.add(user)
                     session.commit()
                 
                 st.session_state.user = user
+                st.session_state.auth_status = "authenticated"
                 st.success(f"Bienvenido, {user.name}!")
-                # Instead of st.experimental_rerun(), we'll use a flag to trigger a refresh
-                st.session_state.trigger_refresh = True
         elif auth_choice == "📄 Terms and Conditions":
             st.sidebar.markdown("# Terms and Conditions")
             st.sidebar.markdown("Please read our terms and conditions here.")
-            # Add your terms and conditions content here
-
-    # Check if we need to refresh the page
-    if st.session_state.get('trigger_refresh', False):
-        st.session_state.trigger_refresh = False
-        st.empty()  # This will clear the current page
-        st.rerun()  # This is the new way to rerun the script
 
     return st.session_state.user
+
+def main():
+    st.title("🌿 Pasto Verde - Pet Grass Delivery")
+    user = auth0_authentication()
+
+    if user:
+        if 'current_page' not in st.session_state:
+            st.session_state.current_page = "🏠 Home"
+
+        menu_items = {
+            "🏠 Home": home_page,
+            "🛒 Order Now": place_order,
+            "📦 My Orders": display_user_orders,
+            "🗺️ Delivery Map": display_map,
+            "ℹ️ About Us": about_us,
+        }
+        if user.type == 'admin':
+            menu_items["📊 Admin Dashboard"] = admin_dashboard
+
+        cols = st.columns(len(menu_items))
+        for i, (emoji_label, func) in enumerate(menu_items.items()):
+            if cols[i].button(emoji_label):
+                st.session_state.current_page = emoji_label
+
+        menu_items[st.session_state.current_page]()
+
+        if st.sidebar.button("🚪 Log Out"):
+            st.session_state.user = None
+            st.session_state.auth_status = None
+            st.success("Logged out successfully.")
+
+    else:
+        st.write("Please log in to access Pasto Verde services")
+
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("[Terms and Conditions](/Terms_and_Conditions)")
 
 def main():
     st.title("🌿 Pasto Verde - Pet Grass Delivery")
