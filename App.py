@@ -134,7 +134,7 @@ def main():
             "🛒 Order Now": place_order,
             "📦 My Orders": display_user_orders,
             "🗺️ Delivery Map": display_map,
-            "ℹ️ About Us": about_us,
+            "ℹ️ Acerca de Pasto Verde": about_us,
         }
         if user.type == 'admin':
             menu_items["📊 Admin Dashboard"] = admin_dashboard
