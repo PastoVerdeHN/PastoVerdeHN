@@ -20,3 +20,4 @@ amplitude-analytics
 clerk
 pystrix
 livekit==0.15.2
+livekit-client==0.15.2
