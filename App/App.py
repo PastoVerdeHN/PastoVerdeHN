@@ -20,7 +20,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from Pages.Terms_and_Conditions import main as terms_and_conditions_main
 
 # New imports for LiveKit integration
-from livekit import RoomServiceClient, Room, RTCStats
+from livekit import RoomServiceClient, Room
 from streamlit_livekit import LiveKitComponent
 import asyncio
 import json
