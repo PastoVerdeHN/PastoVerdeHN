@@ -18,6 +18,8 @@ from auth0_component import login_button
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from Pages.Terms_and_Conditions import main as terms_and_conditions_main
+import pkg_resources
+print("Livekit version:", pkg_resources.get_distribution("livekit").version)
 
 # New imports for LiveKit integration
 from livekit.rtc import RoomServiceClient, Room
