@@ -19,6 +19,17 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from Pages.Terms_and_Conditions import main as terms_and_conditions_main
 
+# New imports for LiveKit integration
+from livekit import RoomServiceClient, Room, RTCStats
+from streamlit_livekit import LiveKitComponent
+import asyncio
+import json
+import logging
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 st.set_page_config(
     page_title="Pasto Verde - Pet Grass Delivery",
     page_icon="🌿",
@@ -27,6 +38,22 @@ st.set_page_config(
 
 # Load environment variables
 load_dotenv()
+
+# LiveKit configuration
+LIVEKIT_API_KEY = os.getenv("LIVEKIT_API_KEY")
+LIVEKIT_API_SECRET = os.getenv("LIVEKIT_API_SECRET")
+LIVEKIT_HOST = os.getenv("LIVEKIT_HOST")
+
+if not all([LIVEKIT_API_KEY, LIVEKIT_API_SECRET, LIVEKIT_HOST]):
+    st.error("LiveKit configuration not found. Please set LIVEKIT_API_KEY, LIVEKIT_API_SECRET, and LIVEKIT_HOST in your environment variables.")
+    st.stop()
+
+# Initialize LiveKit client
+room_service = RoomServiceClient(
+    host=LIVEKIT_HOST,
+    api_key=LIVEKIT_API_KEY,
+    api_secret=LIVEKIT_API_SECRET
+)
 
 # Database setup
 Base = declarative_base()
@@ -124,6 +151,48 @@ def auth0_authentication():
 
     return st.session_state.user
 
+def livekit_component():
+    st.subheader("LiveKit Voice Chat and Screen Share")
+    
+    if 'livekit_room' not in st.session_state:
+        st.session_state.livekit_room = None
+
+    if st.button("Start Voice Chat"):
+        try:
+            room_name = f"pasto-verde-{st.session_state.user.id}"
+            token = room_service.create_token(room_name, st.session_state.user.name)
+            st.session_state.livekit_room = Room(room_name, token)
+            st.success("Voice chat started!")
+            st.audio("path/to/start_chat_sound.mp3")  # Add a sound effect
+        except Exception as e:
+            logger.error(f"Error starting voice chat: {str(e)}")
+            st.error("Failed to start voice chat. Please try again.")
+
+    if st.session_state.livekit_room:
+        livekit_component = LiveKitComponent(
+            room=st.session_state.livekit_room,
+            audio=True,
+            video=False,
+            screen_share=True
+        )
+        st.write(livekit_component)
+
+        if st.button("End Voice Chat"):
+            try:
+                st.session_state.livekit_room.disconnect()
+                st.session_state.livekit_room = None
+                st.success("Voice chat ended!")
+                st.audio("path/to/end_chat_sound.mp3")  # Add a sound effect
+            except Exception as e:
+                logger.error(f"Error ending voice chat: {str(e)}")
+                st.error("Failed to end voice chat. Please try again.")
+
+    # Display active users
+    if st.session_state.livekit_room:
+        st.subheader("Active Users")
+        for participant in st.session_state.livekit_room.participants:
+            st.write(f"- {participant.name}")
+
 def main():
     st.title("🌿 Pasto Verde - Pet Grass Delivery")
     user = auth0_authentication()
@@ -138,6 +207,7 @@ def main():
             "📦 My Orders": display_user_orders,
             "🗺️ Delivery Map": display_map,
             "ℹ️ About us": about_us,
+            "🎙️ Voice Chat": livekit_component,
         }
         if user.type == 'admin':
             menu_items["📊 Admin Dashboard"] = admin_dashboard
