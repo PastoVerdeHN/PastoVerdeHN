@@ -19,4 +19,4 @@ av
 amplitude-analytics
 clerk
 pystrix
-livekit
+livekit==0.15.2
