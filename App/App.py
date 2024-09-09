@@ -22,7 +22,7 @@ import pkg_resources
 print("Livekit version:", pkg_resources.get_distribution("livekit").version)
 
 # New imports for LiveKit integration
-from livekit import RoomClient, Room
+from livekit import RoomServiceClient, Room
 from streamlit_livekit import LiveKitComponent
 import asyncio
 import json
