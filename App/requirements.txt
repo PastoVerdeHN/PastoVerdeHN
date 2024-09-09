@@ -21,3 +21,4 @@ clerk
 pystrix
 livekit
 setuptools
+streamlit_livekit
