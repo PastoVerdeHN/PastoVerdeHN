@@ -18,14 +18,10 @@ from auth0_component import login_button
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from Pages.Terms_and_Conditions import main as terms_and_conditions_main
-import pkg_resources
-print("Livekit version:", pkg_resources.get_distribution("livekit").version)
 
 # New imports for LiveKit integration
-from livekit import RoomServiceClient, Room
+from livekit import RoomServiceClient
 from streamlit_livekit import LiveKitComponent
-import asyncio
-import json
 import logging
 
 # Set up logging
@@ -156,23 +152,23 @@ def auth0_authentication():
 def livekit_component():
     st.subheader("LiveKit Voice Chat and Screen Share")
     
-    if 'livekit_room' not in st.session_state:
-        st.session_state.livekit_room = None
+    if 'livekit_token' not in st.session_state:
+        st.session_state.livekit_token = None
 
     if st.button("Start Voice Chat"):
         try:
             room_name = f"pasto-verde-{st.session_state.user.id}"
-            token = room_service.create_token(room_name, st.session_state.user.name)
-            st.session_state.livekit_room = Room(room_name, token)
+            token = room_service.create_token(room_name, identity=st.session_state.user.name)
+            st.session_state.livekit_token = token.to_jwt()
             st.success("Voice chat started!")
-            st.audio("path/to/start_chat_sound.mp3")  # Add a sound effect
         except Exception as e:
             logger.error(f"Error starting voice chat: {str(e)}")
             st.error("Failed to start voice chat. Please try again.")
 
-    if st.session_state.livekit_room:
+    if st.session_state.livekit_token:
         livekit_component = LiveKitComponent(
-            room=st.session_state.livekit_room,
+            token=st.session_state.livekit_token,
+            server_url=LIVEKIT_HOST,
             audio=True,
             video=False,
             screen_share=True
@@ -181,19 +177,11 @@ def livekit_component():
 
         if st.button("End Voice Chat"):
             try:
-                st.session_state.livekit_room.disconnect()
-                st.session_state.livekit_room = None
+                st.session_state.livekit_token = None
                 st.success("Voice chat ended!")
-                st.audio("path/to/end_chat_sound.mp3")  # Add a sound effect
             except Exception as e:
                 logger.error(f"Error ending voice chat: {str(e)}")
                 st.error("Failed to end voice chat. Please try again.")
-
-    # Display active users
-    if st.session_state.livekit_room:
-        st.subheader("Active Users")
-        for participant in st.session_state.livekit_room.participants:
-            st.write(f"- {participant.name}")
 
 def main():
     st.title("🌿 Pasto Verde - Pet Grass Delivery")
