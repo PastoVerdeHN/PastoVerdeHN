@@ -155,9 +155,7 @@ def main():
     else:
         st.write("Please log in to access Pasto Verde services")
 
-    st.sidebar.markdown("---")
-    if st.sidebar.button("Pagina Web"):
-        st.switch_page("pages/pagina_web.py")
+
 
 def home_page():
     st.write(f"Welcome to Pasto Verde, {st.session_state.user.name}! 🌿")
