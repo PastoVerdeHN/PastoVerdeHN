@@ -9,5 +9,8 @@ def app():
     # Embed the website in an iframe
     st.components.v1.iframe(website_url, width=None, height=600, scrolling=True)
 
+    if st.button("Inicio"):
+        st.switch_page("App.py")
+
 if __name__ == "__main__":
     app()
