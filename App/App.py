@@ -116,6 +116,8 @@ def auth0_authentication():
                 st.session_state.user = user
                 st.session_state.auth_status = "authenticated"
                 st.success(f"Bienvenido, {user.name}!")
+        elif auth_choice == "📄 Terms and Conditions":
+            st.switch_page("/Terms_and_Conditions.py")
 
     return st.session_state.user
 
@@ -154,7 +156,7 @@ def main():
         st.write("Please log in to access Pasto Verde services")
 
     st.sidebar.markdown("---")
-    if st.sidebar.button("📄 Terms and Conditions"):
+    if st.sidebar.button("Pagina Web"):
         st.switch_page("pages/Terms_and_Conditions.py")
 
 def home_page():
