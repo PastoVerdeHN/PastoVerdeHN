@@ -68,7 +68,7 @@ def main():
 
     st.write("Last updated: September 04, 2024")
 
-    if st.button("Return to Home"):
+    if st.button("Inicio"):
         st.switch_page("App.py")
 
     if st.button("Política de privacidad"):
