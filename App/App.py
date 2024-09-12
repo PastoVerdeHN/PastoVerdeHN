@@ -163,14 +163,14 @@ def home_page():
     
     session = Session()
     products = session.query(Product).all()
-    st.subheader("Our Products")
+    st.subheader("Nuestros Servicios")
     for product in products:
         st.write(f"- {product.name}: ${product.price:.2f}")
         st.write(product.description)
     session.close()
 
 def place_order():
-    st.subheader("🛒 Place Your Order")
+    st.subheader("🛒 Realizar pedido")
     
     session = Session()
     products = session.query(Product).all()
@@ -185,7 +185,7 @@ def place_order():
     
     st.write(f"Total Price: ${total_price:.2f}")
     
-    if st.button("Place Order"):
+    if st.button("Realizar pedido"):
         new_order = Order(
             id=generate_order_id(),
             user_id=st.session_state.user.id,
@@ -197,7 +197,7 @@ def place_order():
         )
         session.add(new_order)
         session.commit()
-        st.success("Order placed successfully!")
+        st.success("Pedido Exitoso!")
     
     session.close()
 
