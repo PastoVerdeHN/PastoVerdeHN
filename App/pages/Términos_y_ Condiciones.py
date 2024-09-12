@@ -2,10 +2,10 @@ import streamlit as st
 
 def main():
 
-    st.title("📜 Términos de Servicio de Pasto Verde")
+
 
     st.set_page_config(
-    page_title="📜 Términos de Servicio de Pasto Verde",
+    st.title("📜 Términos de Servicio de Pasto Verde"),
     page_icon="🌿",
     layout="wide"
 )
