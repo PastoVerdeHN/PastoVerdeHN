@@ -202,7 +202,7 @@ def place_order():
     session.close()
 
 def display_user_orders():
-    st.subheader("📦 My Orders")
+    st.subheader("📦 Mis Ordenes")
     
     session = Session()
     orders = session.query(Order).filter_by(user_id=st.session_state.user.id).all()
@@ -217,14 +217,14 @@ def display_user_orders():
     session.close()
 
 def display_map():
-    st.subheader("🗺️ Delivery Map")
+    st.subheader("🗺️ Zona de Entrega")
     
     # This is a placeholder. You'd need to implement actual delivery locations.
     m = folium.Map(location=[15.5, -88.0], zoom_start=7)
     folium_static(m)
 
 def about_us():
-    st.subheader("ℹ️ About us")
+    st.subheader("ℹ️ Sobre nosotros")
     st.write("""
     En Pasto Verde, creemos que cada mascota merece un toque de naturaleza en su vida diaria. Nuestra misión es llevar pasto fresco y exuberante directamente a tu puerta, brindando a tus amigos peludos una experiencia natural y placentera.
 
