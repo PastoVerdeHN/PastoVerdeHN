@@ -16,8 +16,6 @@ import os
 from dotenv import load_dotenv
 from auth0_component import login_button
 import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from Pages.Terms_and_Conditions import main as terms_and_conditions_main
 
 st.set_page_config(
     page_title="Pasto Verde - Pet Grass Delivery",
@@ -85,7 +83,7 @@ def auth0_authentication():
         st.session_state.auth_status = None
 
     if st.session_state.user is None:
-        auth_choice = st.sidebar.radio("Choose action", ["🔑 Entrar",])
+        auth_choice = st.sidebar.radio("Choose action", ["🔑 Entrar", "📄 Terms and Conditions"])
         
         if auth_choice == "🔑 Entrar":
             try:
@@ -119,8 +117,7 @@ def auth0_authentication():
                 st.session_state.auth_status = "authenticated"
                 st.success(f"Bienvenido, {user.name}!")
         elif auth_choice == "📄 Terms and Conditions":
-            st.sidebar.markdown("# Terms and Conditions")
-            st.sidebar.markdown("Please read our terms and conditions here.")
+            st.switch_page("pages/Terms_and_Conditions.py")
 
     return st.session_state.user
 
@@ -150,7 +147,6 @@ def main():
         menu_items[st.session_state.current_page]()
 
         if st.sidebar.button("🚪 Log Out"):
-            # Clear the session state
             for key in list(st.session_state.keys()):
                 del st.session_state[key]
             st.success("Logged out successfully.")
@@ -160,7 +156,8 @@ def main():
         st.write("Please log in to access Pasto Verde services")
 
     st.sidebar.markdown("---")
-    st.sidebar.markdown("[Terms and Conditions](/App/Pages/Terms_and_Conditions.py)")
+    if st.sidebar.button("📄 Terms and Conditions"):
+        st.switch_page("pages/Terms_and_Conditions.py")
 
 def home_page():
     st.write(f"Welcome to Pasto Verde, {st.session_state.user.name}! 🌿")
@@ -231,15 +228,15 @@ def display_map():
 def about_us():
     st.subheader("ℹ️ About us")
     st.write("""
-En Pasto Verde, creemos que cada mascota merece un toque de naturaleza en su vida diaria. Nuestra misión es llevar pasto fresco y exuberante directamente a tu puerta, brindando a tus amigos peludos una experiencia natural y placentera.
+    En Pasto Verde, creemos que cada mascota merece un toque de naturaleza en su vida diaria. Nuestra misión es llevar pasto fresco y exuberante directamente a tu puerta, brindando a tus amigos peludos una experiencia natural y placentera.
 
-🌿 ¿Por qué elegir Pasto Verde?
+    🌿 ¿Por qué elegir Pasto Verde?
 
-Pasto fresco, libre de pesticidas
-Opciones de entrega convenientes
-Empaque ecológico
-¡Mascotas felices, dueños felices!
-Únete a nosotros para hacer que el día de tu mascota sea un poco más verde y mucho más divertido.
+    Pasto fresco, libre de pesticidas
+    Opciones de entrega convenientes
+    Empaque ecológico
+    ¡Mascotas felices, dueños felices!
+    Únete a nosotros para hacer que el día de tu mascota sea un poco más verde y mucho más divertido.
     """)
 
 def admin_dashboard():
