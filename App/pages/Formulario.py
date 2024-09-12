@@ -1,7 +1,7 @@
 import streamlit as st
 
 def app():
-    st.title("Ordena Hoy"),
+    st.title("Ordena Hoy"),=(
     page_icon="🌿",
     layout="wide"
 )
