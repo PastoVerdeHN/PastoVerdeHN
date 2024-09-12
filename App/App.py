@@ -18,7 +18,7 @@ from auth0_component import login_button
 import sys
 
 st.set_page_config(
-    page_title="Pasto Verde - Pet Grass Delivery",
+    page_title="Pasto Verde - Naturaleza en Casa para tus Mascotas",
     page_icon="🌿",
     layout="wide"
 )
