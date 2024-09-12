@@ -159,7 +159,7 @@ def main():
 
 def home_page():
     st.write(f"Welcome to Pasto Verde, {st.session_state.user.name}! 🌿")
-    st.write("Bringing fresh grass to your pets, one box at a time!")
+    st.write("¡Llevando pasto fresco a tus mascotas, una caja a la vez!")
     
     session = Session()
     products = session.query(Product).all()
