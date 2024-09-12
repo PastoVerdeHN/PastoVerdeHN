@@ -83,7 +83,7 @@ def auth0_authentication():
         st.session_state.auth_status = None
 
     if st.session_state.user is None:
-        auth_choice = st.sidebar.radio("Choose action", ["🔑 Entrar", "📄 Terms and Conditions"])
+        auth_choice = st.sidebar.radio("Choose action", ["🔑 Entrar"])
         
         if auth_choice == "🔑 Entrar":
             try:
@@ -154,10 +154,6 @@ def main():
 
     else:
         st.write("Please log in to access Pasto Verde services")
-
-    st.sidebar.markdown("---")
-    if st.sidebar.button("📄 Terms and Conditions"):
-        st.switch_page("pages/Terms_and_Conditions.py")
 
 def home_page():
     st.write(f"Welcome to Pasto Verde, {st.session_state.user.name}! 🌿")
