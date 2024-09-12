@@ -175,7 +175,7 @@ def place_order():
     session = Session()
     products = session.query(Product).all()
     
-    selected_product = st.selectbox("Choose your grass type:", [p.name for p in products])
+    selected_product = st.selectbox("Elige tu plan:", [p.name for p in products])
     quantity = st.number_input("Quantity:", min_value=1, value=1)
     delivery_date = st.date_input("Delivery Date:", min_value=datetime.now().date())
     delivery_address = st.text_input("Delivery Address:", value=st.session_state.user.address)
