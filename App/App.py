@@ -259,5 +259,9 @@ def admin_dashboard():
     
     session.close()
 
+    st.sidebar.markdown("---")
+    if st.sidebar.button("Pagina Web"):
+        st.switch_page("pages/pagina_web.py")
+
 if __name__ == "__main__":
     main()
