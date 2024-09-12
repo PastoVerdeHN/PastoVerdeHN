@@ -157,7 +157,7 @@ def main():
 
     st.sidebar.markdown("---")
     if st.sidebar.button("Pagina Web"):
-        st.switch_page("pages/Terms_and_Conditions.py")
+        st.switch_page("pages/pagina_web.py")
 
 def home_page():
     st.write(f"Welcome to Pasto Verde, {st.session_state.user.name}! 🌿")
