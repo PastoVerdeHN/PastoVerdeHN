@@ -1,10 +1,7 @@
 import streamlit as st
 
 def app():
-    st.title("Ordena Hoy"),=(
-    page_icon="🌿",
-    layout="wide"
-)
+    st.title("Ordena Hoy")
     
     # Replace 'https://example.com' with your actual website URL
     website_url = "https://pastoverde.durablesites.com/contact?pt=NjZjZmZiNmQzMzBjMWZmZWVjOWY4OWRhOjE3MjQ5MTgwODYuOTQ1OnByZXZpZXc="
