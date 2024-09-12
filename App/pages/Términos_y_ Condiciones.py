@@ -71,5 +71,8 @@ def main():
     if st.button("Return to Home"):
         st.switch_page("App.py")
 
+    if st.button("Política de privacidad"):
+
+
 if __name__ == "__main__":
     main()
