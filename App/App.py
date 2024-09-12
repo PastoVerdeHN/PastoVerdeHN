@@ -130,11 +130,11 @@ def main():
             st.session_state.current_page = "🏠 Home"
 
         menu_items = {
-            "🏠 Home": home_page,
-            "🛒 Order Now": place_order,
-            "📦 My Orders": display_user_orders,
-            "🗺️ Delivery Map": display_map,
-            "ℹ️ About us": about_us,
+            "🏠 Inicio": home_page,
+            "🛒  Ordene Ahora": place_order,
+            "📦 Mis Ordenes": display_user_orders,
+            "🗺️ Zona De Envios": display_map,
+            "ℹ️ Sobre Nosotros": about_us,
         }
         if user.type == 'admin':
             menu_items["📊 Admin Dashboard"] = admin_dashboard
