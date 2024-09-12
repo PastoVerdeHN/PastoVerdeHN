@@ -1,7 +1,12 @@
 import streamlit as st
 
 def main():
-    st.title("📜 Términos de Servicio de Pasto Verde")
+
+    st.set_page_config(
+    page_title="📜 Términos de Servicio de Pasto Verde",
+    page_icon="🌿",
+    layout="wide"
+)
 
     st.write("""
     ¡Bienvenido a los términos de servicio de Pasto Verde! Al utilizar nuestros servicios, usted acepta los siguientes términos y condiciones:
