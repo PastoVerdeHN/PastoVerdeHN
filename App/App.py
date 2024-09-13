@@ -18,32 +18,26 @@ from auth0_component import login_button
 import sys
 from streamlit_folium import folium_static
 from branca.element import Template, MacroElement
-
+import plotly.graph_objects as go  # Import Plotly for graphs
 st.set_page_config(
     page_title="Pasto Verde - Naturaleza en Casa para tus Mascotas",
     page_icon="🌿",
     layout="wide"
 )
-
 # Load environment variables
 load_dotenv()
-
 # Database setup
 Base = declarative_base()
-
 # Try to get the database URL from Streamlit secrets, fall back to environment variable if not found
 try:
     database_url = st.secrets["database"]["url"]
 except KeyError:
     database_url = os.getenv("DATABASE_URL")
-
 if not database_url:
     st.error("Database URL not found. Please set it in Streamlit secrets or as an environment variable.")
     st.stop()
-
 engine = create_engine(database_url, echo=True)
 Session = sessionmaker(bind=engine)
-
 # SQLAlchemy models
 class User(Base):
     __tablename__ = 'users'
@@ -52,14 +46,12 @@ class User(Base):
     email = Column(String, unique=True, nullable=False)
     type = Column(String, nullable=False)
     address = Column(String)
-
 class Product(Base):
     __tablename__ = 'products'
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
     description = Column(String)
     price = Column(Float, nullable=False)
-
 class Order(Base):
     __tablename__ = 'orders'
     id = Column(String, primary_key=True)
@@ -71,19 +63,15 @@ class Order(Base):
     status = Column(String, nullable=False)
     user = relationship("User")
     product = relationship("Product")
-
 Base.metadata.create_all(engine)
-
 # Helper functions
 def generate_order_id():
     return f"ORD-{random.randint(10000, 99999)}"
-
 def auth0_authentication():
     if 'user' not in st.session_state:
         st.session_state.user = None
     if 'auth_status' not in st.session_state:
         st.session_state.auth_status = None
-
     if st.session_state.user is None:
         auth_choice = st.sidebar.radio("Choose action", ["🔑 Entrar"])
         
@@ -94,7 +82,6 @@ def auth0_authentication():
             except KeyError:
                 st.error("Auth0 configuration not found. Please set AUTH0_CLIENT_ID and AUTH0_DOMAIN in Streamlit secrets.")
                 return None
-
             user_info = login_button(
                 AUTH0_CLIENT_ID, 
                 domain=AUTH0_DOMAIN,
@@ -120,17 +107,13 @@ def auth0_authentication():
                 st.success(f"Bienvenido, {user.name}!")
         elif auth_choice == "📄 Terms and Conditions":
             st.switch_page("/Terms_and_Conditions.py")
-
     return st.session_state.user
-
 def main():
     st.title("🌿 Pasto Verde - Pet Grass Delivery")
     user = auth0_authentication()
-
     if user:
         if 'current_page' not in st.session_state:
             st.session_state.current_page = "🏠 Home"
-
         menu_items = {
             "🏠 Inicio": home_page,
             "🛒  Ordene Ahora": place_order,
@@ -140,25 +123,18 @@ def main():
         }
         if user.type == 'admin':
             menu_items["📊 Admin Dashboard"] = admin_dashboard
-
         cols = st.columns(len(menu_items))
         for i, (emoji_label, func) in enumerate(menu_items.items()):
             if cols[i].button(emoji_label):
                 st.session_state.current_page = emoji_label
-
         menu_items[st.session_state.current_page]()
-
         if st.sidebar.button("🚪 Log Out"):
             for key in list(st.session_state.keys()):
                 del st.session_state[key]
             st.success("Logged out successfully.")
             st.rerun()
-
     else:
         st.write("Por favor inicie sesión para acceder a los servicios de Pasto Verde")
-
-
-
 def home_page():
     st.write(f"Bienvenido/a Pasto Verde, {st.session_state.user.name}! 🌿")
     st.write("¡Llevando pasto fresco a tus mascotas, una caja a la vez!")
@@ -170,39 +146,54 @@ def home_page():
         st.write(f"- {product.name}: ${product.price:.2f}")
         st.write(product.description)
     session.close()
-
 def place_order():
     st.subheader("🛒 Realizar pedido")
-    
     session = Session()
     products = session.query(Product).all()
-    
-    selected_product = st.selectbox("Elige tu plan:", [p.name for p in products])
-    quantity = st.number_input("Quantity:", min_value=1, value=1)
-    delivery_date = st.date_input("Delivery Date:", min_value=datetime.now().date())
-    delivery_address = st.text_input("Delivery Address:", value=st.session_state.user.address)
-    
-    product = next(p for p in products if p.name == selected_product)
-    total_price = product.price * quantity
-    
-    st.write(f"Total Price: ${total_price:.2f}")
-    
-    if st.button("Realizar pedido"):
-        new_order = Order(
-            id=generate_order_id(),
-            user_id=st.session_state.user.id,
-            product_id=product.id,
-            quantity=quantity,
-            date=delivery_date,
-            delivery_address=delivery_address,
-            status='Pending'
-        )
-        session.add(new_order)
-        session.commit()
-        st.success("Pedido Exitoso!")
-    
+    # Plan Options (Customize with your data)
+    plans = {
+        "Básico": {"price": 10.00, "features": ["Entrega semanal", "Pasto estándar"]},
+        "Premium": {"price": 15.00, "features": ["Entrega semanal", "Pasto premium", "Golosinas adicionales"]},
+        "Pro": {"price": 20.00, "features": ["Entrega quincenal", "Pasto premium", "Golosinas adicionales", "Nota personalizada"]}
+    }
+    # Display Plan Cards
+    cols = st.columns(len(plans))
+    for i, (plan_name, plan_data) in enumerate(plans.items()):
+        with cols[i]:
+            st.write(f"## {plan_name}")
+            st.write(f"### ${plan_data['price']:.2f}")
+            for feature in plan_data["features"]:
+                st.checkbox(feature, key=f"{plan_name}_{feature}")
+    # Example Graph (Replace with your own)
+    plan_data = [
+        {"plan": "Básico", "frequency": 1},
+        {"plan": "Premium", "frequency": 2},
+        {"plan": "Pro", "frequency": 3}
+    ]
+    fig = go.Figure(data=[go.Bar(x=[d["plan"] for d in plan_data],
+                                  y=[d["frequency"] for d in plan_data])])
+    fig.update_layout(title="Comparación de frecuencia de entrega")
+    st.plotly_chart(fig)
+    # Address Input and Map
+    st.subheader("Dirección de entrega")
+    delivery_address = st.text_input("Ingresa tu dirección", value=st.session_state.user.address)
+    # Create a map centered on Tegucigalpa (or adjust to your delivery area)
+    tegucigalpa_coords = [14.0818, -87.2068]
+    m = folium.Map(location=tegucigalpa_coords, zoom_start=12)
+    # Display the map
+    folium_static(m)
+    # Gather User Selections
+    selected_plan = None
+    # ... (Code to determine the selected plan based on toggles)
+    # Confirm Order Details
+    if selected_plan:
+        st.write(f"## Has seleccionado el plan **{selected_plan}**.")
+        # ... (Display the final price and other details)
+        if st.button("Confirmar pedido"):
+            # ... (Process the order using the selected plan and delivery address)
+            st.success("¡Pedido realizado con éxito!")
+            st.stop()
     session.close()
-
 def display_user_orders():
     st.subheader("📦 Mis Ordenes")
     
@@ -217,7 +208,6 @@ def display_user_orders():
             st.write(f"Delivery Address: {order.delivery_address}")
     
     session.close()
-
 def display_map():
     st.subheader("🗺️ Zona de Entrega")
     
@@ -304,27 +294,21 @@ def display_map():
     
     # Display the map
     folium_static(m)
-
-
 def about_us():
     st.subheader("ℹ️ Sobre nosotros")
     st.write("""
     En Pasto Verde, creemos que cada mascota merece un toque de naturaleza en su vida diaria. Nuestra misión es llevar pasto fresco y exuberante directamente a tu puerta, brindando a tus amigos peludos una experiencia natural y placentera.
-
     🌿 ¿Por qué elegir Pasto Verde?
-
     Pasto fresco, libre de pesticidas
     Opciones de entrega convenientes
     Empaque ecológico
     ¡Mascotas felices, dueños felices!
     Únete a nosotros para hacer que el día de tu mascota sea un poco más verde y mucho más divertido.
     """)
-
 def admin_dashboard():
     if st.session_state.user.type != 'admin':
         st.error("You don't have permission to access this page.")
         return
-
     st.subheader("📊 Admin Dashboard")
     
     session = Session()
@@ -341,10 +325,8 @@ def admin_dashboard():
         st.write(f"Order ID: {order.id} - User: {order.user.name} - Product: {order.product.name} - Date: {order.date}")
     
     session.close()
-
     st.sidebar.markdown("---")
     if st.sidebar.button("Pagina Web"):
         st.switch_page("pages/pagina_web.py")
-
 if __name__ == "__main__":
     main()
