@@ -16,6 +16,8 @@ import os
 from dotenv import load_dotenv
 from auth0_component import login_button
 import sys
+from streamlit_folium import folium_static
+from branca.element import Template, MacroElement
 
 st.set_page_config(
     page_title="Pasto Verde - Naturaleza en Casa para tus Mascotas",
