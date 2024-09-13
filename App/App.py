@@ -165,7 +165,7 @@ def place_order():
             ]
         },
         "Suscripción Semestral": {
-            "price": 899.00,
+            "price": L.899.00,
             "features": [
                 "Entrega cada dos semanas",
                 "Envío gratis",
