@@ -227,7 +227,7 @@ def display_map():
     # Create a map centered on Tegucigalpa
     m = folium.Map(location=tegucigalpa_coords, zoom_start=12)
     
-    # Define delivery zones (adjusted based on the new image)
+    # Define delivery zones (adjusted to reduce overlap)
     zones = {
         "Zona Norte": {
             "coordinates": [
@@ -305,8 +305,6 @@ def display_map():
     # Display the map
     folium_static(m)
 
-# Call the function to display the map
-display_map()
 
 def about_us():
     st.subheader("ℹ️ Sobre nosotros")
