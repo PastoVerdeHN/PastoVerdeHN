@@ -168,10 +168,10 @@ def place_order():
             "price": 899.00,
             "features": [
                 "Entrega cada dos semanas",
-                "Descuento del 29%",
+                "Envío gratis",
                 "Descuento adicional del 25%",
-                "Personalización incluida",
-                "Envío gratis"
+                "Descuento del 29%",
+                "Personalización incluida"
             ]
         },
         "Suscripción Mensual": {
