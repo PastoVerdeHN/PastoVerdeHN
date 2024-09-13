@@ -248,6 +248,10 @@ def display_user_orders():
             st.write(f"Quantity: {order.quantity}")
             st.write(f"Delivery Date: {order.date}")
             st.write(f"Delivery Address: {order.delivery_address}")
+            # Display features as checked checkboxes
+            if order.product.name in plans:
+                for feature in plans[order.product.name]["features"]:
+                    st.checkbox(feature, checked=True, disabled=True)  # Disable checkbox
     
     session.close()
 def display_map():
