@@ -153,7 +153,7 @@ def main():
             st.rerun()
 
     else:
-        st.write("Please log in to access Pasto Verde services")
+        st.write("Por favor inicie sesión para acceder a los servicios de Pasto Verde")
 
 
 
@@ -219,9 +219,94 @@ def display_user_orders():
 def display_map():
     st.subheader("🗺️ Zona de Entrega")
     
-    # This is a placeholder. You'd need to implement actual delivery locations.
-    m = folium.Map(location=[15.5, -88.0], zoom_start=7)
+    # Coordinates for Tegucigalpa
+    tegucigalpa_coords = [14.0723, -87.1921]
+    
+    # Create a map centered on Tegucigalpa
+    m = folium.Map(location=tegucigalpa_coords, zoom_start=12)
+    
+    # Define delivery zones (these are approximate and should be adjusted)
+    zones = {
+        "Zona Central": {
+            "coordinates": [
+                [14.1023, -87.2121],
+                [14.0923, -87.1821],
+                [14.0623, -87.1921],
+                [14.0723, -87.2221]
+            ],
+            "color": "#FF0000"  # Red
+        },
+        "Zona Norte": {
+            "coordinates": [
+                [14.1223, -87.2321],
+                [14.1123, -87.1921],
+                [14.1023, -87.2121],
+                [14.1123, -87.2421]
+            ],
+            "color": "#00FF00"  # Green
+        },
+        "Zona Sur": {
+            "coordinates": [
+                [14.0523, -87.2121],
+                [14.0423, -87.1821],
+                [14.0223, -87.1921],
+                [14.0323, -87.2221]
+            ],
+            "color": "#0000FF"  # Blue
+        },
+        "Zona Este": {
+            "coordinates": [
+                [14.0923, -87.1721],
+                [14.0823, -87.1421],
+                [14.0623, -87.1521],
+                [14.0723, -87.1821]
+            ],
+            "color": "#FFFF00"  # Yellow
+        },
+        "Zona Oeste": {
+            "coordinates": [
+                [14.0923, -87.2321],
+                [14.0823, -87.2021],
+                [14.0623, -87.2121],
+                [14.0723, -87.2421]
+            ],
+            "color": "#FF00FF"  # Magenta
+        }
+    }
+    
+    # Add polygons for each zone
+    for zone_name, zone_data in zones.items():
+        folium.Polygon(
+            locations=zone_data["coordinates"],
+            color=zone_data["color"],
+            fill=True,
+            fill_color=zone_data["color"],
+            fill_opacity=0.4,
+            popup=zone_name
+        ).add_to(m)
+    
+    # Display the map
     folium_static(m)
+    
+    # Create a legend
+    st.subheader("Leyenda")
+    for zone_name, zone_data in zones.items():
+        st.markdown(
+            f'<span style="color:{zone_data["color"]};">■</span> {zone_name}',
+            unsafe_allow_html=True
+        )
+
+    # Dropdown for zone selection
+    selected_zone = st.selectbox(
+        "Seleccione su zona de entrega:",
+        list(zones.keys())
+    )
+    
+    if selected_zone:
+        st.write(f"Has seleccionado: {selected_zone}")
+
+# Call the function to display the map
+display_map()
 
 def about_us():
     st.subheader("ℹ️ Sobre nosotros")
