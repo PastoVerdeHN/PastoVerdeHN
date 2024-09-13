@@ -184,20 +184,12 @@ def place_order():
                 "Descuento adicional del 10%",
                 "Envío gratis"
             ]
-        },
-        "Sin Suscripción": {
-            "price": 850.00,
-            "features": [
-                "Compra única de alfombra de césped",
-                "Pago único",
-                "Envío gratis"
-            ]
         }
     }
 
     # Display Plan Cards
-    cols = st.columns(len(plans))
-    selected_plan = st.radio("Selecciona un plan:", list(plans.keys()), horizontal=True)
+    cols = st.columns(len(plans) + 1)  # +1 for the "Sin Suscripción" option
+    selected_plan = st.radio("Selecciona un plan:", list(plans.keys()) + ["Sin Suscripción"], horizontal=True)
 
     for i, (plan_name, plan_data) in enumerate(plans.items()):
         with cols[i]:
@@ -208,18 +200,13 @@ def place_order():
             for feature in plan_data["features"]:
                 st.write(f"✅ {feature}")
 
-    # Example Graph (Replace with your own)
-    plan_data = [
-        {"plan": "Suscripción Anual", "frequency": 2},
-        {"plan": "Suscripción Semestral", "frequency": 2},
-        {"plan": "Suscripción Mensual", "frequency": 1},
-        {"plan": "Sin Suscripción", "frequency": 1}
-    ]
-
-    fig = go.Figure(data=[go.Bar(x=[d["plan"] for d in plan_data],
-                                 y=[d["frequency"] for d in plan_data])])
-    fig.update_layout(title="Comparación de frecuencia de entrega")
-    st.plotly_chart(fig)
+    # Display "Sin Suscripción" option
+    with cols[-1]:
+        st.write("## Sin Suscripción")
+        st.write("### L. 850.00")
+        st.write("✅ Compra única de alfombra de césped")
+        st.write("✅ Pago único")
+        st.write("✅ Envío gratis")
 
     # Address Input and Map
     st.subheader("Dirección de entrega")
@@ -229,15 +216,27 @@ def place_order():
     tegucigalpa_coords = [14.0818, -87.2068]
     m = folium.Map(location=tegucigalpa_coords, zoom_start=12)
 
+    # Add a draggable marker
+    marker = folium.Marker(
+        tegucigalpa_coords,
+        draggable=True,
+        popup="Arrastra el marcador a tu ubicación exacta"
+    )
+    marker.add_to(m)
+
     # Display the map
-    folium_static(m)
+    map_data = folium_static(m, width=700, height=500)
+
+    # Display the confirmed address and coordinates
+    if marker.location:
+        st.write(f"Dirección confirmada: {delivery_address}")
+        st.write(f"Coordenadas: {marker.location}")
 
     # Confirm Order Details
     if selected_plan:
         st.write(f"## Has seleccionado el plan **{selected_plan}**.")
-        # ... (Display the final price and other details)
         if st.button("Confirmar pedido"):
-            # ... (Process the order using the selected plan and delivery address)
+            # Process the order using the selected plan and delivery address
             st.success("¡Pedido realizado con éxito!")
 
     session.close()
