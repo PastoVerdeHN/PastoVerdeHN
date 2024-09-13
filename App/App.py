@@ -150,25 +150,64 @@ def place_order():
     st.subheader("🛒 Realizar pedido")
     session = Session()
     products = session.query(Product).all()
-    # Plan Options (Customize with your data)
+    # Plan Options (Updated with your data)
     plans = {
-        "Básico": {"price": 10.00, "features": ["Entrega semanal", "Pasto estándar"]},
-        "Premium": {"price": 15.00, "features": ["Entrega semanal", "Pasto premium", "Golosinas adicionales"]},
-        "Pro": {"price": 20.00, "features": ["Entrega quincenal", "Pasto premium", "Golosinas adicionales", "Nota personalizada"]}
+        "Suscripción Anual": {
+            "price": 720.00,  # Monthly price after discounts
+            "features": [
+                "Entrega cada dos semanas",
+                "Envío gratis",
+                "Personalización incluida",
+                "Descuento del 29%",
+                "Descuento adicional del 40%",
+                "Primer mes gratis"
+            ]
+        },
+        "Suscripción Semestral": {
+            "price": 899.00,  # Monthly price after discounts
+            "features": [
+                "Entrega cada dos semanas",
+                "Césped fresco",
+                "Descuento del 29%",
+                "Descuento adicional del 25%",
+                "Personalización incluida",
+                "Envío gratis"
+            ]
+        },
+        "Suscripción Mensual": {
+            "price": 1080.00,  # Monthly price after discounts
+            "features": [
+                "Entrega cada dos semanas",
+                "Césped natural fresco",
+                "Descuento del 29%",
+                "Descuento adicional del 10%",
+                "Envío gratis"
+            ]
+        },
+        "Sin Suscripción": {
+            "price": 850.00, 
+            "features": [
+                "Compra única de alfombra de césped",
+                "Pago único",
+                "Envío gratis"
+            ]
+        }
     }
     # Display Plan Cards
     cols = st.columns(len(plans))
     for i, (plan_name, plan_data) in enumerate(plans.items()):
         with cols[i]:
             st.write(f"## {plan_name}")
-            st.write(f"### ${plan_data['price']:.2f}")
+            # Display the strikethrough price before the actual price
+            st.write(f"### <del>L.1200.00</del>  L. {plan_data['price']:.2f} al mes", unsafe_allow_html=True)
             for feature in plan_data["features"]:
                 st.checkbox(feature, key=f"{plan_name}_{feature}")
     # Example Graph (Replace with your own)
     plan_data = [
-        {"plan": "Básico", "frequency": 1},
-        {"plan": "Premium", "frequency": 2},
-        {"plan": "Pro", "frequency": 3}
+        {"plan": "Suscripción Anual", "frequency": 2},
+        {"plan": "Suscripción Semestral", "frequency": 2},
+        {"plan": "Suscripción Mensual", "frequency": 1},
+        {"plan": "Sin Suscripción", "frequency": 1}
     ]
     fig = go.Figure(data=[go.Bar(x=[d["plan"] for d in plan_data],
                                   y=[d["frequency"] for d in plan_data])])
