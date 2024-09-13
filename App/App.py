@@ -168,7 +168,6 @@ def place_order():
             "price": 899.00,
             "features": [
                 "Entrega cada dos semanas",
-                "Césped fresco",
                 "Descuento del 29%",
                 "Descuento adicional del 25%",
                 "Personalización incluida",
@@ -179,7 +178,6 @@ def place_order():
             "price": 1080.00,
             "features": [
                 "Entrega cada dos semanas",
-                "Césped natural fresco",
                 "Descuento del 29%",
                 "Descuento adicional del 10%",
                 "Envío gratis"
