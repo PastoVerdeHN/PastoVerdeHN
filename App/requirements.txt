@@ -19,3 +19,4 @@ av
 amplitude-analytics
 clerk
 pystrix
+plotly
