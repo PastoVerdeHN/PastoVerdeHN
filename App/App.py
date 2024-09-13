@@ -158,9 +158,9 @@ def place_order():
             "features": [
                 "Entrega cada dos semanas",
                 "Envío gratis",
-                "Personalización incluida",
                 "Descuento del 29%",
-                "Descuento adicional del 40%",
+                "Descuento adicional del 40%", 
+                "Personalización incluida",
                 "Primer mes gratis"
             ]
         },
