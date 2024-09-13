@@ -229,10 +229,10 @@ def display_map():
     zones = {
         "Zona Norte": {
             "coordinates": [
-                [14.1200, -87.2400],
-                [14.1200, -87.1700],
-                [14.0950, -87.1700],
-                [14.0950, -87.2400]
+                [14.1300, -87.2500],
+                [14.1300, -87.1600],
+                [14.0950, -87.1600],
+                [14.0950, -87.2500]
             ],
             "color": "#00FF00"  # Green
         },
@@ -256,10 +256,10 @@ def display_map():
         },
         "Zona Oeste": {
             "coordinates": [
-                [14.0950, -87.2400],
-                [14.0950, -87.2200],
+                [14.1000, -87.2500],
+                [14.1000, -87.2200],
                 [14.0600, -87.2200],
-                [14.0600, -87.2400]
+                [14.0600, -87.2500]
             ],
             "color": "#FF00FF"  # Magenta
         },
@@ -285,25 +285,23 @@ def display_map():
             popup=zone_name
         ).add_to(m)
     
+    # Add legend to the map
+    legend_html = '''
+    <div style="position: fixed; bottom: 50px; left: 50px; width: 120px; height: 160px; 
+    border:2px solid grey; z-index:9999; font-size:14px; background-color:white;
+    ">&nbsp;<b>Leyenda:</b><br>
+    {% for zone, color in zones.items() %}
+    &nbsp;<i class="fa fa-map-marker" style="color:{{ color }}"></i>&nbsp;{{ zone }}<br>
+    {% endfor %}
+    </div>
+    '''
+    legend_template = Template(legend_html)
+    macro = MacroElement()
+    macro._template = legend_template
+    m.get_root().add_child(macro)
+    
     # Display the map
     folium_static(m)
-    
-    # Create a legend
-    st.subheader("Leyenda")
-    for zone_name, zone_data in zones.items():
-        st.markdown(
-            f'<span style="color:{zone_data["color"]};">■</span> {zone_name}',
-            unsafe_allow_html=True
-        )
-
-    # Dropdown for zone selection
-    selected_zone = st.selectbox(
-        "Seleccione su zona de entrega:",
-        list(zones.keys())
-    )
-    
-    if selected_zone:
-        st.write(f"Has seleccionado: {selected_zone}")
 
 # Call the function to display the map
 display_map()
