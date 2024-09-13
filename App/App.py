@@ -195,13 +195,19 @@ def place_order():
     }
     # Display Plan Cards
     cols = st.columns(len(plans))
+    selected_plan = None  # Initialize selected_plan
     for i, (plan_name, plan_data) in enumerate(plans.items()):
         with cols[i]:
             st.write(f"## {plan_name}")
             # Display the strikethrough price before the actual price
             st.write(f"### <del>L.1200.00</del>  L. {plan_data['price']:.2f} al mes", unsafe_allow_html=True)
-            for feature in plan_data["features"]:
-                st.checkbox(feature, key=f"{plan_name}_{feature}")
+            # Radio button for plan selection
+            if st.radio("", [plan_name], key=f"{plan_name}_radio"):
+                selected_plan = plan_name
+            # Display features as checked checkboxes
+            if selected_plan == plan_name:
+                for feature in plan_data["features"]:
+                    st.checkbox(feature, checked=True, disabled=True)  # Disable checkbox
     # Example Graph (Replace with your own)
     plan_data = [
         {"plan": "Suscripción Anual", "frequency": 2},
@@ -221,9 +227,6 @@ def place_order():
     m = folium.Map(location=tegucigalpa_coords, zoom_start=12)
     # Display the map
     folium_static(m)
-    # Gather User Selections
-    selected_plan = None
-    # ... (Code to determine the selected plan based on toggles)
     # Confirm Order Details
     if selected_plan:
         st.write(f"## Has seleccionado el plan **{selected_plan}**.")
