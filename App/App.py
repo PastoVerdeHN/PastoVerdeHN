@@ -197,20 +197,16 @@ def place_order():
 
     # Display Plan Cards
     cols = st.columns(len(plans))
-    selected_plan = None
+    selected_plan = st.radio("Selecciona un plan:", list(plans.keys()), horizontal=True)
 
     for i, (plan_name, plan_data) in enumerate(plans.items()):
         with cols[i]:
             st.write(f"## {plan_name}")
             st.write(f"### ~~L.1200.00~~ L. {plan_data['price']:.2f} al mes", unsafe_allow_html=True)
             
-            # Radio button for plan selection
-            if st.radio("Seleccionar plan", [plan_name], key=f"{plan_name}_radio"):
-                selected_plan = plan_name
-
-            # Display features as unchecked checkboxes
-            for j, feature in enumerate(plan_data["features"]):
-                st.checkbox(feature, value=False, key=f"{plan_name}_feature_{j}")
+            # Display features with checkmarks
+            for feature in plan_data["features"]:
+                st.write(f"✅ {feature}")
 
     # Example Graph (Replace with your own)
     plan_data = [
