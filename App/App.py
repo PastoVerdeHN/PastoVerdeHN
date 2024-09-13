@@ -202,7 +202,7 @@ def place_order():
     for i, (plan_name, plan_data) in enumerate(plans.items()):
         with cols[i]:
             st.write(f"## {plan_name}")
-            st.write(f"### ~~L.1200.00~~ L. {plan_data['price']:.2f} al mes", unsafe_allow_html=True)
+            st.write(f"### ~~L.1700.00~~ L. {plan_data['price']:.2f} al mes", unsafe_allow_html=True)
             
             # Display features with checkmarks
             for feature in plan_data["features"]:
