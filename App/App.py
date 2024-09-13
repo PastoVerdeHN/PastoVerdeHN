@@ -220,57 +220,57 @@ def display_map():
     st.subheader("🗺️ Zona de Entrega")
     
     # Coordinates for Tegucigalpa
-    tegucigalpa_coords = [14.0723, -87.1921]
+    tegucigalpa_coords = [14.0818, -87.2068]
     
     # Create a map centered on Tegucigalpa
     m = folium.Map(location=tegucigalpa_coords, zoom_start=12)
     
-    # Define delivery zones (these are approximate and should be adjusted)
+    # Define delivery zones (adjusted based on the image)
     zones = {
-        "Zona Central": {
-            "coordinates": [
-                [14.1023, -87.2121],
-                [14.0923, -87.1821],
-                [14.0623, -87.1921],
-                [14.0723, -87.2221]
-            ],
-            "color": "#FF0000"  # Red
-        },
         "Zona Norte": {
             "coordinates": [
-                [14.1223, -87.2321],
-                [14.1123, -87.1921],
-                [14.1023, -87.2121],
-                [14.1123, -87.2421]
+                [14.1150, -87.2250],
+                [14.1150, -87.1850],
+                [14.0950, -87.1850],
+                [14.0950, -87.2250]
             ],
             "color": "#00FF00"  # Green
         },
-        "Zona Sur": {
+        "Zona Centro": {
             "coordinates": [
-                [14.0523, -87.2121],
-                [14.0423, -87.1821],
-                [14.0223, -87.1921],
-                [14.0323, -87.2221]
+                [14.1000, -87.2150],
+                [14.1000, -87.1900],
+                [14.0800, -87.1900],
+                [14.0800, -87.2150]
             ],
-            "color": "#0000FF"  # Blue
+            "color": "#FF0000"  # Red
         },
         "Zona Este": {
             "coordinates": [
-                [14.0923, -87.1721],
-                [14.0823, -87.1421],
-                [14.0623, -87.1521],
-                [14.0723, -87.1821]
+                [14.0950, -87.1900],
+                [14.0950, -87.1600],
+                [14.0700, -87.1600],
+                [14.0700, -87.1900]
             ],
             "color": "#FFFF00"  # Yellow
         },
         "Zona Oeste": {
             "coordinates": [
-                [14.0923, -87.2321],
-                [14.0823, -87.2021],
-                [14.0623, -87.2121],
-                [14.0723, -87.2421]
+                [14.0900, -87.2400],
+                [14.0900, -87.2150],
+                [14.0650, -87.2150],
+                [14.0650, -87.2400]
             ],
             "color": "#FF00FF"  # Magenta
+        },
+        "Zona Sur": {
+            "coordinates": [
+                [14.0700, -87.2250],
+                [14.0700, -87.1850],
+                [14.0450, -87.1850],
+                [14.0450, -87.2250]
+            ],
+            "color": "#0000FF"  # Blue
         }
     }
     
