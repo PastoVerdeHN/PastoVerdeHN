@@ -169,8 +169,8 @@ def place_order():
             "features": [
                 "Entrega cada dos semanas",
                 "Envío gratis",
-                "Descuento adicional del 25%",
                 "Descuento del 29%",
+                "Descuento adicional del 25%",
                 "Personalización incluida"
             ]
         },
@@ -178,9 +178,10 @@ def place_order():
             "price": 1080.00,
             "features": [
                 "Entrega cada dos semanas",
-                "Descuento del 29%",
-                "Descuento adicional del 10%",
-                "Envío gratis"
+                "Envío gratis", 
+                "Descuento del 29%"
+                "Descuento adicional del 10%"
+               
             ]
         }
     }
