@@ -207,7 +207,7 @@ def place_order():
             # Display features as checked checkboxes
             if selected_plan == plan_name:
                 for feature in plan_data["features"]:
-                    st.checkbox(feature, checked=True, disabled=True)  # Disable checkbox
+                    st.checkbox(feature, disabled=True)  # Disable checkbox
     # Example Graph (Replace with your own)
     plan_data = [
         {"plan": "Suscripción Anual", "frequency": 2},
@@ -251,7 +251,7 @@ def display_user_orders():
             # Display features as checked checkboxes
             if order.product.name in plans:
                 for feature in plans[order.product.name]["features"]:
-                    st.checkbox(feature, checked=True, disabled=True)  # Disable checkbox
+                    st.checkbox(feature, disabled=True)  # Disable checkbox
     
     session.close()
 def display_map():
