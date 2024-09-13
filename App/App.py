@@ -204,8 +204,8 @@ def place_order():
         st.write("## Sin Suscripción")
         st.write("### L. 850.00")
         st.write("✅ Compra única de alfombra de césped")
-        st.write("✅ Pago único")
         st.write("✅ Envío gratis")
+        st.write("✅ Pago único")
 
     # Address Input and Map
     st.subheader("Dirección de entrega")
