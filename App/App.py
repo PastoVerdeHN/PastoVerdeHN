@@ -313,7 +313,7 @@ def place_order():
               session.rollback()
 
   session.close()
-    def display_user_orders():
+def display_user_orders():
   st.subheader("📦 Mis Ordenes")
   
   session = Session()
