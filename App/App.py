@@ -11,7 +11,6 @@ import os
 from dotenv import load_dotenv
 from auth0_component import login_button
 from branca.element import Template, MacroElement
-from models
 from geopy.geocoders import Nominatim
 import time
 
