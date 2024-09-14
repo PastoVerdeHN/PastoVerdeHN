@@ -119,7 +119,6 @@ def main():
           "📦 Mis Ordenes": display_user_orders,
           "🗺️ Zona De Envios": display_map,
           "ℹ️ Sobre Nosotros": about_us,
-          "📦 Productos": productos_page,
       }
 
       cols = st.columns(len(menu_items))
