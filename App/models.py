@@ -1,4 +1,3 @@
-# models.py
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, Float, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
@@ -38,5 +37,8 @@ class Order(Base):
 # Function to set up the database
 def setup_database(database_url):
   engine = create_engine(database_url, echo=True)  # Create the database engine
-  Base.metadata.create_all(engine)                  # Create all tables in the database
-  return sessionmaker(bind=engine)                   # Return a session factory
+  try:
+      Base.metadata.create_all(engine)  # Create all tables in the database
+  except Exception as e:
+      print(f"Error creating tables: {e}")
+  return sessionmaker(bind=engine)  # Return a session factory
