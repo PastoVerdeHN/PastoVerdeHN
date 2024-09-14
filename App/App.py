@@ -24,6 +24,11 @@ load_dotenv()
 # Database setup
 Base = declarative_base()
 database_url = os.getenv("DATABASE_URL")
+
+if not database_url:
+  st.error("Database URL not found. Please set it in Streamlit secrets or as an environment variable.")
+  st.stop()
+
 engine = create_engine(database_url, echo=True)
 Session = sessionmaker(bind=engine)
 
@@ -103,8 +108,8 @@ def auth0_authentication():
               st.success(f"Bienvenido, {user.name}!")
   return st.session_state.user
 
-def create_order(user_id: str, product_ids: list, quantities: list, subscription_type: str = None) -> dict:
-  logging.info(f"Starting order creation for user_id: {user_id}, subscription_type: {subscription_type}")
+def create_order(user_id: str, product_ids: list, quantities: list) -> dict:
+  logging.info(f"Starting order creation for user_id: {user_id}")
 
   # Create a new session
   db = Session()
@@ -161,82 +166,15 @@ def place_order():
   # Fetch products from the database
   products = session.query(Product).all()
 
-  # Plan Options
-  plans = {
-      "Suscripción Anual": {
-          "price": 720.00,
-          "features": [
-              "Entrega cada dos semanas",
-              "Envío gratis",
-              "Descuento del 29%",
-              "Descuento adicional del 40%", 
-              "Personalización incluida",
-              "Primer mes gratis"
-          ]
-      },
-      "Suscripción Semestral": {
-          "price": 899.00,
-          "features": [
-              "Entrega cada dos semanas",
-              "Envío gratis",
-              "Descuento del 29%",
-              "Descuento adicional del 25%",
-              "Personalización incluida"
-          ]
-      },
-      "Suscripción Mensual": {
-          "price": 1080.00,
-          "features": [
-              "Entrega cada dos semanas",
-              "Envío gratis", 
-              "Descuento del 29%",
-              "Descuento adicional del 10%"
-          ]
-      }
-  }
+  # Display products for selection
+  product_ids = [product.id for product in products]
+  quantities = []
 
-  # Display Plan Cards
-  cols = st.columns(len(plans) + 1)  # +1 for the "Sin Suscripción" option
-  selected_plan = st.radio("Selecciona un plan:", list(plans.keys()) + ["Sin Suscripción"], horizontal=True)
+  for product in products:
+      quantity = st.number_input(f"Cantidad para {product.name} (ID: {product.id})", min_value=1, value=1)
+      quantities.append(quantity)
 
-  for i, (plan_name, plan_data) in enumerate(plans.items()):
-      with cols[i]:
-          st.write(f"## {plan_name}")
-          st.write(f"### ~~L.1700.00~~ L. {plan_data['price']:.2f} al mes", unsafe_allow_html=True)
-          for feature in plan_data["features"]:
-              st.write(f"✅ {feature}")
-
-  # Display "Sin Suscripción" option
-  with cols[-1]:
-      st.write("## Sin Suscripción")
-      st.write("### L. 850.00")
-      st.write("✅ Compra única de alfombra de césped")
-      st.write("✅ Envío gratis")
-      st.write("✅ Pago único")
-
-  # Address Input and Map
-  st.subheader("Dirección de entrega")
-  delivery_address = st.text_input("Ingresa tu dirección", value=st.session_state.user.address)
-
-  # Create a map centered on Tegucigalpa
-  tegucigalpa_coords = [14.0818, -87.2068]
-  m = folium.Map(location=tegucigalpa_coords, zoom_start=12)
-
-  # Add a draggable marker
-  marker = folium.Marker(
-      tegucigalpa_coords,
-      draggable=True,
-      popup="Arrastra el marcador a tu ubicación exacta"
-  )
-  marker.add_to(m)
-
-  # Display the map
-  folium_static(m)
-
-  # Confirm Order Details
   if st.button("Confirmar pedido"):
-      product_ids = [product.id for product in products]  # Assuming you want to order all products
-      quantities = [1] * len(product_ids)  # Default quantity of 1 for each product
       result = create_order(st.session_state.user.id, product_ids, quantities)
 
       if result['status'] == "success":
