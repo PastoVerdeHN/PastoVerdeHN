@@ -301,10 +301,10 @@ def place_order():
               new_order = Order(
                   id=order_id,
                   user_id=st.session_state.user.id,
+                  product_id=None,  # Set this to the appropriate product ID if needed
                   date=datetime.now(),
                   delivery_address=full_address,
                   status='Pending'
-                  # Removed quantity since it's not applicable
               )
               session.add(new_order)
               session.commit()
@@ -337,14 +337,10 @@ def display_user_orders():
           # Removed plan_id since it's no longer part of the Order class
           st.write(f"Delivery Date: {order.date}")
           st.write(f"Delivery Address: {order.delivery_address}")
-          # If you want to display features, you can still do that based on the selected plan
-          # You may need to adjust how you retrieve the plan features if you have a separate structure for that
           if order.product_id:
               product = session.query(Product).filter_by(id=order.product_id).first()
               if product:
                   st.write(f"Product: {product.name} - Price: ${product.price:.2f}")
-                  # Display features if applicable
-                  # You may need to implement a way to retrieve features based on the product or plan
 
   session.close()
 
