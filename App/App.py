@@ -146,14 +146,6 @@ def home_page():
         st.write(f"- {product.name}: ${product.price:.2f}")
         st.write(product.description)
     session.close()
-import streamlit as st
-import folium
-from streamlit_folium import folium_static
-from datetime import datetime
-import time
-from geopy.geocoders import Nominatim
-from geopy.exc import GeocoderTimedOut, GeocoderServiceError
-
 def place_order():
   st.subheader("🛒 Realizar pedido")
   session = Session()
