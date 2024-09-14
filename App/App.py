@@ -147,98 +147,147 @@ def home_page():
         st.write(product.description)
     session.close()
 def place_order():
-    st.subheader("🛒 Realizar pedido")
-    session = Session()
-    products = session.query(Product).all()
+  st.subheader("🛒 Realizar pedido")
+  session = Session()
 
-    # Plan Options (Updated with your data)
-    plans = {
-        "Suscripción Anual": {
-            "price": 720.00,
-            "features": [
-                "Entrega cada dos semanas",
-                "Envío gratis",
-                "Descuento del 29%",
-                "Descuento adicional del 40%", 
-                "Personalización incluida",
-                "Primer mes gratis"
-            ]
-        },
-        "Suscripción Semestral": {
-            "price": 899.00,
-            "features": [
-                "Entrega cada dos semanas",
-                "Envío gratis",
-                "Descuento del 29%",
-                "Descuento adicional del 25%",
-                "Personalización incluida"
-            ]
-        },
-        "Suscripción Mensual": {
-            "price": 1080.00,
-            "features": [
-                "Entrega cada dos semanas",
-                "Envío gratis", 
-                "Descuento del 29%",
-                "Descuento adicional del 10%"
-               
-            ]
-        }
-    }
+  # Plan options
+  plans = {
+      "Suscripción Anual": {
+          "id": "annual",
+          "price": 720.00,
+          "features": [
+              "Entrega cada dos semanas",
+              "Envío gratis",
+              "Descuento del 29%",
+              "Descuento adicional del 40%", 
+              "Personalización incluida",
+              "Primer mes gratis"
+          ]
+      },
+      "Suscripción Semestral": {
+          "id": "semiannual",
+          "price": 899.00,
+          "features": [
+              "Entrega cada dos semanas",
+              "Envío gratis",
+              "Descuento del 29%",
+              "Descuento adicional del 25%",
+              "Personalización incluida"
+          ]
+      },
+      "Suscripción Mensual": {
+          "id": "monthly",
+          "price": 1080.00,
+          "features": [
+              "Entrega cada dos semanas",
+              "Envío gratis", 
+              "Descuento del 29%",
+              "Descuento adicional del 10%"
+          ]
+      },
+      "Sin Suscripción": {
+          "id": "one_time",
+          "price": 850.00,
+          "features": [
+              "Compra única de alfombra de césped",
+              "Envío gratis",
+              "Pago único"
+          ]
+      }
+  }
 
-    # Display Plan Cards
-    cols = st.columns(len(plans) + 1)  # +1 for the "Sin Suscripción" option
-    selected_plan = st.radio("Selecciona un plan:", list(plans.keys()) + ["Sin Suscripción"], horizontal=True)
+  # Display Plan Cards
+  cols = st.columns(len(plans))
+  selected_plan = st.radio("Selecciona un plan:", list(plans.keys()), horizontal=True)
 
-    for i, (plan_name, plan_data) in enumerate(plans.items()):
-        with cols[i]:
-            st.write(f"## {plan_name}")
-            st.write(f"### ~~L.1700.00~~ L. {plan_data['price']:.2f} al mes", unsafe_allow_html=True)
-            
-            # Display features with checkmarks
-            for feature in plan_data["features"]:
-                st.write(f"✅ {feature}")
+  for i, (plan_name, plan_data) in enumerate(plans.items()):
+      with cols[i]:
+          st.write(f"## {plan_name}")
+          st.write(f"### ~~L.1700.00~~ L. {plan_data['price']:.2f} al mes", unsafe_allow_html=True)
+          
+          # Display features with checkmarks
+          for feature in plan_data['features']:
+              st.write(f"✅ {feature}")
 
-    # Display "Sin Suscripción" option
-    with cols[-1]:
-        st.write("## Sin Suscripción")
-        st.write("### L. 850.00")
-        st.write("✅ Compra única de alfombra de césped")
-        st.write("✅ Envío gratis")
-        st.write("✅ Pago único")
+  # Address Input and Map
+  st.subheader("Dirección de entrega")
+  delivery_address = st.text_input("Ingresa tu dirección", value=st.session_state.user.address)
 
-    # Address Input and Map
-    st.subheader("Dirección de entrega")
-    delivery_address = st.text_input("Ingresa tu dirección", value=st.session_state.user.address)
+  # Initialize map
+  if 'map_center' not in st.session_state:
+      st.session_state.map_center = [14.0818, -87.2068]  # Default to Tegucigalpa
 
-    # Create a map centered on Tegucigalpa (or adjust to your delivery area)
-    tegucigalpa_coords = [14.0818, -87.2068]
-    m = folium.Map(location=tegucigalpa_coords, zoom_start=12)
+  # Address search
+  if st.button("Buscar dirección"):
+      geolocator = Nominatim(user_agent="pasto_verde_app")
+      try:
+          location = geolocator.geocode(delivery_address)
+          if location:
+              st.session_state.map_center = [location.latitude, location.longitude]
+              st.success(f"Dirección encontrada: {location.address}")
+          else:
+              st.error("No se pudo encontrar la dirección. Por favor, intenta ser más específico.")
+      except (GeocoderTimedOut, GeocoderServiceError):
+          st.error("Error en el servicio de geolocalización. Por favor, intenta de nuevo más tarde.")
 
-    # Add a draggable marker
-    marker = folium.Marker(
-        tegucigalpa_coords,
-        draggable=True,
-        popup="Arrastra el marcador a tu ubicación exacta"
-    )
-    marker.add_to(m)
+  # Create map
+  m = folium.Map(location=st.session_state.map_center, zoom_start=15)
+  
+  # Add a draggable marker
+  marker = folium.Marker(
+      st.session_state.map_center,
+      draggable=True,
+      popup="Arrastra el marcador a tu ubicación exacta"
+  )
+  marker.add_to(m)
 
-    # Display the map
-    map_data = folium_static(m, width=700, height=500)
+  # Display the map
+  map_data = folium_static(m, width=700, height=500)
 
-    # Display the confirmed address and coordinates
-    if marker.location:
-        st.write(f"Dirección confirmada: {delivery_address}")
-        st.write(f"Coordenadas: {marker.location}")
+  # Get marker position after map interaction
+  marker_position = None
+  if map_data:
+      marker_position = list(marker.location)
+      st.write(f"Ubicación seleccionada: {marker_position}")
 
-    # Confirm Order Details
-    if selected_plan:
-        st.write(f"## Has seleccionado el plan **{selected_plan}**.")
-        if st.button("Confirmar pedido"):
-            # Process the order using the selected plan and delivery address
-            st.success("¡Pedido realizado con éxito!")
+  # Order Review
+  if selected_plan and marker_position:
+      st.write("## Resumen del Pedido")
+      st.write(f"Plan seleccionado: **{selected_plan}**")
+      st.write(f"Precio: L. {plans[selected_plan]['price']:.2f}")
+      st.write(f"Dirección de entrega: {delivery_address}")
+      st.write(f"Coordenadas de entrega: {marker_position}")
 
-    session.close()
+      if st.button("Confirmar pedido"):
+          try:
+              order_id = generate_order_id()
+              new_order = Order(
+                  id=order_id,
+                  user_id=st.session_state.user.id,
+                  plan_id=plans[selected_plan]['id'],
+                  date=datetime.now(),
+                  delivery_address=delivery_address,
+                  status='Pending'
+              )
+              session.add(new_order)
+              session.commit()
+
+              # Animated order confirmation
+              progress_bar = st.progress(0)
+              status_text = st.empty()
+              for i in range(100):
+                  progress_bar.progress(i + 1)
+                  status_text.text(f"Procesando pedido... {i+1}%")
+                  time.sleep(0.01)
+              status_text.text("¡Pedido realizado con éxito! 🎉")
+              st.success(f"Tu número de orden es {order_id}")
+              st.balloons()
+
+          except Exception as e:
+              st.error(f"Ocurrió un error al procesar el pedido: {str(e)}")
+              session.rollback()
+
+  session.close()
 def display_user_orders():
     st.subheader("📦 Mis Ordenes")
     
