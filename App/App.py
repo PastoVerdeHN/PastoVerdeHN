@@ -290,10 +290,10 @@ def place_order():
               new_order = Order(
                   id=order_id,
                   user_id=st.session_state.user.id,
-                  plan_id=plans[selected_plan]['id'],
                   date=datetime.now(),
                   delivery_address=full_address,
                   status='Pending'
+                  # Removed plan_id since it's not valid
               )
               session.add(new_order)
               session.commit()
