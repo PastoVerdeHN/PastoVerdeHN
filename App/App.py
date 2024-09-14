@@ -150,13 +150,64 @@ def place_order():
   st.subheader("🛒 Realizar pedido")
   session = Session()
 
-  # Plan options (as before)
-  plans = {...}  # Your existing plans dictionary
+  # Plan options
+  plans = {
+      "Suscripción Anual": {
+          "id": "annual",
+          "price": 720.00,
+          "features": [
+              "Entrega cada dos semanas",
+              "Envío gratis",
+              "Descuento del 29%",
+              "Descuento adicional del 40%", 
+              "Personalización incluida",
+              "Primer mes gratis"
+          ]
+      },
+      "Suscripción Semestral": {
+          "id": "semiannual",
+          "price": 899.00,
+          "features": [
+              "Entrega cada dos semanas",
+              "Envío gratis",
+              "Descuento del 29%",
+              "Descuento adicional del 25%",
+              "Personalización incluida"
+          ]
+      },
+      "Suscripción Mensual": {
+          "id": "monthly",
+          "price": 1080.00,
+          "features": [
+              "Entrega cada dos semanas",
+              "Envío gratis", 
+              "Descuento del 29%",
+              "Descuento adicional del 10%"
+          ]
+      },
+      "Sin Suscripción": {
+          "id": "one_time",
+          "price": 850.00,
+          "features": [
+              "Compra única de alfombra de césped",
+              "Envío gratis",
+              "Pago único"
+          ]
+      }
+  }
 
-  # Display Plan Cards (as before)
+  # Display Plan Cards
+  cols = st.columns(len(plans))
   selected_plan = st.radio("Selecciona un plan:", list(plans.keys()), horizontal=True)
+
   for i, (plan_name, plan_data) in enumerate(plans.items()):
-      ...  # Your existing plan display code
+      with cols[i]:
+          st.write(f"## {plan_name}")
+          st.write(f"### ~~L.1700.00~~ L. {plan_data['price']:.2f} al mes", unsafe_allow_html=True)
+          
+          # Display features with checkmarks
+          for feature in plan_data['features']:
+              st.write(f"✅ {feature}")
 
   # Address Input and Map
   st.subheader("Dirección de entrega")
