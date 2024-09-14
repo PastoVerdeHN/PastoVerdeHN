@@ -13,11 +13,7 @@ from auth0_component import login_button
 from branca.element import Template, MacroElement
 from geopy.geocoders import Nominatim
 import time
-from models import User
-from models import Product
-from models import Order
-from models import Base
-from models import setup_database
+import models
 
 # Streamlit page configuration
 st.set_page_config(
