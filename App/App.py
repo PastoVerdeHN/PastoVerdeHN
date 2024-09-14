@@ -14,7 +14,6 @@ from branca.element import Template, MacroElement
 from models import User, Product, Order, setup_database
 from geopy.geocoders import Nominatim
 import time
-from models import Product, Order, Base, setup_database
 
 # Streamlit page configuration
 st.set_page_config(
