@@ -227,8 +227,6 @@ def place_order():
       st.session_state.map_center = [14.0818, -87.2068]  # Default to Tegucigalpa
   if 'search_result' not in st.session_state:
       st.session_state.search_result = None
-  if 'marker_position' not in st.session_state:
-      st.session_state.marker_position = st.session_state.map_center
 
   # Address search
   if search_button or (colonia and st.session_state.get('last_search') != colonia):
@@ -240,7 +238,6 @@ def place_order():
           location = geolocator.geocode(search_query)
           if location:
               st.session_state.map_center = [location.latitude, location.longitude]
-              st.session_state.marker_position = st.session_state.map_center
               st.session_state.search_result = location.address
               st.success(f"Colonia encontrada: {location.address}")
           else:
@@ -253,7 +250,7 @@ def place_order():
   
   # Add a draggable marker
   marker = folium.Marker(
-      st.session_state.marker_position,
+      st.session_state.map_center,
       draggable=True,
       popup="Arrastra el marcador a tu ubicación exacta"
   )
@@ -264,14 +261,11 @@ def place_order():
 
   # Get marker position after map interaction
   if map_data:
-      st.session_state.marker_position = list(marker.location)
-      st.write(f"Coordenadas seleccionadas: {st.session_state.marker_position}")
-
-  # Update coordinates button
-  if st.button("Actualizar Coordenadas"):
-      st.session_state.map_center = st.session_state.marker_position
-      st.success("Coordenadas actualizadas correctamente.")
-      st.rerun()
+      marker_position = list(marker.location)
+      st.write(f"Coordenadas seleccionadas: {marker_position}")
+      if st.button("Actualizar Coordenadas"):
+          st.session_state.map_center = marker_position
+          st.success("Coordenadas actualizadas correctamente.")
 
   # Specific address details and additional references (below the map)
   specific_address = st.text_input("Número de casa y calle", value="")
