@@ -150,7 +150,7 @@ def place_order():
   st.subheader("🛒 Realizar pedido")
   session = Session()
 
-  # Plan options (as before)
+  # Plan options
   plans = {
       "Suscripción Anual": {
           "id": "annual",
@@ -260,15 +260,16 @@ def place_order():
   map_data = folium_static(m, width=700, height=500)
 
   # Get marker position after map interaction
-  marker_position = None
   if map_data:
       marker_position = list(marker.location)
-      st.session_state.map_center = marker_position
       st.write(f"Coordenadas seleccionadas: {marker_position}")
+      if st.button("Actualizar Coordenadas"):
+          st.session_state.map_center = marker_position
+          st.success("Coordenadas actualizadas correctamente.")
 
-  # Specific address details and additional references (moved below the map)
+  # Specific address details and additional references (below the map)
   specific_address = st.text_input("Número de casa y calle", value="")
-  additional_references = st.text_area("Referencias adicionales (opcional)", value="")
+  additional_references = st.text_area("Referencias adicionales (opcional)", value="", key="additional_refs")
 
   # Combine all address information
   full_address = f"{specific_address}, {st.session_state.search_result or colonia}"
@@ -276,12 +277,12 @@ def place_order():
       full_address += f" ({additional_references})"
 
   # Order Review
-  if selected_plan and marker_position:
+  if selected_plan and st.session_state.map_center:
       st.write("## Resumen del Pedido")
       st.write(f"Plan seleccionado: **{selected_plan}**")
       st.write(f"Precio: L. {plans[selected_plan]['price']:.2f}")
       st.write(f"Dirección de entrega: {full_address}")
-      st.write(f"Coordenadas de entrega: {marker_position}")
+      st.write(f"Coordenadas de entrega: {st.session_state.map_center}")
 
       if st.button("Confirmar pedido"):
           try:
