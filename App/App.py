@@ -1,3 +1,4 @@
+# app.py
 import streamlit as st
 from streamlit.runtime.scriptrunner import get_script_run_ctx
 import pandas as pd
@@ -5,18 +6,15 @@ import folium
 from streamlit_folium import folium_static
 from datetime import datetime
 import random
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, Float, ForeignKey
-from sqlalchemy.orm import declarative_base, sessionmaker, relationship
-import time
-import sqlalchemy
-from dataclasses import dataclass
-from geopy.geocoders import Nominatim
-from geopy.exc import GeocoderTimedOut, GeocoderServiceError
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 import os
 from dotenv import load_dotenv
 from auth0_component import login_button
 from branca.element import Template, MacroElement
+from models import User, Product, Order, setup_database
 
+# Streamlit page configuration
 st.set_page_config(
   page_title="Pasto Verde - Naturaleza en Casa para tus Mascotas",
   page_icon="🌿",
@@ -27,9 +25,6 @@ st.set_page_config(
 load_dotenv()
 
 # Database setup
-Base = declarative_base()
-
-# Try to get the database URL from Streamlit secrets, fall back to environment variable if not found
 try:
   database_url = st.secrets["database"]["url"]
 except KeyError:
@@ -39,37 +34,7 @@ if not database_url:
   st.error("Database URL not found. Please set it in Streamlit secrets or as an environment variable.")
   st.stop()
 
-engine = create_engine(database_url, echo=True)
-Session = sessionmaker(bind=engine)
-
-# SQLAlchemy models
-class User(Base):
-  __tablename__ = 'users'
-  id = Column(String, primary_key=True)
-  name = Column(String, nullable=False)
-  email = Column(String, unique=True, nullable=False)
-  type = Column(String, nullable=False)
-  address = Column(String)
-
-class Product(Base):
-  __tablename__ = 'products'
-  id = Column(Integer, primary_key=True)
-  name = Column(String, nullable=False)
-  description = Column(String)
-  price = Column(Float, nullable=False)
-
-class Order(Base):
-  __tablename__ = 'orders'
-  id = Column(String, primary_key=True)
-  user_id = Column(String, ForeignKey('users.id'))
-  product_id = Column(Integer, ForeignKey('products.id'))
-  date = Column(DateTime, nullable=False)
-  delivery_address = Column(String, nullable=False)
-  status = Column(String, nullable=False)
-  user = relationship("User")
-  product = relationship("Product")
-
-Base.metadata.create_all(engine)
+Session = setup_database(database_url)
 
 # Helper functions
 def generate_order_id():
@@ -113,9 +78,7 @@ def auth0_authentication():
               st.session_state.user = user
               st.session_state.auth_status = "authenticated"
               st.success(f"Bienvenido, {user.name}!")
-      elif auth_choice == "📄 Terms and Conditions":
-          st.switch_page("/Terms_and_Conditions.py")
-  return st.session_state.user
+      return st.session_state.user
 
 def main():
   st.title("🌿 Pasto Verde - Pet Grass Delivery")
@@ -334,7 +297,6 @@ def display_user_orders():
   
   for order in orders:
       with st.expander(f"Order ID: {order.id} - Status: {order.status}"):
-          # Removed plan_id since it's no longer part of the Order class
           st.write(f"Delivery Date: {order.date}")
           st.write(f"Delivery Address: {order.delivery_address}")
           if order.product_id:
