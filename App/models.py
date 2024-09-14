@@ -1,28 +1,9 @@
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, Float, ForeignKey
+from sqlalchemy import create_engine, Column, Integer, String, DateTime, Float, ForeignKey, Date
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 
-# Define the base class for declarative models
-Base = declarative_base()
+# ... (keep the existing imports and Base declaration)
 
-# Define the User model
-class User(Base):
-  __tablename__ = 'users'
-  id = Column(String, primary_key=True)  # Unique identifier for the user
-  name = Column(String, nullable=False)   # User's name
-  email = Column(String, unique=True, nullable=False)  # User's email (must be unique)
-  type = Column(String, nullable=False)    # User type (e.g., customer, admin)
-  address = Column(String)                  # User's address
-
-# Define the Product model
-class Product(Base):
-  __tablename__ = 'products'
-  id = Column(Integer, primary_key=True)   # Unique identifier for the product
-  name = Column(String, nullable=False)      # Product name
-  description = Column(String)               # Product description
-  price = Column(Float, nullable=False)      # Product price
-
-# Define the Order model
 class Order(Base):
   __tablename__ = 'orders'
   id = Column(String, primary_key=True)     # Unique identifier for the order
@@ -31,14 +12,9 @@ class Order(Base):
   date = Column(DateTime, nullable=False)    # Order date
   delivery_address = Column(String, nullable=False)  # Delivery address for the order
   status = Column(String, nullable=False)     # Order status (e.g., Pending, Completed)
+  start_date = Column(Date)  # New field: Start date for the order
+  delivery_time_preference = Column(String)  # New field: Delivery time preference
   user = relationship("User")                # Relationship to the User model
   product = relationship("Product")          # Relationship to the Product model
 
-# Function to set up the database
-def setup_database(database_url):
-  engine = create_engine(database_url, echo=True)  # Create the database engine
-  try:
-      Base.metadata.create_all(engine)  # Create all tables in the database
-  except Exception as e:
-      print(f"Error creating tables: {e}")
-  return sessionmaker(bind=engine)  # Return a session factory
+# ... (keep the rest of the file as is)
