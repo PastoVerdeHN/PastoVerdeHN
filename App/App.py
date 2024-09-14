@@ -146,87 +146,57 @@ def home_page():
         st.write(f"- {product.name}: ${product.price:.2f}")
         st.write(product.description)
     session.close()
+import streamlit as st
+import folium
+from streamlit_folium import folium_static
+from datetime import datetime
+import time
+from geopy.geocoders import Nominatim
+from geopy.exc import GeocoderTimedOut, GeocoderServiceError
+
 def place_order():
   st.subheader("🛒 Realizar pedido")
   session = Session()
 
-  # Plan options
-  plans = {
-      "Suscripción Anual": {
-          "id": "annual",
-          "price": 720.00,
-          "features": [
-              "Entrega cada dos semanas",
-              "Envío gratis",
-              "Descuento del 29%",
-              "Descuento adicional del 40%", 
-              "Personalización incluida",
-              "Primer mes gratis"
-          ]
-      },
-      "Suscripción Semestral": {
-          "id": "semiannual",
-          "price": 899.00,
-          "features": [
-              "Entrega cada dos semanas",
-              "Envío gratis",
-              "Descuento del 29%",
-              "Descuento adicional del 25%",
-              "Personalización incluida"
-          ]
-      },
-      "Suscripción Mensual": {
-          "id": "monthly",
-          "price": 1080.00,
-          "features": [
-              "Entrega cada dos semanas",
-              "Envío gratis", 
-              "Descuento del 29%",
-              "Descuento adicional del 10%"
-          ]
-      },
-      "Sin Suscripción": {
-          "id": "one_time",
-          "price": 850.00,
-          "features": [
-              "Compra única de alfombra de césped",
-              "Envío gratis",
-              "Pago único"
-          ]
-      }
-  }
+  # Plan options (as before)
+  plans = {...}  # Your existing plans dictionary
 
-  # Display Plan Cards
-  cols = st.columns(len(plans))
+  # Display Plan Cards (as before)
   selected_plan = st.radio("Selecciona un plan:", list(plans.keys()), horizontal=True)
-
   for i, (plan_name, plan_data) in enumerate(plans.items()):
-      with cols[i]:
-          st.write(f"## {plan_name}")
-          st.write(f"### ~~L.1700.00~~ L. {plan_data['price']:.2f} al mes", unsafe_allow_html=True)
-          
-          # Display features with checkmarks
-          for feature in plan_data['features']:
-              st.write(f"✅ {feature}")
+      ...  # Your existing plan display code
 
   # Address Input and Map
   st.subheader("Dirección de entrega")
-  delivery_address = st.text_input("Ingresa tu dirección", value=st.session_state.user.address)
+  
+  # Colonia search
+  colonia = st.text_input("Buscar colonia", value="")
+  
+  # Specific address details
+  specific_address = st.text_input("Número de casa y calle", value="")
+  
+  # Additional references
+  additional_references = st.text_area("Referencias adicionales (opcional)", value="")
 
   # Initialize map
   if 'map_center' not in st.session_state:
       st.session_state.map_center = [14.0818, -87.2068]  # Default to Tegucigalpa
+  if 'search_result' not in st.session_state:
+      st.session_state.search_result = None
 
   # Address search
-  if st.button("Buscar dirección"):
+  if st.button("Buscar colonia"):
       geolocator = Nominatim(user_agent="pasto_verde_app")
       try:
-          location = geolocator.geocode(delivery_address)
+          # Append ", Tegucigalpa, Honduras" to improve search results
+          search_query = f"{colonia}, Tegucigalpa, Honduras"
+          location = geolocator.geocode(search_query)
           if location:
               st.session_state.map_center = [location.latitude, location.longitude]
-              st.success(f"Dirección encontrada: {location.address}")
+              st.session_state.search_result = location.address
+              st.success(f"Colonia encontrada: {location.address}")
           else:
-              st.error("No se pudo encontrar la dirección. Por favor, intenta ser más específico.")
+              st.error("No se pudo encontrar la colonia. Por favor, intenta ser más específico.")
       except (GeocoderTimedOut, GeocoderServiceError):
           st.error("Error en el servicio de geolocalización. Por favor, intenta de nuevo más tarde.")
 
@@ -248,14 +218,19 @@ def place_order():
   marker_position = None
   if map_data:
       marker_position = list(marker.location)
-      st.write(f"Ubicación seleccionada: {marker_position}")
+      st.write(f"Coordenadas seleccionadas: {marker_position}")
+
+  # Combine all address information
+  full_address = f"{specific_address}, {st.session_state.search_result or colonia}"
+  if additional_references:
+      full_address += f" ({additional_references})"
 
   # Order Review
   if selected_plan and marker_position:
       st.write("## Resumen del Pedido")
       st.write(f"Plan seleccionado: **{selected_plan}**")
       st.write(f"Precio: L. {plans[selected_plan]['price']:.2f}")
-      st.write(f"Dirección de entrega: {delivery_address}")
+      st.write(f"Dirección de entrega: {full_address}")
       st.write(f"Coordenadas de entrega: {marker_position}")
 
       if st.button("Confirmar pedido"):
@@ -266,7 +241,7 @@ def place_order():
                   user_id=st.session_state.user.id,
                   plan_id=plans[selected_plan]['id'],
                   date=datetime.now(),
-                  delivery_address=delivery_address,
+                  delivery_address=full_address,
                   status='Pending'
               )
               session.add(new_order)
