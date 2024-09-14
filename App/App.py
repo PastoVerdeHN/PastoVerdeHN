@@ -152,7 +152,7 @@ def place_order():
   session = Session()
   products = session.query(Product).all()
 
-  # Plan Options
+  # Subscription Plans
   plans = {
       "Suscripción Anual": {
           "price": 720.00,
@@ -186,49 +186,31 @@ def place_order():
       }
   }
 
-  # Display Plan Cards
-  cols = st.columns(len(plans) + 1)  # +1 for the "Sin Suscripción" option
-  selected_plan = st.radio("Selecciona un plan:", list(plans.keys()) + ["Sin Suscripción"], horizontal=True)
+  # Display Subscription Plans
+  selected_plan = st.selectbox("Selecciona un plan:", list(plans.keys()) + ["Sin Suscripción"])
 
-  for i, (plan_name, plan_data) in enumerate(plans.items()):
-      with cols[i]:
-          st.write(f"## {plan_name}")
-          st.write(f"### ~~L.1700.00~~ L. {plan_data['price']:.2f} al mes", unsafe_allow_html=True)
-          for feature in plan_data["features"]:
-              st.write(f"✅ {feature}")
-
-  # Display "Sin Suscripción" option
-  with cols[-1]:
-      st.write("## Sin Suscripción")
-      st.write("### L. 850.00")
-      st.write("✅ Compra única de alfombra de césped")
-      st.write("✅ Envío gratis")
-      st.write("✅ Pago único")
-
-  # Address Input and Map
-  st.subheader("Dirección de entrega")
+  # Address Input
   delivery_address = st.text_input("Ingresa tu dirección", value=st.session_state.user.address)
 
-  # Create a map centered on Tegucigalpa
-  tegucigalpa_coords = [14.0818, -87.2068]
-  m = folium.Map(location=tegucigalpa_coords, zoom_start=12)
+  if st.button("Confirmar pedido"):
+      order_id = f"ORD-{random.randint(10000, 99999)}"
+      quantity = 1  # Default quantity
+      status = 'Pending'
 
-  # Add a draggable marker
-  marker = folium.Marker(
-      tegucigalpa_coords,
-      draggable=True,
-      popup="Arrastra el marcador a tu ubicación exacta"
-  )
-  marker.add_to(m)
-
-  # Display the map
-  folium_static(m)
-
-  # Confirm Order Details
-  if selected_plan:
-      st.write(f"## Has seleccionado el plan **{selected_plan}**.")
-      if st.button("Confirmar pedido"):
-          st.success("¡Pedido realizado con éxito!")
+      # Create a new order
+      new_order = Order(
+          id=order_id,
+          user_id=st.session_state.user.id,
+          product_id=1,  # Assuming a default product ID for now
+          quantity=quantity,
+          date=datetime.now(),
+          delivery_address=delivery_address,
+          status=status
+      )
+      session.add(new_order)
+      session.commit()
+      
+      st.success(f"¡Pedido realizado con éxito! Tu ID de pedido es {order_id}.")
 
   session.close()
 
@@ -240,11 +222,12 @@ def display_user_orders():
   
   for order in orders:
       with st.expander(f"Order ID: {order.id} - Status: {order.status}"):
-          st.write(f"Product: {order.product.name}")
+          product = session.query(Product).filter_by(id=order.product_id).first()
+          st.write(f"Product: {product.name}")
           st.write(f"Quantity: {order.quantity}")
-          st.write(f"Delivery Date: {order.date}")
           st.write(f"Delivery Address: {order.delivery_address}")
-  
+          st.write(f"Order Date: {order.date}")
+
   session.close()
 
 def display_map():
