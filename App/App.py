@@ -315,21 +315,24 @@ def place_order():
 
   session.close()
 def display_user_orders():
-  st.subheader("📦 Mis Ordenes")
+  st.subheader("📦 Mis Órdenes")
   
   session = Session()
   orders = session.query(Order).filter_by(user_id=st.session_state.user.id).all()
   
   for order in orders:
       with st.expander(f"Order ID: {order.id} - Status: {order.status}"):
-          st.write(f"Plan: {order.plan_id}")
+          # Removed plan_id since it's no longer part of the Order class
           st.write(f"Delivery Date: {order.date}")
           st.write(f"Delivery Address: {order.delivery_address}")
-          # Display features as checked checkboxes
-          if order.plan_id in plans:
-              for feature in plans[order.plan_id]["features"]:
+          # If you want to display features, you can still do that based on the selected plan
+          # You may need to adjust how you retrieve the plan features if you have a separate structure for that
+          plan_id = order.plan_id if hasattr(order, 'plan_id') else None  # Check if plan_id exists
+          if plan_id and plan_id in plans:
+              st.write(f"Plan: {plan_id}")  # Display the plan name or ID
+              for feature in plans[plan_id]["features"]:
                   st.checkbox(feature, value=True, disabled=True)  # Disable checkbox
-  
+
   session.close()
 def display_map():
     st.subheader("🗺️ Zona de Entrega")
