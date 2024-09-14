@@ -17,7 +17,6 @@ class Order(Base):
   status = Column(String, nullable=False)     # Order status (e.g., Pending, Completed)
   start_date = Column(Date)  # New field: Start date for the order
   delivery_time_preference = Column(String)  # New field: Delivery time preference
-  user = relationship("User")                # Relationship to the User model
   product = relationship("Product")          # Relationship to the Product model
 
 # ... (keep the rest of the file as is)
