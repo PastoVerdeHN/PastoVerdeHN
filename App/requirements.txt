@@ -21,3 +21,4 @@ clerk
 pystrix
 plotly
 psycopg2-binary
+Nominatim
