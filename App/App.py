@@ -1,4 +1,3 @@
-# app.py
 import streamlit as st
 from streamlit.runtime.scriptrunner import get_script_run_ctx
 import pandas as pd
@@ -78,7 +77,7 @@ def auth0_authentication():
               st.session_state.user = user
               st.session_state.auth_status = "authenticated"
               st.success(f"Bienvenido, {user.name}!")
-      return st.session_state.user
+  return st.session_state.user
 
 def main():
   st.title("🌿 Pasto Verde - Pet Grass Delivery")
