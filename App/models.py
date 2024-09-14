@@ -7,6 +7,14 @@ Base = declarative_base()
 
 # ... (keep the existing imports and Base declaration)
 
+def setup_database(database_url):
+    engine = create_engine(database_url, echo=True)
+    try:
+        Base.metadata.create_all(engine)
+    except Exception as e:
+        print(f"Error creating tables: {e}")
+    return sessionmaker(bind=engine)
+
 class Order(Base):
   __tablename__ = 'orders'
   id = Column(String, primary_key=True)     # Unique identifier for the order
