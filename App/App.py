@@ -12,6 +12,7 @@ from dotenv import load_dotenv
 from auth0_component import login_button
 from branca.element import Template, MacroElement
 from models import User, Product, Order, setup_database
+from geopy.geocoders import Nominatim
 
 # Streamlit page configuration
 st.set_page_config(
