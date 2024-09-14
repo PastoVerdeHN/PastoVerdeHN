@@ -151,12 +151,63 @@ def place_order():
   session = Session()
 
   # Plan options (as before)
-  plans = {...}  # Your existing plans dictionary
+  plans = {
+      "Suscripción Anual": {
+          "id": "annual",
+          "price": 720.00,
+          "features": [
+              "Entrega cada dos semanas",
+              "Envío gratis",
+              "Descuento del 29%",
+              "Descuento adicional del 40%", 
+              "Personalización incluida",
+              "Primer mes gratis"
+          ]
+      },
+      "Suscripción Semestral": {
+          "id": "semiannual",
+          "price": 899.00,
+          "features": [
+              "Entrega cada dos semanas",
+              "Envío gratis",
+              "Descuento del 29%",
+              "Descuento adicional del 25%",
+              "Personalización incluida"
+          ]
+      },
+      "Suscripción Mensual": {
+          "id": "monthly",
+          "price": 1080.00,
+          "features": [
+              "Entrega cada dos semanas",
+              "Envío gratis", 
+              "Descuento del 29%",
+              "Descuento adicional del 10%"
+          ]
+      },
+      "Sin Suscripción": {
+          "id": "one_time",
+          "price": 850.00,
+          "features": [
+              "Compra única de alfombra de césped",
+              "Envío gratis",
+              "Pago único"
+          ]
+      }
+  }
 
-  # Display Plan Cards (as before)
+  # Display Plan Cards
+  cols = st.columns(len(plans))
   selected_plan = st.radio("Selecciona un plan:", list(plans.keys()), horizontal=True)
+
   for i, (plan_name, plan_data) in enumerate(plans.items()):
-      ...  # Your existing plan display code
+      with cols[i]:
+          st.write(f"## {plan_name}")
+          st.write(f"### ~~L.1700.00~~ L. {plan_data['price']:.2f} al mes", unsafe_allow_html=True)
+          
+          # Display features with checkmarks
+          for feature in plan_data['features']:
+              st.write(f"✅ {feature}")
 
   # Address Input and Map
   st.subheader("Dirección de entrega")
@@ -209,6 +260,7 @@ def place_order():
   map_data = folium_static(m, width=700, height=500)
 
   # Get marker position after map interaction
+  marker_position = None
   if map_data:
       marker_position = list(marker.location)
       st.session_state.map_center = marker_position
@@ -224,12 +276,12 @@ def place_order():
       full_address += f" ({additional_references})"
 
   # Order Review
-  if selected_plan and st.session_state.map_center:
+  if selected_plan and marker_position:
       st.write("## Resumen del Pedido")
       st.write(f"Plan seleccionado: **{selected_plan}**")
       st.write(f"Precio: L. {plans[selected_plan]['price']:.2f}")
       st.write(f"Dirección de entrega: {full_address}")
-      st.write(f"Coordenadas de entrega: {st.session_state.map_center}")
+      st.write(f"Coordenadas de entrega: {marker_position}")
 
       if st.button("Confirmar pedido"):
           try:
@@ -261,24 +313,6 @@ def place_order():
               session.rollback()
 
   session.close()
-def display_user_orders():
-    st.subheader("📦 Mis Ordenes")
-    
-    session = Session()
-    orders = session.query(Order).filter_by(user_id=st.session_state.user.id).all()
-    
-    for order in orders:
-        with st.expander(f"Order ID: {order.id} - Status: {order.status}"):
-            st.write(f"Product: {order.product.name}")
-            st.write(f"Quantity: {order.quantity}")
-            st.write(f"Delivery Date: {order.date}")
-            st.write(f"Delivery Address: {order.delivery_address}")
-            # Display features as checked checkboxes
-            if order.product.name in plans:
-                for feature in plans[order.product.name]["features"]:
-                    st.checkbox(feature, disabled=True)  # Disable checkbox
-    
-    session.close()
 def display_map():
     st.subheader("🗺️ Zona de Entrega")
     
