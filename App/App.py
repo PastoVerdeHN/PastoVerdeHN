@@ -271,7 +271,7 @@ def place_order():
   if st.button("Actualizar Coordenadas"):
       st.session_state.map_center = st.session_state.marker_position
       st.success("Coordenadas actualizadas correctamente.")
-      st.experimental_rerun()
+      st.rerun()
 
   # Specific address details and additional references (below the map)
   specific_address = st.text_input("Número de casa y calle", value="")
