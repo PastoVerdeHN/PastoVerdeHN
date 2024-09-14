@@ -14,7 +14,6 @@ from branca.element import Template, MacroElement
 from models import User, Product, Order, setup_database
 from geopy.geocoders import Nominatim
 import time
-from models import Order
 
 # Streamlit page configuration
 st.set_page_config(
@@ -264,11 +263,6 @@ def place_order():
   if additional_references:
       full_address += f" ({additional_references})"
 
-  # New section for start date and delivery time preference
-  st.subheader("Preferencias de entrega")
-  start_date = st.date_input("Fecha de inicio de la entrega", min_value=datetime.now().date())
-  delivery_time = st.selectbox("Preferencia de horario de entrega", ["Mañana", "Tarde", "Noche"])
-
   # Order Review
   if selected_plan and st.session_state.map_center:
       st.write("## Resumen del Pedido")
@@ -276,8 +270,6 @@ def place_order():
       st.write(f"Precio: L. {plans[selected_plan]['price']:.2f}")
       st.write(f"Dirección de entrega: {full_address}")
       st.write(f"Coordenadas de entrega: {st.session_state.map_center}")
-      st.write(f"Fecha de inicio: {start_date}")
-      st.write(f"Preferencia de horario: {delivery_time}")
 
       if st.button("Confirmar pedido"):
           try:
@@ -285,12 +277,10 @@ def place_order():
               new_order = Order(
                   id=order_id,
                   user_id=st.session_state.user.id,
-                  product_id=plans[selected_plan]['id'],  # Use the plan ID as the product ID
+                  product_id=None,  # Set this to the appropriate product ID if needed
                   date=datetime.now(),
                   delivery_address=full_address,
-                  status='Pending',
-                  start_date=start_date,
-                  delivery_time_preference=delivery_time
+                  status='Pending'
               )
               session.add(new_order)
               session.commit()
@@ -320,14 +310,12 @@ def display_user_orders():
   
   for order in orders:
       with st.expander(f"Order ID: {order.id} - Status: {order.status}"):
-          st.write(f"Fecha de orden: {order.date}")
-          st.write(f"Dirección de entrega: {order.delivery_address}")
-          st.write(f"Fecha de inicio: {order.start_date}")
-          st.write(f"Preferencia de horario: {order.delivery_time_preference}")
+          st.write(f"Delivery Date: {order.date}")
+          st.write(f"Delivery Address: {order.delivery_address}")
           if order.product_id:
               product = session.query(Product).filter_by(id=order.product_id).first()
               if product:
-                  st.write(f"Plan: {product.name} - Precio: L. {product.price:.2f}")
+                  st.write(f"Product: {product.name} - Price: ${product.price:.2f}")
 
   session.close()
 
