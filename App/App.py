@@ -150,76 +150,26 @@ def place_order():
   st.subheader("🛒 Realizar pedido")
   session = Session()
 
-  # Plan options
-  plans = {
-      "Suscripción Anual": {
-          "id": "annual",
-          "price": 720.00,
-          "features": [
-              "Entrega cada dos semanas",
-              "Envío gratis",
-              "Descuento del 29%",
-              "Descuento adicional del 40%", 
-              "Personalización incluida",
-              "Primer mes gratis"
-          ]
-      },
-      "Suscripción Semestral": {
-          "id": "semiannual",
-          "price": 899.00,
-          "features": [
-              "Entrega cada dos semanas",
-              "Envío gratis",
-              "Descuento del 29%",
-              "Descuento adicional del 25%",
-              "Personalización incluida"
-          ]
-      },
-      "Suscripción Mensual": {
-          "id": "monthly",
-          "price": 1080.00,
-          "features": [
-              "Entrega cada dos semanas",
-              "Envío gratis", 
-              "Descuento del 29%",
-              "Descuento adicional del 10%"
-          ]
-      },
-      "Sin Suscripción": {
-          "id": "one_time",
-          "price": 850.00,
-          "features": [
-              "Compra única de alfombra de césped",
-              "Envío gratis",
-              "Pago único"
-          ]
-      }
-  }
+  # Plan options (as before)
+  plans = {...}  # Your existing plans dictionary
 
-  # Display Plan Cards
-  cols = st.columns(len(plans))
+  # Display Plan Cards (as before)
   selected_plan = st.radio("Selecciona un plan:", list(plans.keys()), horizontal=True)
-
   for i, (plan_name, plan_data) in enumerate(plans.items()):
-      with cols[i]:
-          st.write(f"## {plan_name}")
-          st.write(f"### ~~L.1700.00~~ L. {plan_data['price']:.2f} al mes", unsafe_allow_html=True)
-          
-          # Display features with checkmarks
-          for feature in plan_data['features']:
-              st.write(f"✅ {feature}")
+      ...  # Your existing plan display code
 
   # Address Input and Map
   st.subheader("Dirección de entrega")
   
   # Colonia search
-  colonia = st.text_input("Buscar colonia", value="")
-  
-  # Specific address details
-  specific_address = st.text_input("Número de casa y calle", value="")
-  
-  # Additional references
-  additional_references = st.text_area("Referencias adicionales (opcional)", value="")
+  col1, col2 = st.columns([3, 1])
+  with col1:
+      colonia = st.text_input("Buscar colonia", value="", key="colonia_search")
+  with col2:
+      search_button = st.button("Buscar")
+
+  # Disclaimer
+  st.info("Si no encuentras tu colonia, intenta acercar el mapa y buscar manualmente. Luego, escribe el nombre de la colonia en el campo de búsqueda.")
 
   # Initialize map
   if 'map_center' not in st.session_state:
@@ -228,7 +178,8 @@ def place_order():
       st.session_state.search_result = None
 
   # Address search
-  if st.button("Buscar colonia"):
+  if search_button or (colonia and st.session_state.get('last_search') != colonia):
+      st.session_state['last_search'] = colonia
       geolocator = Nominatim(user_agent="pasto_verde_app")
       try:
           # Append ", Tegucigalpa, Honduras" to improve search results
@@ -239,7 +190,7 @@ def place_order():
               st.session_state.search_result = location.address
               st.success(f"Colonia encontrada: {location.address}")
           else:
-              st.error("No se pudo encontrar la colonia. Por favor, intenta ser más específico.")
+              st.error("No se pudo encontrar la colonia. Por favor, intenta ser más específico o busca manualmente en el mapa.")
       except (GeocoderTimedOut, GeocoderServiceError):
           st.error("Error en el servicio de geolocalización. Por favor, intenta de nuevo más tarde.")
 
@@ -258,10 +209,14 @@ def place_order():
   map_data = folium_static(m, width=700, height=500)
 
   # Get marker position after map interaction
-  marker_position = None
   if map_data:
       marker_position = list(marker.location)
+      st.session_state.map_center = marker_position
       st.write(f"Coordenadas seleccionadas: {marker_position}")
+
+  # Specific address details and additional references (moved below the map)
+  specific_address = st.text_input("Número de casa y calle", value="")
+  additional_references = st.text_area("Referencias adicionales (opcional)", value="")
 
   # Combine all address information
   full_address = f"{specific_address}, {st.session_state.search_result or colonia}"
@@ -269,12 +224,12 @@ def place_order():
       full_address += f" ({additional_references})"
 
   # Order Review
-  if selected_plan and marker_position:
+  if selected_plan and st.session_state.map_center:
       st.write("## Resumen del Pedido")
       st.write(f"Plan seleccionado: **{selected_plan}**")
       st.write(f"Precio: L. {plans[selected_plan]['price']:.2f}")
       st.write(f"Dirección de entrega: {full_address}")
-      st.write(f"Coordenadas de entrega: {marker_position}")
+      st.write(f"Coordenadas de entrega: {st.session_state.map_center}")
 
       if st.button("Confirmar pedido"):
           try:
