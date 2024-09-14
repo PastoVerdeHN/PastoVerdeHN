@@ -20,4 +20,4 @@ amplitude-analytics
 clerk
 pystrix
 plotly
-psycopg2
+psycopg2-binary
