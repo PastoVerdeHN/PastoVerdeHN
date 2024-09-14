@@ -12,8 +12,6 @@ from dotenv import load_dotenv
 from auth0_component import login_button
 from branca.element import Template, MacroElement
 from models import User, Product, Order, setup_database
-from geopy.geocoders import Nominatim
-import time
 
 # Streamlit page configuration
 st.set_page_config(
@@ -84,11 +82,9 @@ def auth0_authentication():
 def main():
   st.title("🌿 Pasto Verde - Pet Grass Delivery")
   user = auth0_authentication()
-  
   if user:
       if 'current_page' not in st.session_state:
-          st.session_state.current_page = "🏠 Inicio"  # Default page
-      
+          st.session_state.current_page = "🏠 Home"
       menu_items = {
           "🏠 Inicio": home_page,
           "🛒  Ordene Ahora": place_order,
@@ -96,24 +92,13 @@ def main():
           "🗺️ Zona De Envios": display_map,
           "ℹ️ Sobre Nosotros": about_us,
       }
-      
       if user.type == 'admin':
           menu_items["📊 Admin Dashboard"] = admin_dashboard
-      
       cols = st.columns(len(menu_items))
       for i, (emoji_label, func) in enumerate(menu_items.items()):
           if cols[i].button(emoji_label):
               st.session_state.current_page = emoji_label
-      
-      # Debugging line
-      st.write(f"Current page: {st.session_state.current_page}")  
-      
-      try:
-          menu_items[st.session_state.current_page]()
-      except KeyError:
-          st.session_state.current_page = "🏠 Inicio"  # Fallback to default page
-          menu_items[st.session_state.current_page]()
-      
+      menu_items[st.session_state.current_page]()
       if st.sidebar.button("🚪 Log Out"):
           for key in list(st.session_state.keys()):
               del st.session_state[key]
@@ -121,6 +106,7 @@ def main():
           st.rerun()
   else:
       st.write("Por favor inicie sesión para acceder a los servicios de Pasto Verde")
+
 def home_page():
   st.write(f"Bienvenido/a Pasto Verde, {st.session_state.user.name}! 🌿")
   st.write("¡Llevando pasto fresco a tus mascotas, una caja a la vez!")
