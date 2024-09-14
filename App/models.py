@@ -3,6 +3,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
 
+Base = declarative_base()
+
 # ... (keep the existing imports and Base declaration)
 
 class Order(Base):
