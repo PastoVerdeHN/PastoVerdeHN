@@ -313,6 +313,23 @@ def place_order():
               session.rollback()
 
   session.close()
+    def display_user_orders():
+  st.subheader("📦 Mis Ordenes")
+  
+  session = Session()
+  orders = session.query(Order).filter_by(user_id=st.session_state.user.id).all()
+  
+  for order in orders:
+      with st.expander(f"Order ID: {order.id} - Status: {order.status}"):
+          st.write(f"Plan: {order.plan_id}")
+          st.write(f"Delivery Date: {order.date}")
+          st.write(f"Delivery Address: {order.delivery_address}")
+          # Display features as checked checkboxes
+          if order.plan_id in plans:
+              for feature in plans[order.plan_id]["features"]:
+                  st.checkbox(feature, value=True, disabled=True)  # Disable checkbox
+  
+  session.close()
 def display_map():
     st.subheader("🗺️ Zona de Entrega")
     
