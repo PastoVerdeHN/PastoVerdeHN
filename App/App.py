@@ -276,9 +276,6 @@ def place_order():
   if additional_references:
       full_address += f" ({additional_references})"
 
-  # Quantity Input
-  quantity = st.number_input("Cantidad", min_value=1, value=1)  # Default quantity set to 1
-
   # Order Review
   if selected_plan and st.session_state.map_center:
       st.write("## Resumen del Pedido")
@@ -286,7 +283,6 @@ def place_order():
       st.write(f"Precio: L. {plans[selected_plan]['price']:.2f}")
       st.write(f"Dirección de entrega: {full_address}")
       st.write(f"Coordenadas de entrega: {st.session_state.map_center}")
-      st.write(f"Cantidad: {quantity}")
 
       if st.button("Confirmar pedido"):
           try:
@@ -294,10 +290,10 @@ def place_order():
               new_order = Order(
                   id=order_id,
                   user_id=st.session_state.user.id,
-                  quantity=quantity,  # Include quantity here
                   date=datetime.now(),
                   delivery_address=full_address,
                   status='Pending'
+                  # Removed quantity since it's not applicable
               )
               session.add(new_order)
               session.commit()
