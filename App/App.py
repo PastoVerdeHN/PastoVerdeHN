@@ -296,6 +296,32 @@ def place_order():
               st.success(f"Tu número de orden es {order_id}")
               st.balloons()
 
+              # Render PayPal button if the monthly plan is selected
+              if selected_plan == "Suscripción Mensual":
+                  st.markdown('<div id="paypal-button-container-P-8JD80124L6471951GM3UKKHA"></div>', unsafe_allow_html=True)
+                  st.markdown('<script src="https://www.paypal.com/sdk/js?client-id=Ad_76woIrZWXf2QX3KYxFd-iAKTTCqxTtLYB0GOYK4weEQYf52INL5SREytqj4mY84BOVy9wWTsrvcxI&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>', unsafe_allow_html=True)
+                  st.markdown('''
+                  <script>
+                    paypal.Buttons({
+                        style: {
+                            shape: 'pill',
+                            color: 'gold',
+                            layout: 'horizontal',
+                            label: 'subscribe'
+                        },
+                        createSubscription: function(data, actions) {
+                          return actions.subscription.create({
+                            /* Creates the subscription */
+                            plan_id: 'P-8JD80124L6471951GM3UKKHA'
+                          });
+                        },
+                        onApprove: function(data, actions) {
+                          alert(data.subscriptionID); // You can add optional success message for the subscriber here
+                        }
+                    }).render('#paypal-button-container-P-8JD80124L6471951GM3UKKHA'); // Renders the PayPal button
+                  </script>
+                  ''', unsafe_allow_html=True)
+
           except Exception as e:
               st.error(f"Ocurrió un error al procesar el pedido: {str(e)}")
               session.rollback()
