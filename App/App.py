@@ -344,11 +344,19 @@ def place_order():
               </script>
               '''
               components.html(paypal_html, height=300)
-          else:
-              st.success("Pedido realizado sin suscripción.")
+          else:  # Sin Suscripción (one-time purchase)
+              paypal_html = '''
+              <script src="https://www.paypal.com/sdk/js?client-id=BAAmZb8q_th0dhU_yFYAOp1HcFnZXsBa-Hf3qv-QhyDOOit1Qvkjc5_3rBFkG8s4VjvmVOyqrh_B7n1Ic0&components=hosted-buttons&disable-funding=venmo&currency=USD"></script>
+              <div id="paypal-container-AMM5P24GTYSR8"></div>
+              <script>
+                paypal.HostedButtons({
+                  hostedButtonId: "AMM5P24GTYSR8",
+                }).render("#paypal-container-AMM5P24GTYSR8")
+              </script>
+              '''
+              components.html(paypal_html, height=300)
 
   session.close()
-
 def display_user_orders():
   st.subheader("📦 Mis Órdenes")
   
