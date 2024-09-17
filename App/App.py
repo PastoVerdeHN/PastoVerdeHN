@@ -296,7 +296,7 @@ def place_order():
                 paypal.Buttons({
                     style: {
                         shape: 'pill',
-                        color: 'gold',
+                        color: 'blue',
                         layout: 'horizontal',
                         label: 'subscribe'
                     },
@@ -324,7 +324,7 @@ def place_order():
                 paypal.Buttons({
                     style: {
                         shape: 'pill',
-                        color: 'blue',
+                        color: 'gold',
                         layout: 'horizontal',
                         label: 'subscribe'
                     },
