@@ -351,7 +351,15 @@ def place_order():
               <script>
                 paypal.HostedButtons({
                   hostedButtonId: "AMM5P24GTYSR8",
-                }).render("#paypal-container-AMM5P24GTYSR8")
+                  onApprove: function(data) {
+                    alert('¡Compra realizada con éxito! 🎉 ID de transacción: ' + data.orderID);
+                    window.location.reload();
+                  },
+                  onError: function(err) {
+                    alert('Error al procesar el pago. Intenta de nuevo.');
+                    console.error('PayPal error:', err);
+                  }
+                }).render("#paypal-container-AMM5P24GTYSR8");
               </script>
               '''
               components.html(paypal_html, height=300)
