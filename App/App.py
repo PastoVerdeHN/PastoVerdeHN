@@ -272,33 +272,10 @@ def place_order():
       st.write(f"Coordenadas de entrega: {st.session_state.map_center}")
 
       if st.button("Confirmar pedido"):
-          try:
-              order_id = generate_order_id()
-              new_order = Order(
-                  id=order_id,
-                  user_id=st.session_state.user.id,
-                  product_id=None,  # Set this to the appropriate product ID if needed
-                  date=datetime.now(),
-                  delivery_address=full_address,
-                  status='Pending'
-              )
-              session.add(new_order)
-              session.commit()
-
-              # Animated order confirmation
-              progress_bar = st.progress(0)
-              status_text = st.empty()
-              for i in range(100):
-                  progress_bar.progress(i + 1)
-                  status_text.text(f"Procesando pedido... {i+1}%")
-                  time.sleep(0.01)
-              status_text.text("¡Pedido realizado con éxito! 🎉")
-              st.success(f"Tu número de orden es {order_id}")
-              st.balloons()
-
-              # Render PayPal button if the monthly plan is selected
-              if selected_plan == "Suscripción Mensual":
-                  st.markdown('<div id="paypal-button-container-P-8JD80124L6471951GM3UKKHA"></div>', unsafe_allow_html=True)
+          # Show PayPal button in a modal
+          if selected_plan == "Suscripción Mensual":
+              with st.modal("Completa tu pago"):
+                  st.markdown('<div id="paypal-button-container"></div>', unsafe_allow_html=True)
                   st.markdown('<script src="https://www.paypal.com/sdk/js?client-id=Ad_76woIrZWXf2QX3KYxFd-iAKTTCqxTtLYB0GOYK4weEQYf52INL5SREytqj4mY84BOVy9wWTsrvcxI&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>', unsafe_allow_html=True)
                   st.markdown('''
                   <script>
@@ -316,15 +293,19 @@ def place_order():
                           });
                         },
                         onApprove: function(data, actions) {
-                          alert(data.subscriptionID); // You can add optional success message for the subscriber here
+                          // Here you can handle the successful payment
+                          alert('¡Pedido realizado con éxito! 🎉');
+                          window.location.reload(); // Reload the page to show success animation
+                        },
+                        onError: function(err) {
+                          alert('Error al procesar el pago. Intenta de nuevo.');
                         }
-                    }).render('#paypal-button-container-P-8JD80124L6471951GM3UKKHA'); // Renders the PayPal button
+                    }).render('#paypal-button-container'); // Renders the PayPal button
                   </script>
                   ''', unsafe_allow_html=True)
-
-          except Exception as e:
-              st.error(f"Ocurrió un error al procesar el pedido: {str(e)}")
-              session.rollback()
+          else:
+              # Handle other plans (e.g., one-time purchase) here if needed
+              st.success("Pedido realizado sin suscripción.")
 
   session.close()
 
