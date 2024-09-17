@@ -260,7 +260,35 @@ def place_order():
           st.write(f"Dirección de entrega: {full_address}")
 
       if st.button("Confirmar pedido"):
-          if selected_plan == "Suscripción Mensual":
+          if selected_plan == "Suscripción Anual":
+              paypal_html = '''
+              <div id="paypal-button-container-P-4E978587FL636905DM3UPY3Q"></div>
+              <script src="https://www.paypal.com/sdk/js?client-id=Ad_76woIrZWXf2QX3KYxFd-iAKTTCqxTtLYB0GOYK4weEQYf52INL5SREytqj4mY84BOVy9wWTsrvcxI&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
+              <script>
+                paypal.Buttons({
+                    style: {
+                        shape: 'pill',
+                        color: 'black',
+                        layout: 'horizontal',
+                        label: 'subscribe'
+                    },
+                    createSubscription: function(data, actions) {
+                      return actions.subscription.create({
+                        plan_id: 'P-4E978587FL636905DM3UPY3Q'
+                      });
+                    },
+                    onApprove: function(data, actions) {
+                      alert('¡Suscripción Anual realizada con éxito! 🎉 ID de suscripción: ' + data.subscriptionID);
+                      window.location.reload();
+                    },
+                    onError: function(err) {
+                      alert('Error al procesar el pago. Intenta de nuevo.');
+                    }
+                }).render('#paypal-button-container-P-4E978587FL636905DM3UPY3Q');
+              </script>
+              '''
+              components.html(paypal_html, height=300)
+          elif selected_plan == "Suscripción Mensual":
               paypal_html = '''
               <div id="paypal-button-container-P-8JD80124L6471951GM3UKKHA"></div>
               <script src="https://www.paypal.com/sdk/js?client-id=Ad_76woIrZWXf2QX3KYxFd-iAKTTCqxTtLYB0GOYK4weEQYf52INL5SREytqj4mY84BOVy9wWTsrvcxI&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
