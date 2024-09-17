@@ -256,7 +256,7 @@ def place_order():
                 <div id="paypal-button-container-P-8JD80124L6471951GM3UKKHA"></div>
                 <script src="https://www.paypal.com/sdk/js?client-id=Ad_76woIrZWXf2QX3KYxFd-iAKTTCqxTtLYB0GOYK4weEQYf52INL5SREytqj4mY84BOVy9wWTsrvcxI&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
                 <script>
-                  paypal.Buttons({
+                  paypal.Buttons({{
                       style: {{
                           shape: 'pill',
                           color: 'gold',
