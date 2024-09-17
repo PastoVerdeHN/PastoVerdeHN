@@ -14,6 +14,7 @@ from branca.element import Template, MacroElement
 from models import User, Product, Order, setup_database
 from geopy.geocoders import Nominatim
 import time
+import streamlit.components.v1 as components
 
 # Streamlit page configuration
 st.set_page_config(
@@ -274,9 +275,10 @@ def place_order():
       if st.button("Confirmar pedido"):
           # Render PayPal button directly below the order summary
           if selected_plan == "Suscripción Mensual":
-              st.markdown('<div id="paypal-button-container-P-8JD80124L6471951GM3UKKHA"></div>', unsafe_allow_html=True)
-              st.markdown('<script src="https://www.paypal.com/sdk/js?client-id=Ad_76woIrZWXf2QX3KYxFd-iAKTTCqxTtLYB0GOYK4weEQYf52INL5SREytqj4mY84BOVy9wWTsrvcxI&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>', unsafe_allow_html=True)
-              st.markdown('''
+              # Use components.html to render the PayPal button
+              components.html('''
+              <div id="paypal-button-container-P-8JD80124L6471951GM3UKKHA"></div>
+              <script src="https://www.paypal.com/sdk/js?client-id=Ad_76woIrZWXf2QX3KYxFd-iAKTTCqxTtLYB0GOYK4weEQYf52INL5SREytqj4mY84BOVy9wWTsrvcxI&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
               <script>
                 paypal.Buttons({
                     style: {
@@ -300,7 +302,7 @@ def place_order():
                     }
                 }).render('#paypal-button-container-P-8JD80124L6471951GM3UKKHA'); // Renders the PayPal button
               </script>
-              ''', unsafe_allow_html=True)
+              ''', height=300)  # Adjust height as needed
           else:
               # Handle other plans (e.g., one-time purchase) here if needed
               st.success("Pedido realizado sin suscripción.")
