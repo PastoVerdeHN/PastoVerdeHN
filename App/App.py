@@ -283,7 +283,7 @@ if st.button("Confirmar pedido"):
       st.success("Pedido realizado sin suscripción.")
 
     session.close()
-  
+
 def display_user_orders():
   st.subheader("📦 Mis Órdenes")
   
