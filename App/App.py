@@ -135,154 +135,154 @@ def home_page():
   session.close()
 
 def place_order():
-    st.subheader("🛒 Realizar pedido")
-    session = Session()
+  st.subheader("🛒 Realizar pedido")
+  session = Session()
 
-    # Plan options
-    plans = {
-        "Suscripción Anual": {
-            "id": "annual",
-            "price": 720.00,
-            "features": [
-                "Entrega cada dos semanas",
-                "Envío gratis",
-                "Descuento del 29%",
-                "Descuento adicional del 40%", 
-                "Personalización incluida",
-                "Primer mes gratis"
-            ]
-        },
-        "Suscripción Semestral": {
-            "id": "semiannual",
-            "price": 899.00,
-            "features": [
-                "Entrega cada dos semanas",
-                "Envío gratis",
-                "Descuento del 29%",
-                "Descuento adicional del 25%",
-                "Personalización incluida"
-            ]
-        },
-        "Suscripción Mensual": {
-            "id": "monthly",
-            "price": 1080.00,
-            "features": [
-                "Entrega cada dos semanas",
-                "Envío gratis", 
-                "Descuento del 29%",
-                "Descuento adicional del 10%"
-            ]
-        },
-        "Sin Suscripción": {
-            "id": "one_time",
-            "price": 850.00,
-            "features": [
-                "Compra única de alfombra de césped",
-                "Envío gratis",
-                "Pago único"
-            ]
-        }
-    }
+  # Plan options
+  plans = {
+      "Suscripción Anual": {
+          "id": "annual",
+          "price": 720.00,
+          "features": [
+              "Entrega cada dos semanas",
+              "Envío gratis",
+              "Descuento del 29%",
+              "Descuento adicional del 40%", 
+              "Personalización incluida",
+              "Primer mes gratis"
+          ]
+      },
+      "Suscripción Semestral": {
+          "id": "semiannual",
+          "price": 899.00,
+          "features": [
+              "Entrega cada dos semanas",
+              "Envío gratis",
+              "Descuento del 29%",
+              "Descuento adicional del 25%",
+              "Personalización incluida"
+          ]
+      },
+      "Suscripción Mensual": {
+          "id": "monthly",
+          "price": 1080.00,
+          "features": [
+              "Entrega cada dos semanas",
+              "Envío gratis", 
+              "Descuento del 29%",
+              "Descuento adicional del 10%"
+          ]
+      },
+      "Sin Suscripción": {
+          "id": "one_time",
+          "price": 850.00,
+          "features": [
+              "Compra única de alfombra de césped",
+              "Envío gratis",
+              "Pago único"
+          ]
+      }
+  }
 
-    # Display Plan Cards
-    cols = st.columns(len(plans))
-    selected_plan = st.radio("Selecciona un plan:", list(plans.keys()), horizontal=True)
+  # Display Plan Cards
+  cols = st.columns(len(plans))
+  selected_plan = st.radio("Selecciona un plan:", list(plans.keys()), horizontal=True)
 
-    for i, (plan_name, plan_data) in enumerate(plans.items()):
-        with cols[i]:
-            st.write(f"## {plan_name}")
-            st.write(f"### ~~L.1700.00~~ L. {plan_data['price']:.2f} al mes", unsafe_allow_html=True)
-            for feature in plan_data['features']:
-                st.write(f"✅ {feature}")
+  for i, (plan_name, plan_data) in enumerate(plans.items()):
+      with cols[i]:
+          st.write(f"## {plan_name}")
+          st.write(f"### ~~L.1700.00~~ L. {plan_data['price']:.2f} al mes", unsafe_allow_html=True)
+          for feature in plan_data['features']:
+              st.write(f"✅ {feature}")
 
-    # Address Input and Map
-    st.subheader("Dirección de entrega")
-    
-    # Colonia search
-    col1, col2 = st.columns([3, 1])
-    with col1:
-        colonia = st.text_input("Buscar colonia", value="", key="colonia_search")
-    with col2:
-        search_button = st.button("Buscar")
+  # Address Input and Map
+  st.subheader("Dirección de entrega")
+  
+  # Colonia search
+  col1, col2 = st.columns([3, 1])
+  with col1:
+      colonia = st.text_input("Buscar colonia", value="", key="colonia_search")
+  with col2:
+      search_button = st.button("Buscar")
 
-    # Initialize map
-    if 'map_center' not in st.session_state:
-        st.session_state.map_center = [14.0818, -87.2068]  # Default to Tegucigalpa
-    if 'search_result' not in st.session_state:
-        st.session_state.search_result = None
+  # Initialize map
+  if 'map_center' not in st.session_state:
+      st.session_state.map_center = [14.0818, -87.2068]  # Default to Tegucigalpa
+  if 'search_result' not in st.session_state:
+      st.session_state.search_result = None
 
-    # Address search
-    if search_button or (colonia and st.session_state.get('last_search') != colonia):
-        st.session_state['last_search'] = colonia
-        geolocator = Nominatim(user_agent="pasto_verde_app")
-        try:
-            search_query = f"{colonia}, Tegucigalpa, Honduras"
-            location = geolocator.geocode(search_query)
-            if location:
-                st.session_state.map_center = [location.latitude, location.longitude]
-                st.session_state.search_result = location.address
-                st.success(f"Colonia encontrada: {location.address}")
-            else:
-                st.error("No se pudo encontrar la colonia.")
-        except Exception as e:
-            st.error(f"Error en el servicio de geolocalización: {str(e)}")
+  # Address search
+  if search_button or (colonia and st.session_state.get('last_search') != colonia):
+      st.session_state['last_search'] = colonia
+      geolocator = Nominatim(user_agent="pasto_verde_app")
+      try:
+          search_query = f"{colonia}, Tegucigalpa, Honduras"
+          location = geolocator.geocode(search_query)
+          if location:
+              st.session_state.map_center = [location.latitude, location.longitude]
+              st.session_state.search_result = location.address
+              st.success(f"Colonia encontrada: {location.address}")
+          else:
+              st.error("No se pudo encontrar la colonia.")
+      except Exception as e:
+          st.error(f"Error en el servicio de geolocalización: {str(e)}")
 
-    # Create map
-    m = folium.Map(location=st.session_state.map_center, zoom_start=15)
-    marker = folium.Marker(st.session_state.map_center, draggable=True)
-    marker.add_to(m)
-    folium_static(m)
+  # Create map
+  m = folium.Map(location=st.session_state.map_center, zoom_start=15)
+  marker = folium.Marker(st.session_state.map_center, draggable=True)
+  marker.add_to(m)
+  folium_static(m)
 
-    # Specific address details
-    specific_address = st.text_input("Número de casa y calle", value="")
-    additional_references = st.text_area("Referencias adicionales (opcional)", value="", key="additional_refs")
+  # Specific address details
+  specific_address = st.text_input("Número de casa y calle", value="")
+  additional_references = st.text_area("Referencias adicionales (opcional)", value="", key="additional_refs")
 
-    # Combine all address information
-    full_address = f"{specific_address}, {st.session_state.search_result or colonia}"
-    if additional_references:
-        full_address += f" ({additional_references})"
+  # Combine all address information
+  full_address = f"{specific_address}, {st.session_state.search_result or colonia}"
+  if additional_references:
+      full_address += f" ({additional_references})"
 
-    # Order Review
-    if selected_plan and st.session_state.map_center:
-        st.write("## Resumen del Pedido")
-        st.write(f"Plan seleccionado: **{selected_plan}**")
-        st.write(f"Precio: L. {plans[selected_plan]['price']:.2f}")
-        st.write(f"Dirección de entrega: {full_address}")
+  # Order Review
+  if selected_plan and st.session_state.map_center:
+      st.write("## Resumen del Pedido")
+      st.write(f"Plan seleccionado: **{selected_plan}**")
+      st.write(f"Precio: L. {plans[selected_plan]['price']:.2f}")
+      st.write(f"Dirección de entrega: {full_address}")
 
-if st.button("Confirmar pedido"):
-  if selected_plan == "Suscripción Mensual":
-      # Render PayPal button directly below the order summary
-      paypal_html = '''
-      <div id="paypal-button-container-P-8JD80124L6471951GM3UKKHA"></div>
-      <script src="https://www.paypal.com/sdk/js?client-id=Ad_76woIrZWXf2QX3KYxFd-iAKTTCqxTtLYB0GOYK4weEQYf52INL5SREytqj4mY84BOVy9wWTsrvcxI&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
-      <script>
-        paypal.Buttons({
-            style: {
-                shape: 'pill',
-                color: 'gold',
-                layout: 'horizontal',
-                label: 'subscribe'
-            },
-            createSubscription: function(data, actions) {
-              return actions.subscription.create({
-                plan_id: 'P-8JD80124L6471951GM3UKKHA'
-              });
-            },
-            onApprove: function(data, actions) {
-              alert('¡Pedido realizado con éxito! 🎉');
-              window.location.reload(); // Reload the page to show success animation
-            },
-            onError: function(err) {
-              alert('Error al procesar el pago. Intenta de nuevo.');
-            }
-        }).render('#paypal-button-container-P-8JD80124L6471951GM3UKKHA'); // Renders the PayPal button
-      </script>
-      '''
-      components.html(paypal_html, height=300)  # Adjust height as needed
-  else:
-      st.success("Pedido realizado sin suscripción.")
+      if st.button("Confirmar pedido"):
+          if selected_plan == "Suscripción Mensual":
+              # Render PayPal button directly below the order summary
+              paypal_html = '''
+              <div id="paypal-button-container-P-8JD80124L6471951GM3UKKHA"></div>
+              <script src="https://www.paypal.com/sdk/js?client-id=Ad_76woIrZWXf2QX3KYxFd-iAKTTCqxTtLYB0GOYK4weEQYf52INL5SREytqj4mY84BOVy9wWTsrvcxI&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
+              <script>
+                paypal.Buttons({
+                    style: {
+                        shape: 'pill',
+                        color: 'gold',
+                        layout: 'horizontal',
+                        label: 'subscribe'
+                    },
+                    createSubscription: function(data, actions) {
+                      return actions.subscription.create({
+                        plan_id: 'P-8JD80124L6471951GM3UKKHA'
+                      });
+                    },
+                    onApprove: function(data, actions) {
+                      alert('¡Pedido realizado con éxito! 🎉');
+                      window.location.reload(); // Reload the page to show success animation
+                    },
+                    onError: function(err) {
+                      alert('Error al procesar el pago. Intenta de nuevo.');
+                    }
+                }).render('#paypal-button-container-P-8JD80124L6471951GM3UKKHA'); // Renders the PayPal button
+              </script>
+              '''
+              components.html(paypal_html, height=300)  # Adjust height as needed
+          else:
+              st.success("Pedido realizado sin suscripción.")
 
-    session.close()
+  session.close()
 
 def display_user_orders():
   st.subheader("📦 Mis Órdenes")
