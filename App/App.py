@@ -275,7 +275,7 @@ def place_order():
           # Show PayPal button in an expander
           if selected_plan == "Suscripción Mensual":
               with st.expander("Completa tu pago", expanded=True):
-                  st.markdown('<div id="paypal-button-container"></div>', unsafe_allow_html=True)
+                  st.markdown('<div id="paypal-button-container-P-8JD80124L6471951GM3UKKHA"></div>', unsafe_allow_html=True)
                   st.markdown('<script src="https://www.paypal.com/sdk/js?client-id=Ad_76woIrZWXf2QX3KYxFd-iAKTTCqxTtLYB0GOYK4weEQYf52INL5SREytqj4mY84BOVy9wWTsrvcxI&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>', unsafe_allow_html=True)
                   st.markdown('''
                   <script>
@@ -293,14 +293,13 @@ def place_order():
                           });
                         },
                         onApprove: function(data, actions) {
-                          // Here you can handle the successful payment
                           alert('¡Pedido realizado con éxito! 🎉');
                           window.location.reload(); // Reload the page to show success animation
                         },
                         onError: function(err) {
                           alert('Error al procesar el pago. Intenta de nuevo.');
                         }
-                    }).render('#paypal-button-container'); // Renders the PayPal button
+                    }).render('#paypal-button-container-P-8JD80124L6471951GM3UKKHA'); // Renders the PayPal button
                   </script>
                   ''', unsafe_allow_html=True)
           else:
@@ -308,7 +307,7 @@ def place_order():
               st.success("Pedido realizado sin suscripción.")
 
   session.close()
-
+  
 def display_user_orders():
   st.subheader("📦 Mis Órdenes")
   
