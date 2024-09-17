@@ -272,36 +272,35 @@ def place_order():
       st.write(f"Coordenadas de entrega: {st.session_state.map_center}")
 
       if st.button("Confirmar pedido"):
-          # Show PayPal button in an expander
+          # Render PayPal button directly below the order summary
           if selected_plan == "Suscripción Mensual":
-              with st.expander("Completa tu pago", expanded=True):
-                  st.markdown('<div id="paypal-button-container-P-8JD80124L6471951GM3UKKHA"></div>', unsafe_allow_html=True)
-                  st.markdown('<script src="https://www.paypal.com/sdk/js?client-id=Ad_76woIrZWXf2QX3KYxFd-iAKTTCqxTtLYB0GOYK4weEQYf52INL5SREytqj4mY84BOVy9wWTsrvcxI&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>', unsafe_allow_html=True)
-                  st.markdown('''
-                  <script>
-                    paypal.Buttons({
-                        style: {
-                            shape: 'pill',
-                            color: 'gold',
-                            layout: 'horizontal',
-                            label: 'subscribe'
-                        },
-                        createSubscription: function(data, actions) {
-                          return actions.subscription.create({
-                            /* Creates the subscription */
-                            plan_id: 'P-8JD80124L6471951GM3UKKHA'
-                          });
-                        },
-                        onApprove: function(data, actions) {
-                          alert('¡Pedido realizado con éxito! 🎉');
-                          window.location.reload(); // Reload the page to show success animation
-                        },
-                        onError: function(err) {
-                          alert('Error al procesar el pago. Intenta de nuevo.');
-                        }
-                    }).render('#paypal-button-container-P-8JD80124L6471951GM3UKKHA'); // Renders the PayPal button
-                  </script>
-                  ''', unsafe_allow_html=True)
+              st.markdown('<div id="paypal-button-container-P-8JD80124L6471951GM3UKKHA"></div>', unsafe_allow_html=True)
+              st.markdown('<script src="https://www.paypal.com/sdk/js?client-id=Ad_76woIrZWXf2QX3KYxFd-iAKTTCqxTtLYB0GOYK4weEQYf52INL5SREytqj4mY84BOVy9wWTsrvcxI&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>', unsafe_allow_html=True)
+              st.markdown('''
+              <script>
+                paypal.Buttons({
+                    style: {
+                        shape: 'pill',
+                        color: 'gold',
+                        layout: 'horizontal',
+                        label: 'subscribe'
+                    },
+                    createSubscription: function(data, actions) {
+                      return actions.subscription.create({
+                        /* Creates the subscription */
+                        plan_id: 'P-8JD80124L6471951GM3UKKHA'
+                      });
+                    },
+                    onApprove: function(data, actions) {
+                      alert('¡Pedido realizado con éxito! 🎉');
+                      window.location.reload(); // Reload the page to show success animation
+                    },
+                    onError: function(err) {
+                      alert('Error al procesar el pago. Intenta de nuevo.');
+                    }
+                }).render('#paypal-button-container-P-8JD80124L6471951GM3UKKHA'); // Renders the PayPal button
+              </script>
+              ''', unsafe_allow_html=True)
           else:
               # Handle other plans (e.g., one-time purchase) here if needed
               st.success("Pedido realizado sin suscripción.")
