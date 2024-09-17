@@ -246,12 +246,20 @@ def place_order():
   if selected_plan and st.session_state.map_center:
       st.write("## Resumen del Pedido")
       st.write(f"Plan seleccionado: **{selected_plan}**")
-      st.write(f"Precio: L. {plans[selected_plan]['price']:.2f}")
+      
+      # Calculate USD price
+      lempira_price = plans[selected_plan]['price']
+      usd_price = lempira_price / 25.00  # Using the exchange rate you provided
+
+      with st.expander("Detalles de Precio", expanded=True):
+          st.write(f"Precio: L. {lempira_price:.2f}")
+          st.write(f"Precio en USD: ${usd_price:.2f}")
+          st.write("Cambio de dólar: 1$ = L.25.00")
+
       st.write(f"Dirección de entrega: {full_address}")
 
       if st.button("Confirmar pedido"):
           if selected_plan == "Suscripción Mensual":
-              # Render PayPal button directly below the order summary
               paypal_html = '''
               <div id="paypal-button-container-P-8JD80124L6471951GM3UKKHA"></div>
               <script src="https://www.paypal.com/sdk/js?client-id=Ad_76woIrZWXf2QX3KYxFd-iAKTTCqxTtLYB0GOYK4weEQYf52INL5SREytqj4mY84BOVy9wWTsrvcxI&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
@@ -270,15 +278,43 @@ def place_order():
                     },
                     onApprove: function(data, actions) {
                       alert('¡Pedido realizado con éxito! 🎉');
-                      window.location.reload(); // Reload the page to show success animation
+                      window.location.reload();
                     },
                     onError: function(err) {
                       alert('Error al procesar el pago. Intenta de nuevo.');
                     }
-                }).render('#paypal-button-container-P-8JD80124L6471951GM3UKKHA'); // Renders the PayPal button
+                }).render('#paypal-button-container-P-8JD80124L6471951GM3UKKHA');
               </script>
               '''
-              components.html(paypal_html, height=300)  # Adjust height as needed
+              components.html(paypal_html, height=300)
+          elif selected_plan == "Suscripción Semestral":
+              paypal_html = '''
+              <div id="paypal-button-container-P-79741958WR506740HM3UPLFA"></div>
+              <script src="https://www.paypal.com/sdk/js?client-id=Ad_76woIrZWXf2QX3KYxFd-iAKTTCqxTtLYB0GOYK4weEQYf52INL5SREytqj4mY84BOVy9wWTsrvcxI&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
+              <script>
+                paypal.Buttons({
+                    style: {
+                        shape: 'pill',
+                        color: 'blue',
+                        layout: 'horizontal',
+                        label: 'subscribe'
+                    },
+                    createSubscription: function(data, actions) {
+                      return actions.subscription.create({
+                        plan_id: 'P-79741958WR506740HM3UPLFA'
+                      });
+                    },
+                    onApprove: function(data, actions) {
+                      alert('¡Pedido realizado con éxito! 🎉 ID de suscripción: ' + data.subscriptionID);
+                      window.location.reload();
+                    },
+                    onError: function(err) {
+                      alert('Error al procesar el pago. Intenta de nuevo.');
+                    }
+                }).render('#paypal-button-container-P-79741958WR506740HM3UPLFA');
+              </script>
+              '''
+              components.html(paypal_html, height=300)
           else:
               st.success("Pedido realizado sin suscripción.")
 
