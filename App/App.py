@@ -272,9 +272,9 @@ def place_order():
       st.write(f"Coordenadas de entrega: {st.session_state.map_center}")
 
       if st.button("Confirmar pedido"):
-          # Show PayPal button in a modal
+          # Show PayPal button in an expander
           if selected_plan == "Suscripción Mensual":
-              with st.modal("Completa tu pago"):
+              with st.expander("Completa tu pago", expanded=True):
                   st.markdown('<div id="paypal-button-container"></div>', unsafe_allow_html=True)
                   st.markdown('<script src="https://www.paypal.com/sdk/js?client-id=Ad_76woIrZWXf2QX3KYxFd-iAKTTCqxTtLYB0GOYK4weEQYf52INL5SREytqj4mY84BOVy9wWTsrvcxI&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>', unsafe_allow_html=True)
                   st.markdown('''
