@@ -249,37 +249,38 @@ def place_order():
         st.write(f"Precio: L. {plans[selected_plan]['price']:.2f}")
         st.write(f"Dirección de entrega: {full_address}")
 
-        if st.button("Confirmar pedido"):
-            if selected_plan == "Suscripción Mensual":
-                # Render PayPal button directly below the order summary
-                components.html(f'''
-                <div id="paypal-button-container-P-8JD80124L6471951GM3UKKHA"></div>
-                <script src="https://www.paypal.com/sdk/js?client-id=Ad_76woIrZWXf2QX3KYxFd-iAKTTCqxTtLYB0GOYK4weEQYf52INL5SREytqj4mY84BOVy9wWTsrvcxI&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
-                <script>
-                  paypal.Buttons({{
-                      style: {{
-                          shape: 'pill',
-                          color: 'gold',
-                          layout: 'horizontal',
-                          label: 'subscribe'
-                      }},
-                      createSubscription: function(data, actions) {{
-                        return actions.subscription.create({{
-                          plan_id: 'P-8JD80124L6471951GM3UKKHA'
-                        }});
-                      }},
-                      onApprove: function(data, actions) {{
-                        alert('¡Pedido realizado con éxito! 🎉');
-                        window.location.reload(); // Reload the page to show success animation
-                      }},
-                      onError: function(err) {{
-                        alert('Error al procesar el pago. Intenta de nuevo.');
-                      }}
-                  }).render('#paypal-button-container-P-8JD80124L6471951GM3UKKHA'); // Renders the PayPal button
-                </script>
-                ''', height=300)  # Adjust height as needed
-            else:
-                st.success("Pedido realizado sin suscripción.")
+if st.button("Confirmar pedido"):
+  if selected_plan == "Suscripción Mensual":
+      # Render PayPal button directly below the order summary
+      paypal_html = '''
+      <div id="paypal-button-container-P-8JD80124L6471951GM3UKKHA"></div>
+      <script src="https://www.paypal.com/sdk/js?client-id=Ad_76woIrZWXf2QX3KYxFd-iAKTTCqxTtLYB0GOYK4weEQYf52INL5SREytqj4mY84BOVy9wWTsrvcxI&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
+      <script>
+        paypal.Buttons({
+            style: {
+                shape: 'pill',
+                color: 'gold',
+                layout: 'horizontal',
+                label: 'subscribe'
+            },
+            createSubscription: function(data, actions) {
+              return actions.subscription.create({
+                plan_id: 'P-8JD80124L6471951GM3UKKHA'
+              });
+            },
+            onApprove: function(data, actions) {
+              alert('¡Pedido realizado con éxito! 🎉');
+              window.location.reload(); // Reload the page to show success animation
+            },
+            onError: function(err) {
+              alert('Error al procesar el pago. Intenta de nuevo.');
+            }
+        }).render('#paypal-button-container-P-8JD80124L6471951GM3UKKHA'); // Renders the PayPal button
+      </script>
+      '''
+      components.html(paypal_html, height=300)  # Adjust height as needed
+  else:
+      st.success("Pedido realizado sin suscripción.")
 
     session.close()
   
