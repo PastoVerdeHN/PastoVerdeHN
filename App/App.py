@@ -130,10 +130,12 @@ def home_page():
       # Inject JavaScript code to open the sidebar
       js_code = '''
       <script>
-      const doc = window.parent.document;
-      const expandButton = doc.querySelector('button[title="Expand sidebar"]');
-      if (expandButton) {
-          expandButton.click();
+      const sidebar = parent.document.querySelector('section[data-testid="stSidebar"][aria-expanded="false"]');
+      if (sidebar) {
+          const expandButton = parent.document.querySelector('div[data-testid="collapsedControl"] button');
+          if (expandButton) {
+              expandButton.click();
+          }
       }
       </script>
       '''
