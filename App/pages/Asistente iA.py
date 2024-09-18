@@ -1,107 +1,116 @@
 import streamlit as st
 from abacusai import ApiClient
 import pandas as pd
-import plotly.express as px
+import traceback
+from googletrans import Translator
 
-# Set page config
-st.set_page_config(page_title="ASISTENTE DE IA", page_icon="🤖", layout="wide")
-
-# Initialize API client
+# Initialize the API client and translator
 client = ApiClient()
+translator = Translator()
 
-# Initialize session state
-if 'conversation_history' not in st.session_state:
-    st.session_state.conversation_history = []
-if 'language' not in st.session_state:
-    st.session_state.language = 'English'
+def translate_text(text, target_language):
+    try:
+        translation = translator.translate(text, dest=target_language)
+        return translation.text
+    except Exception as e:
+        st.error(f"Translation error: {str(e)}")
+        return text  # Return original text if translation fails
 
-# Function to execute AI agent
 def execute_pasto_verde_assistant(user_input, language):
     try:
+        # Make the API call to the agent
         result = client.execute_agent(
-            deployment_token = st.secrets["abacus"]["ABACUS_DEPLOYMENT_TOKEN"],
-            deployment_id = st.secrets["abacus"]["ABACUS_DEPLOYMENT_ID"],
+            deployment_token=st.secrets["abacus"]["ABACUS_DEPLOYMENT_TOKEN"],
+            deployment_id=st.secrets["abacus"]["ABACUS_DEPLOYMENT_ID"],
             keyword_arguments={
                 "user_input": user_input,
                 "language": language
             }
         )
-        return result.response
+        
+        # Check if the response contains the expected fields
+        if isinstance(result.response, dict) and 'response' in result.response:
+            return result.response['response']
+        else:
+            st.warning("Unexpected response format from the AI agent.")
+            return "I'm sorry, but I received an unexpected response format. Please try again."
+
     except Exception as e:
         st.error(f"Error executing AI agent: {str(e)}")
-        return None
+        st.error(f"Traceback: {traceback.format_exc()}")
+        return "I'm sorry, but I encountered an error while processing your request. Please try again later."
 
-# Function to load pricing data
-@st.cache_data
 def load_pricing_data():
-    fg = client.describe_feature_group(st.secrets["PRICING_FEATURE_GROUP_ID"])
-    df = client.execute_feature_group_sql(f"SELECT * FROM {fg.table_name}")
-    return df
+    try:
+        fg_id = st.secrets["abacus"]["PRICING_FEATURE_GROUP_ID"]
+        fg = client.describe_feature_group(fg_id)
+        df = client.execute_feature_group_sql(f"SELECT * FROM {fg.table_name}")
+        return df
+    except Exception as e:
+        st.error(f"Error loading pricing data: {str(e)}")
+        st.error(f"Traceback: {traceback.format_exc()}")
+        return pd.DataFrame()  # Return an empty DataFrame if there's an error
 
-# Function to display pricing information
-def display_pricing_info(df):
-    st.subheader("Pricing Information")
-    
-    # Filter options
-    sub_type = st.selectbox("Subscription Type", df['subscription_type'].unique())
-    filtered_df = df[df['subscription_type'] == sub_type]
+# Streamlit app
+st.title("Pasto Verde Assistant")
 
-    # Display comparison table
-    st.write("Plan Comparison")
-    st.dataframe(filtered_df[['plan_name', 'price', 'effective_price', 'total_discount', 'savings_percentage', 'commitment_period', 'first_month_free', 'delivery']])
+# Sidebar for testing options
+st.sidebar.title("Test Options")
+show_pricing_data = st.sidebar.checkbox("Show Pricing Data")
+show_errors = st.sidebar.checkbox("Show Errors", value=True)
+show_warnings = st.sidebar.checkbox("Show Warnings", value=True)
 
-    # Savings Visualization
-    st.write("Savings Comparison")
-    fig = px.bar(filtered_df, x='plan_name', y='savings_percentage', title='Savings Percentage by Plan')
-    st.plotly_chart(fig)
+# Language selection
+user_language = st.selectbox("Select your language", ["en", "es", "fr"])  # Add more languages as needed
 
-    # Best Value Plan
-    best_value = filtered_df.loc[filtered_df['savings_percentage'].idxmax()]
-    st.write(f"Best Value Plan: {best_value['plan_name']} with {best_value['savings_percentage']:.2f}% savings")
-
-# Main app layout
-st.title("ASISTENTE DE IA - Pasto Verde")
-
-# Sidebar for language selection
-with st.sidebar:
-    st.session_state.language = st.radio("Select Language / Seleccione el idioma", ["English", "Español"])
-
-# Main chat interface
-st.subheader("Chat with Pasto Verde Assistant")
-
-# Display conversation history
-for message in st.session_state.conversation_history:
-    with st.chat_message(message["role"]):
-        st.write(message["content"])
+# Load and display pricing data if selected
+if show_pricing_data:
+    st.subheader("Pricing Data")
+    pricing_df = load_pricing_data()
+    if not pricing_df.empty:
+        st.dataframe(pricing_df)
+    else:
+        st.warning("No pricing data available.")
 
 # User input
-user_input = st.chat_input("How can I assist you today? / ¿Cómo puedo ayudarte hoy?")
+user_input = st.text_input("How can I assist you today?")
 
-if user_input:
-    # Add user message to history
-    st.session_state.conversation_history.append({"role": "user", "content": user_input})
-    
-    # Display user message
-    with st.chat_message("user"):
-        st.write(user_input)
-    
-    # Get AI response
-    response = execute_pasto_verde_assistant(user_input, st.session_state.language)
-    
-    if response:
-        # Add AI response to history
-        st.session_state.conversation_history.append({"role": "assistant", "content": response})
-        
-        # Display AI response
-        with st.chat_message("assistant"):
-            st.write(response)
+if st.button("Submit Query"):
+    if user_input:
+        with st.spinner("Processing your request..."):
+            # Translate user input to English if necessary
+            if user_language != "en":
+                translated_input = translate_text(user_input, "en")
+            else:
+                translated_input = user_input
+            
+            # Execute the AI assistant
+            response = execute_pasto_verde_assistant(translated_input, "en")
+            
+            # Translate response back to user's language if necessary
+            if user_language != "en":
+                translated_response = translate_text(response, user_language)
+            else:
+                translated_response = response
+            
+            st.subheader("Assistant Response:")
+            st.write(translated_response)
+    else:
+        st.warning("Please enter a query before submitting.")
 
-# Display pricing information
-if st.button("Show Pricing Information"):
-    pricing_data = load_pricing_data()
-    display_pricing_info(pricing_data)
+# Error and warning display
+if show_errors:
+    st.subheader("Errors")
+    error_placeholder = st.empty()
+    if not error_placeholder.text:
+        st.info("No errors to display.")
 
-# Clear conversation button
-if st.button("Clear Conversation"):
-    st.session_state.conversation_history = []
-    st.experimental_rerun()
+if show_warnings:
+    st.subheader("Warnings")
+    warning_placeholder = st.empty()
+    if not warning_placeholder.text:
+        st.info("No warnings to display.")
+
+# Footer
+st.markdown("---")
+st.markdown("Pasto Verde Assistant ")
