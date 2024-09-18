@@ -126,13 +126,19 @@ def home_page():
   st.write(f"Bienvenido/a Pasto Verde, {st.session_state.user.name}! 🌿")
   st.write("¡Llevando pasto fresco a tus mascotas, una caja a la vez!")
   
-  session = Session()
-  products = session.query(Product).all()
-  st.subheader("Nuestros Servicios")
-  for product in products:
-      st.write(f"- {product.name}: ${product.price:.2f}")
-      st.write(product.description)
-  session.close()
+  if st.button("MENU"):
+      # Inject JavaScript code to open the sidebar
+      js_code = '''
+      <script>
+      const doc = window.parent.document;
+      const expandButton = doc.querySelector('button[title="Expand sidebar"]');
+      if (expandButton) {
+          expandButton.click();
+      }
+      </script>
+      '''
+      # Use components.html to inject the JavaScript into the app
+      st.components.v1.html(js_code, height=0, width=0)
 
 def place_order():
   st.subheader("🛒 Realizar pedido")
