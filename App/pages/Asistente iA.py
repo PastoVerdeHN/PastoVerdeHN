@@ -42,7 +42,7 @@ def execute_pasto_verde_assistant(user_input, language):
 
 def load_pricing_data():
     try:
-        fg_id = st.secrets["abacus"]["PRICING_FEATURE_GROUP_ID"]
+        fg_id = st.secrets['abacus']['PRICING_FEATURE_GROUP_ID']
         fg = client.describe_feature_group(fg_id)
         df = client.execute_feature_group_sql(f"SELECT * FROM {fg.table_name}")
         return df
