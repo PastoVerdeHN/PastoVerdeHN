@@ -19,8 +19,8 @@ if 'language' not in st.session_state:
 def execute_pasto_verde_assistant(user_input, language):
     try:
         result = client.execute_agent(
-            deployment_token=st.secrets["ABACUS_DEPLOYMENT_TOKEN"],
-            deployment_id=st.secrets["ABACUS_DEPLOYMENT_ID"],
+            deployment_token = st.secrets["abacus"]["ABACUS_DEPLOYMENT_TOKEN"],
+            deployment_id = st.secrets["abacus"]["ABACUS_DEPLOYMENT_ID"],
             keyword_arguments={
                 "user_input": user_input,
                 "language": language
