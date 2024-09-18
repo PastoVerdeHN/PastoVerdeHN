@@ -32,7 +32,7 @@ def app():
       bottom: 0;
       left: 0;
       width: 100%;
-      height: 15%;  /* Cover the bottom 15% */
+      height: 10%;  /* Cover the bottom 10% */
       background-color: white;  /* Match your app's background color */
   }}
   </style>
