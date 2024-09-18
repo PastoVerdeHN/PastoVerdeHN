@@ -52,65 +52,43 @@ def load_pricing_data():
         return pd.DataFrame()  # Return an empty DataFrame if there's an error
 
 # Streamlit app
-st.title("Pasto Verde Assistant")
+st.title("Pasto Verde Assistant - Test Page")
 
-# Sidebar for testing options
-st.sidebar.title("Test Options")
-show_pricing_data = st.sidebar.checkbox("Show Pricing Data")
-show_errors = st.sidebar.checkbox("Show Errors", value=True)
-show_warnings = st.sidebar.checkbox("Show Warnings", value=True)
+# Display pricing data (optional, for testing purposes)
+st.subheader("Pricing Data")
+pricing_df = load_pricing_data()
+if not pricing_df.empty:
+    st.dataframe(pricing_df)
+else:
+    st.warning("Unable to load pricing data.")
 
 # Language selection
-user_language = st.selectbox("Select your language", ["en", "es", "fr"])  # Add more languages as needed
-
-# Load and display pricing data if selected
-if show_pricing_data:
-    st.subheader("Pricing Data")
-    pricing_df = load_pricing_data()
-    if not pricing_df.empty:
-        st.dataframe(pricing_df)
-    else:
-        st.warning("No pricing data available.")
+user_language = st.selectbox("Select Language / Seleccione el idioma", ["en", "es"])
 
 # User input
-user_input = st.text_input("How can I assist you today?")
+user_input = st.text_input("How can I assist you today? / ¿Cómo puedo ayudarte hoy?")
 
-if st.button("Submit Query"):
-    if user_input:
-        with st.spinner("Processing your request..."):
-            # Translate user input to English if necessary
-            if user_language != "en":
-                translated_input = translate_text(user_input, "en")
-            else:
-                translated_input = user_input
-            
-            # Execute the AI assistant
-            response = execute_pasto_verde_assistant(translated_input, "en")
-            
-            # Translate response back to user's language if necessary
-            if user_language != "en":
-                translated_response = translate_text(response, user_language)
-            else:
-                translated_response = response
-            
-            st.subheader("Assistant Response:")
-            st.write(translated_response)
-    else:
-        st.warning("Please enter a query before submitting.")
+if user_input:
+    # Translate user input to English if necessary
+    if user_language != "en":
+        user_input = translate_text(user_input, "en")
+    
+    # Execute the AI agent
+    response = execute_pasto_verde_assistant(user_input, "en")
+    
+    # Translate response back to user's language if necessary
+    if user_language != "en":
+        response = translate_text(response, user_language)
+    
+    st.write("Assistant:", response)
 
-# Error and warning display
-if show_errors:
+# Error and warning display (optional, for testing purposes)
+if st.session_state.get('errors'):
     st.subheader("Errors")
-    error_placeholder = st.empty()
-    if not error_placeholder.text:
-        st.info("No errors to display.")
+    for error in st.session_state.errors:
+        st.error(error)
 
-if show_warnings:
+if st.session_state.get('warnings'):
     st.subheader("Warnings")
-    warning_placeholder = st.empty()
-    if not warning_placeholder.text:
-        st.info("No warnings to display.")
-
-# Footer
-st.markdown("---")
-st.markdown("Pasto Verde Assistant ")
+    for warning in st.session_state.warnings:
+        st.warning(warning)
