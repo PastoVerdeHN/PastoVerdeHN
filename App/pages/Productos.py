@@ -20,26 +20,21 @@ def generate_iframe_html(url, container_height, hide_top_pct, hide_bottom_pct):
 
   iframe_html = f"""
   <style>
-  .iframe-container {{
-      position: relative;
-      width: 100%;
-      height: {container_height}px;  /* Container height */
-      overflow: hidden;              /* Hide overflowing content */
-      border: 2px solid #4CAF50;     /* Optional: Add a border to the container */
-      border-radius: 10px;           /* Optional: Rounded corners */
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  /* Optional: Add a shadow */
-  }}
-  .iframe-container iframe {{
-      position: absolute;
-      top: -{shift_pixels_top}px;         /* Shift upwards to hide top {hide_top_pct}% */
-      left: 0;
-      width: 100%;
-      height: {iframe_height}px;         /* Increase height to cover hidden top and bottom */
-      border: none;                      /* Remove iframe border */
-  }}
+      .iframe-container {{
+          position: relative;
+          height: {iframe_height}px;
+          overflow: hidden;
+      }}
+      .iframe-container iframe {{
+          position: absolute;
+          top: -{shift_pixels_top}px; /* Shift the iframe up to hide the top */
+          height: {iframe_height}px; /* Set the height of the iframe */
+          width: 100%; /* Full width */
+          pointer-events: none; /* Disable pointer events */
+      }}
   </style>
   <div class="iframe-container">
-      <iframe src="{url}" scrolling="no"></iframe>
+      <iframe src="{url}" scrolling="yes"></iframe>
   </div>
   """
   return iframe_html
