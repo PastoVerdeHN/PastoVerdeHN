@@ -10,41 +10,33 @@ def app():
   # Your website URL
   website_url = "https://pastoverde.durablesites.com/contact?pt=NjZjZmZiNmQzMzBjMWZmZWVjOWY4OWRhOjE3MjQ5MTgwODYuOTQ1OnByZXZpZXc="
   
-  # HTML and CSS to display only the top 80% of the webpage without scrolling
+  # HTML and CSS to display only the bottom 80% of the webpage
   iframe_html = f"""
   <style>
   .iframe-container {{
       position: relative;
       width: 100%;
-      height: 600px;  /* Adjust the container height */
+      height: 600px;  /* Adjust the container height as needed */
       overflow: hidden;
   }}
   .iframe-container iframe {{
       position: absolute;
-      top: 0;
+      top: -20%;    /* Shift the iframe content upwards by 20% */
       left: 0;
       width: 100%;
-      height: 125%;   /* Adjust to ensure content covers the container */
+      height: 120%;  /* Increase the iframe height to cover the shifted content */
       border: none;
-  }}
-  .overlay {{
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 10%;  /* Cover the bottom 10% */
-      background-color: white;  /* Match your app's background color */
   }}
   </style>
   <div class="iframe-container">
       <iframe src="{website_url}" scrolling="no"></iframe>
-      <div class="overlay"></div>
   </div>
   """
+  # Embed the HTML into the Streamlit app
   st.components.v1.html(iframe_html, height=600, scrolling=False)
   
   if st.button("Inicio"):
       st.experimental_rerun()
 
 if __name__ == "__main__":
-      app()
+  app()
