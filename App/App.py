@@ -16,11 +16,11 @@ from geopy.geocoders import Nominatim
 import time
 import streamlit.components.v1 as components
 
+# Streamlit page configuration
 st.set_page_config(
   page_title="Pasto Verde - Naturaleza en Casa para tus Mascotas",
   page_icon="🌿",
-  layout="wide",
-  initial_sidebar_state="collapsed"  # Sidebar starts collapsed
+  layout="wide"
 )
 
 # Load environment variables
@@ -84,19 +84,11 @@ def auth0_authentication():
 
 def main():
   st.title("🌿 Pasto Verde - Entrega de pasto para mascotas")
-  user = auth0_authentication()  
+  user = auth0_authentication()
   
   if user:
       if 'current_page' not in st.session_state:
           st.session_state.current_page = "🏠 Inicio"  # Default page
-
-      # The page navigation is handled by Streamlit's multipage app feature
-      # So no need to define menu items here for navigation
-
-      # Display the current page content
-      # The current page is determined by the file in the 'pages' directory
-      # For the home page, we display 'home_page()' function content
-      home_page()
       
       menu_items = {
           "🏠 Inicio": home_page,
@@ -133,23 +125,14 @@ def main():
 def home_page():
   st.write(f"Bienvenido/a Pasto Verde, {st.session_state.user.name}! 🌿")
   st.write("¡Llevando pasto fresco a tus mascotas, una caja a la vez!")
-
-  if st.button("MENU"):
-      # Inject JavaScript code to open the sidebar
-      js_code = '''
-      <script>
-      const sidebar = parent.document.querySelector('section[data-testid="stSidebar"][aria-expanded="false"]');
-      if (sidebar) {
-          const expandButton = parent.document.querySelector('div[data-testid="collapsedControl"] button');
-          if (expandButton) {
-              expandButton.click();
-          }
-      }
-      </script>
-      '''
-      # Use components.html to inject the JavaScript into the app
-      st.components.v1.html(js_code, height=0, width=0)
-
+  
+  session = Session()
+  products = session.query(Product).all()
+  st.subheader("Nuestros Servicios")
+  for product in products:
+      st.write(f"- {product.name}: ${product.price:.2f}")
+      st.write(product.description)
+  session.close()
 
 def place_order():
   st.subheader("🛒 Realizar pedido")
