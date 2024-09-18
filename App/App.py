@@ -85,7 +85,6 @@ def auth0_authentication():
 def main():
   st.title("🌿 Pasto Verde - Entrega de pasto para mascotas")
   user = auth0_authentication()
-
     if user:
       if 'current_page' not in st.session_state:
           st.session_state.current_page = "🏠 Inicio"  # Default page
