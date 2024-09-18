@@ -19,8 +19,8 @@ if 'language' not in st.session_state:
 def execute_pasto_verde_assistant(user_input, language):
     try:
         result = client.execute_agent(
-            deployment_token="YOUR_DEPLOYMENT_TOKEN",  # Replace with actual token
-            deployment_id="YOUR_DEPLOYMENT_ID",  # Replace with actual ID
+            deployment_token=st.secrets["ABACUS_DEPLOYMENT_TOKEN"],
+            deployment_id=st.secrets["ABACUS_DEPLOYMENT_ID"],
             keyword_arguments={
                 "user_input": user_input,
                 "language": language
@@ -34,7 +34,7 @@ def execute_pasto_verde_assistant(user_input, language):
 # Function to load pricing data
 @st.cache_data
 def load_pricing_data():
-    fg = client.describe_feature_group("127e54af20")
+    fg = client.describe_feature_group(st.secrets["PRICING_FEATURE_GROUP_ID"])
     df = client.execute_feature_group_sql(f"SELECT * FROM {fg.table_name}")
     return df
 
@@ -50,52 +50,58 @@ def display_pricing_info(df):
     st.write("Plan Comparison")
     st.dataframe(filtered_df[['plan_name', 'price', 'effective_price', 'total_discount', 'savings_percentage', 'commitment_period', 'first_month_free', 'delivery']])
 
-    # Savings visualization
+    # Savings Visualization
     st.write("Savings Comparison")
     fig = px.bar(filtered_df, x='plan_name', y='savings_percentage', title='Savings Percentage by Plan')
     st.plotly_chart(fig)
 
-    # Best value plan
+    # Best Value Plan
     best_value = filtered_df.loc[filtered_df['savings_percentage'].idxmax()]
-    st.info(f"Best Value Plan: {best_value['plan_name']} with {best_value['savings_percentage']:.2f}% savings")
+    st.write(f"Best Value Plan: {best_value['plan_name']} with {best_value['savings_percentage']:.2f}% savings")
 
-# Main function
-def main():
-    st.title("Pasto Verde AI Assistant")
+# Main app layout
+st.title("ASISTENTE DE IA - Pasto Verde")
 
-    # Sidebar for language selection
-    st.sidebar.title("Settings")
-    st.session_state.language = st.sidebar.radio("Select Language / Seleccione el idioma", ["English", "Español"])
+# Sidebar for language selection
+with st.sidebar:
+    st.session_state.language = st.radio("Select Language / Seleccione el idioma", ["English", "Español"])
 
-    # User input
-    user_input = st.text_input("How can I assist you today? / ¿Cómo puedo ayudarte hoy?", key="user_input")
+# Main chat interface
+st.subheader("Chat with Pasto Verde Assistant")
 
-    # Execute AI agent when user submits input
-    if st.button("Submit / Enviar"):
-        if user_input:
-            with st.spinner("Processing..."):
-                response = execute_pasto_verde_assistant(user_input, st.session_state.language)
-            
-            if response:
-                # Add to conversation history
-                st.session_state.conversation_history.append(("User", user_input))
-                st.session_state.conversation_history.append(("Assistant", response))
+# Display conversation history
+for message in st.session_state.conversation_history:
+    with st.chat_message(message["role"]):
+        st.write(message["content"])
 
-                # Clear input
-                st.session_state.user_input = ""
+# User input
+user_input = st.chat_input("How can I assist you today? / ¿Cómo puedo ayudarte hoy?")
 
-    # Display conversation history
-    st.subheader("Conversation History")
-    for role, message in st.session_state.conversation_history:
-        if role == "User":
-            st.text_input("You:", message, disabled=True)
-        else:
-            st.text_area("Assistant:", message, height=100, disabled=True)
+if user_input:
+    # Add user message to history
+    st.session_state.conversation_history.append({"role": "user", "content": user_input})
+    
+    # Display user message
+    with st.chat_message("user"):
+        st.write(user_input)
+    
+    # Get AI response
+    response = execute_pasto_verde_assistant(user_input, st.session_state.language)
+    
+    if response:
+        # Add AI response to history
+        st.session_state.conversation_history.append({"role": "assistant", "content": response})
+        
+        # Display AI response
+        with st.chat_message("assistant"):
+            st.write(response)
 
-    # Display pricing information
-    if st.checkbox("Show Pricing Information"):
-        df = load_pricing_data()
-        display_pricing_info(df)
+# Display pricing information
+if st.button("Show Pricing Information"):
+    pricing_data = load_pricing_data()
+    display_pricing_info(pricing_data)
 
-if __name__ == "__main__":
-    main()
+# Clear conversation button
+if st.button("Clear Conversation"):
+    st.session_state.conversation_history = []
+    st.experimental_rerun()
