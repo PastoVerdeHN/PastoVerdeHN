@@ -16,11 +16,10 @@ def generate_iframe_html(url, container_height, hide_top_pct, hide_bottom_pct):
   hide_pixels_top = container_height * hide_top_pct / 100
   hide_pixels_bottom = container_height * hide_bottom_pct / 100
   iframe_height = container_height + hide_pixels_top + hide_pixels_bottom
-  shift_pixels_top = hide_pixels_top
 
   iframe_html = f"""
-  <div class="iframe-container">
-      <iframe src="{url}" scrolling="no" style="height: {iframe_height}px; width: 100%; border: none;"></iframe>
+  <div class="iframe-container" style="height: {iframe_height}px; overflow: hidden;">
+      <iframe src="{url}" scrolling="no" style="height: {iframe_height}px; width: 100%; border: none; transform: translateY(-{hide_pixels_top}px);"></iframe>
   </div>
   """
   return iframe_html
