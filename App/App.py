@@ -99,7 +99,7 @@ def auth0_authentication():
   return st.session_state.user
 
 def main():
-  st.title("🌿 Pasto Verde - Entrega de pasto para mascotas")
+  st.title("Pasto Verde - Entrega de pasto para mascotas")
   user = auth0_authentication()
   
   if user:
