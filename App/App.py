@@ -23,6 +23,22 @@ st.set_page_config(
   layout="wide"
 )
 
+# Add custom CSS for green glow
+st.markdown(
+  """
+  <style>
+  .cover-glow {
+      box-shadow: 0 0 20px green;
+  }
+  </style>
+  """,
+  unsafe_allow_html=True,
+)
+
+# Load and display the sidebar image with green glow
+image_url = "https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/main/STREAMLIT%20PAGE%20ICON.png"
+st.sidebar.image(image_url, use_column_width=True, caption="Pasto Verde")
+
 # Load environment variables
 load_dotenv()
 
