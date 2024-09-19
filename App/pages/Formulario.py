@@ -1,5 +1,3 @@
-import streamlit as st
-
 def app():
   # Configure the Streamlit page
   st.set_page_config(
@@ -8,7 +6,7 @@ def app():
       layout="wide"
   )
   
-  # Load and display the sidebar image with green glow
+  # Load and display the sidebar image
   image_url = "https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/main/STREAMLIT%20PAGE%20ICON.png"
   st.sidebar.image(image_url, use_column_width=True, caption="La Naturaleza A Los Pies De Tus Mascota")
 
@@ -29,8 +27,8 @@ def app():
 
   # HTML and CSS to embed the iframe with hidden top and bottom portions
   iframe_html = f"""
-  <div class="iframe-container" style="height: {iframe_height}px; overflow: hidden;">
-      <iframe src="{website_url}" style="height: {iframe_height}px; width: 100%;" scrolling="no"></iframe>
+  <div class="iframe-container">
+      <iframe src="{website_url}" scrolling="no"></iframe>
   </div>
   """
 
