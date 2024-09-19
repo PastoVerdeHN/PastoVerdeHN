@@ -129,13 +129,15 @@ def main():
           st.success("Logged out successfully.")
           st.rerun()
       
+
+  else:
+      st.write("Por favor inicie sesión para acceder a los servicios de Pasto Verde")
+    
       # Move the image to the bottom of the sidebar
       st.sidebar.markdown("---")
       image_url = "https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/main/STREAMLIT%20PAGE%20ICON.png"
       st.sidebar.image(image_url, use_column_width=True, caption="La Naturaleza A Los Pies De Tus Mascota")
-  else:
-      st.write("Por favor inicie sesión para acceder a los servicios de Pasto Verde")
-
+    
 def home_page():
   st.write(f"Bienvenido/a Pasto Verde, {st.session_state.user.name}! 🌿")
   st.write("¡Llevando pasto fresco a tus mascotas, una caja a la vez!")
