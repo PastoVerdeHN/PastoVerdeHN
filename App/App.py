@@ -20,6 +20,7 @@ import streamlit.components.v1 as components
 st.set_page_config(
   page_title="Pasto Verde - Naturaleza en Casa para tus Mascotas",
   page_icon="🌿",
+  initial_sidebar_state="auto",
   layout="wide"
 )
 
