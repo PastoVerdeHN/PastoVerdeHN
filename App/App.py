@@ -90,6 +90,15 @@ def main():
   if user:
       if 'current_page' not in st.session_state:
           st.session_state.current_page = "🏠 Inicio"  # Default page
+
+        # Load and display sidebar image
+    img_path = "imgs/sidebar_streamly_avatar.png"
+    img_base64 = img_to_base64(img_path)
+    if img_base64:
+        st.sidebar.markdown(
+            f'<img src="data:image/png;base64,{img_base64}" class="cover-glow">',
+            unsafe_allow_html=True,
+        )
       
       menu_items = {
           "🏠 Inicio": home_page,
