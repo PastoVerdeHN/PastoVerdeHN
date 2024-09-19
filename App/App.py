@@ -123,7 +123,7 @@ def main():
           st.session_state.current_page = "🏠 Inicio"  # Fallback to default page
           menu_items[st.session_state.current_page]()
       
-      if st.sidebar.button("🚪 Log Out"):
+      if st.sidebar.button("🚪 Finalizar la sesión"):
           for key in list(st.session_state.keys()):
               del st.session_state[key]
           st.success("Logged out successfully.")
