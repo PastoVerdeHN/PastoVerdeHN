@@ -92,11 +92,11 @@ def main():
           st.session_state.current_page = "🏠 Inicio"  # Default page
 
         # Load and display sidebar image
-    img_path = "imgs/sidebar_streamly_avatar.png"
-    img_base64 = img_to_base64(img_path)
-    if img_base64:
+    img_path = "logo2.jpg"
+    img_base64 = logo2.jpg(img_path)
+    if logo2.jpg:
         st.sidebar.markdown(
-            f'<img src="data:image/png;base64,{img_base64}" class="cover-glow">',
+            f'<img src="data:logo2.jpg,{logo2.jpg}" class="cover-glow">',
             unsafe_allow_html=True,
         )
       
