@@ -11,10 +11,6 @@ def app():
   # Load and display the sidebar image
   image_url = "https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/main/STREAMLIT%20PAGE%20ICON.png"
   st.sidebar.image(image_url, use_column_width=True, caption="La Naturaleza A Los Pies De Tus Mascota")
-  
-  # Load and display the sidebar image with green glow
-image_url = "https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/main/STREAMLIT%20PAGE%20ICON.png"
-st.sidebar.image(image_url, use_column_width=True, caption="La Naturaleza A Los Pies De Tus Mascota")
 
   # Define the website URL to embed
   website_url = "https://pastoverde.durablesites.com/contact?pt=NjZjZmZiNmQzMzBjMWZmZWVjOWY4OWRhOjE3MjQ5MTgwODYuOTQ1OnByZXZpZXc="
@@ -33,25 +29,6 @@ st.sidebar.image(image_url, use_column_width=True, caption="La Naturaleza A Los 
 
   # HTML and CSS to embed the iframe with hidden top and bottom portions
   iframe_html = f"""
-  <style>
-  .iframe-container {{
-      position: relative;
-      width: 100%;
-      height: {container_height}px;  /* Container height */
-      overflow: hidden;              /* Hide overflowing content */
-      border: 2px solid #4CAF50;     /* Optional: Add a border to the container */
-      border-radius: 10px;           /* Optional: Rounded corners */
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  /* Optional: Add a shadow */
-  }}
-  .iframe-container iframe {{
-      position: absolute;
-      top: -{shift_pixels_top}px;          /* Shift upwards to hide top 20% */
-      left: 0;
-      width: 100%;
-      height: {iframe_height}px;      /* Increase height to cover hidden top and bottom */
-      border: none;                   /* Remove iframe border */
-  }}
-  </style>
   <div class="iframe-container">
       <iframe src="{website_url}" scrolling="no"></iframe>
   </div>
