@@ -1,12 +1,40 @@
 import streamlit as st
 
+def generate_iframe_html(url, container_height, hide_top_pct, hide_bottom_pct):
+  """
+  Generates custom HTML and CSS to embed an iframe with specified hidden portions.
+
+  Parameters:
+  - url (str): The URL to embed in the iframe.
+  - container_height (int or float): The height of the visible container in pixels.
+  - hide_top_pct (float): The percentage of the top to hide.
+  - hide_bottom_pct (float): The percentage of the bottom to hide.
+
+  Returns:
+  - str: The HTML string with embedded CSS and iframe.
+  """
+  hide_pixels_top = container_height * hide_top_pct / 100
+  hide_pixels_bottom = container_height * hide_bottom_pct / 100
+  iframe_height = container_height + hide_pixels_top + hide_pixels_bottom
+
+  iframe_html = f"""
+  <div class="iframe-container" style="height: {iframe_height}px; overflow: hidden;">
+      <iframe src="{url}" scrolling="no" style="height: {iframe_height}px; width: 100%; border: none; transform: translateY(-{hide_pixels_top}px);"></iframe>
+  </div>
+  """
+  return iframe_html
+
 def app():
   # Configure the Streamlit page
   st.set_page_config(
-      page_title="Pagina Web",
+      page_title="Sobre Nosotros",
       page_icon="🌿",
       layout="wide"
   )
+
+  # Load and display the sidebar image
+  image_url = "https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/main/STREAMLIT%20PAGE%20ICON.png"
+  st.sidebar.image(image_url, use_column_width=True, caption="La Naturaleza A Los Pies De Tus Mascota")
 
   # Define the website URL to embed
   website_url = "https://pastoverde.durablesites.com/?pt=NjZjZmZiNmQzMzBjMWZmZWVjOWY4OWRhOjE3MjQ5MTgwODYuOTQ1OnByZXZpZXc="
@@ -14,41 +42,15 @@ def app():
   # Define container and iframe dimensions
   container_height = 600  # Height of the visible container in pixels
   hide_percentage_top = 20    # Percentage of the top to hide
-  hide_percentage_bottom = 10 # Percentage of the bottom to hide
+  hide_percentage_bottom = 10  # Percentage of the bottom to hide
 
-  # Calculate the pixel values to hide
-  hide_pixels_top = container_height * hide_percentage_top / 100  # Pixels to hide from top (20% of 600px = 120px)
-  hide_pixels_bottom = container_height * hide_percentage_bottom / 100  # Pixels to hide from bottom (10% of 600px = 60px)
-
-  # Calculate total iframe height and shift
-  iframe_height = container_height + hide_pixels_top + hide_pixels_bottom  # Total iframe height (600 + 120 + 60 = 780px)
-  shift_pixels_top = hide_pixels_top  # Pixels to shift upwards (120px)
-
-  # HTML and CSS to embed the iframe with hidden top and bottom portions
-  iframe_html = f"""
-  <style>
-  .iframe-container {{
-      position: relative;
-      width: 100%;
-      height: {container_height}px;  /* Container height */
-      overflow: hidden;              /* Hide overflowing content */
-      border: 2px solid #4CAF50;     /* Optional: Add a border to the container */
-      border-radius: 10px;           /* Optional: Rounded corners */
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  /* Optional: Add a shadow */
-  }}
-  .iframe-container iframe {{
-      position: absolute;
-      top: -{shift_pixels_top}px;          /* Shift upwards to hide top 20% */
-      left: 0;
-      width: 100%;
-      height: {iframe_height}px;      /* Increase height to cover hidden top and bottom */
-      border: none;                   /* Remove iframe border */
-  }}
-  </style>
-  <div class="iframe-container">
-      <iframe src="{website_url}" scrolling="no"></iframe>
-  </div>
-  """
+  # Generate the iframe HTML
+  iframe_html = generate_iframe_html(
+      url=website_url,
+      container_height=container_height,
+      hide_top_pct=hide_percentage_top,
+      hide_bottom_pct=hide_percentage_bottom
+  )
 
   # Embed the HTML into the Streamlit app
   st.components.v1.html(
