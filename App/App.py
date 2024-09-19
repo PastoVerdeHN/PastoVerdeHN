@@ -5,7 +5,7 @@ import folium
 from streamlit_folium import folium_static
 from datetime import datetime
 import random
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker
 import os
 from dotenv import load_dotenv
@@ -26,18 +26,10 @@ st.set_page_config(
 # Add custom CSS for green glow
 st.markdown(
   """
-  <style>
-  .cover-glow {
-      box-shadow: 0 0 20px green;
-  }
-  </style>
+  
   """,
   unsafe_allow_html=True,
 )
-
-# Load and display the sidebar image with green glow
-image_url = "https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/main/STREAMLIT%20PAGE%20ICON.png"
-st.sidebar.image(image_url, use_column_width=True, caption="La Naturaleza A Los Pies De Tus Mascota")
 
 # Load environment variables
 load_dotenv()
@@ -136,8 +128,14 @@ def main():
               del st.session_state[key]
           st.success("Logged out successfully.")
           st.rerun()
+      
+      # Move the image to the bottom of the sidebar
+      st.sidebar.markdown("---")
+      image_url = "https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/main/STREAMLIT%20PAGE%20ICON.png"
+      st.sidebar.image(image_url, use_column_width=True, caption="La Naturaleza A Los Pies De Tus Mascota")
   else:
       st.write("Por favor inicie sesión para acceder a los servicios de Pasto Verde")
+
 def home_page():
   st.write(f"Bienvenido/a Pasto Verde, {st.session_state.user.name}! 🌿")
   st.write("¡Llevando pasto fresco a tus mascotas, una caja a la vez!")
@@ -381,6 +379,7 @@ def place_order():
               components.html(paypal_html, height=300)
 
   session.close()
+
 def display_user_orders():
   st.subheader("📦 Mis Órdenes")
   
@@ -506,7 +505,7 @@ def admin_dashboard():
   session = Session()
   
   total_orders = session.query(Order).count()
-  total_revenue = session.query(sqlalchemy.func.sum(Product.price)).join(Order).scalar() or 0
+  total_revenue = session.query(func.sum(Product.price)).join(Order).scalar() or 0
   
   st.write(f"Total Orders: {total_orders}")
   st.write(f"Total Revenue: ${total_revenue:.2f}")
