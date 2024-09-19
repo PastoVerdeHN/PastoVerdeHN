@@ -30,7 +30,7 @@ def app():
   # HTML and CSS to embed the iframe with hidden top and bottom portions
   iframe_html = f"""
   <div class="iframe-container">
-      <iframe src="{website_url}" scrolling="no"></iframe>
+      <iframe src="{website_url}" scrolling="no" style="height: {iframe_height}px; width: 100%; border: none;"></iframe>
   </div>
   """
 
