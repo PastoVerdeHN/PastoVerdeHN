@@ -20,7 +20,6 @@ import streamlit.components.v1 as components
 st.set_page_config(
   page_title="Pasto Verde - Naturaleza en Casa para tus Mascotas",
   page_icon="🌿",
-  initial_sidebar_state="auto",
   layout="wide"
 )
 
@@ -90,15 +89,6 @@ def main():
   if user:
       if 'current_page' not in st.session_state:
           st.session_state.current_page = "🏠 Inicio"  # Default page
-
-        # Load and display sidebar image
-    img_path = "logo2.jpg"
-    img_base64 = logo2.jpg(img_path)
-    if logo2.jpg:
-        st.sidebar.markdown(
-            f'<img src="data:logo2.jpg,{logo2.jpg}" class="cover-glow">',
-            unsafe_allow_html=True,
-        )
       
       menu_items = {
           "🏠 Inicio": home_page,
