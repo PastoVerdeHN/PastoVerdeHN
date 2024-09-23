@@ -1,44 +1,92 @@
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, Float, ForeignKey
+from sqlalchemy import create_engine, Column, Integer, String, DateTime, Float, ForeignKey, Enum, Boolean
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, relationship
+from sqlalchemy.orm import sessionmaker, relationship, validates
+from datetime import datetime
+import enum
 
-# Define the base class for declarative models
 Base = declarative_base()
 
-# Define the User model
+class UserType(enum.Enum):
+  customer = "customer"
+  admin = "admin"
+
+class OrderStatus(enum.Enum):
+  pending = "pending"
+  completed = "completed"
+  cancelled = "cancelled"
+
 class User(Base):
   __tablename__ = 'users'
-  id = Column(String, primary_key=True)  # Unique identifier for the user
-  name = Column(String, nullable=False)   # User's name
-  email = Column(String, unique=True, nullable=False)  # User's email (must be unique)
-  type = Column(String, nullable=False)    # User type (e.g., customer, admin)
-  address = Column(String)                  # User's address
+  id = Column(String, primary_key=True)
+  name = Column(String, nullable=False)
+  email = Column(String, unique=True, nullable=False)
+  type = Column(Enum(UserType), nullable=False)
+  address = Column(String)
+  phone_number = Column(String)
+  created_at = Column(DateTime, default=datetime.utcnow)
+  last_login = Column(DateTime)
+  is_active = Column(Boolean, default=True)
+  orders = relationship("Order", back_populates="user")
 
-# Define the Product model
+  @validates('email')
+  def validate_email(self, key, address):
+      assert '@' in address
+      return address
+
 class Product(Base):
   __tablename__ = 'products'
-  id = Column(Integer, primary_key=True)   # Unique identifier for the product
-  name = Column(String, nullable=False)      # Product name
-  description = Column(String)               # Product description
-  price = Column(Float, nullable=False)      # Product price
+  id = Column(Integer, primary_key=True)
+  name = Column(String, nullable=False)
+  description = Column(String)
+  price = Column(Float, nullable=False)
+  stock = Column(Integer, default=0)
+  category = Column(String)
+  created_at = Column(DateTime, default=datetime.utcnow)
+  updated_at = Column(DateTime, onupdate=datetime.utcnow)
 
-# Define the Order model
 class Order(Base):
   __tablename__ = 'orders'
-  id = Column(String, primary_key=True)     # Unique identifier for the order
-  user_id = Column(String, ForeignKey('users.id'))  # Foreign key to the User table
-  product_id = Column(Integer, ForeignKey('products.id'))  # Foreign key to the Product table
-  date = Column(DateTime, nullable=False)    # Order date
-  delivery_address = Column(String, nullable=False)  # Delivery address for the order
-  status = Column(String, nullable=False)     # Order status (e.g., Pending, Completed)
-  user = relationship("User")                # Relationship to the User model
-  product = relationship("Product")          # Relationship to the Product model
+  id = Column(String, primary_key=True)
+  user_id = Column(String, ForeignKey('users.id'))
+  product_id = Column(Integer, ForeignKey('products.id'))
+  quantity = Column(Integer, nullable=False, default=1)
+  date = Column(DateTime, nullable=False, default=datetime.utcnow)
+  delivery_address = Column(String, nullable=False)
+  status = Column(Enum(OrderStatus), nullable=False, default=OrderStatus.pending)
+  total_price = Column(Float, nullable=False)
+  payment_status = Column(String, default="pending")
+  created_at = Column(DateTime, default=datetime.utcnow)
+  updated_at = Column(DateTime, onupdate=datetime.utcnow)
+  user = relationship("User", back_populates="orders")
+  product = relationship("Product")
 
-# Function to set up the database
+  def calculate_total_price(self):
+      return self.quantity * self.product.price
+
+class Subscription(Base):
+  __tablename__ = 'subscriptions'
+  id = Column(Integer, primary_key=True)
+  user_id = Column(String, ForeignKey('users.id'))
+  plan_name = Column(String, nullable=False)
+  start_date = Column(DateTime, nullable=False, default=datetime.utcnow)
+  end_date = Column(DateTime)
+  is_active = Column(Boolean, default=True)
+  user = relationship("User")
+
+class PaymentTransaction(Base):
+  __tablename__ = 'payment_transactions'
+  id = Column(Integer, primary_key=True)
+  order_id = Column(String, ForeignKey('orders.id'))
+  amount = Column(Float, nullable=False)
+  transaction_date = Column(DateTime, default=datetime.utcnow)
+  status = Column(String, nullable=False)
+  payment_method = Column(String)
+  order = relationship("Order")
+
 def setup_database(database_url):
-  engine = create_engine(database_url, echo=True)  # Create the database engine
+  engine = create_engine(database_url, echo=True)
   try:
-      Base.metadata.create_all(engine)  # Create all tables in the database
+      Base.metadata.create_all(engine)
   except Exception as e:
       print(f"Error creating tables: {e}")
-  return sessionmaker(bind=engine)  # Return a session factory
+  return sessionmaker(bind=engine)
