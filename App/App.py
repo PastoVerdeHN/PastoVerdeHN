@@ -146,13 +146,11 @@ def home_page():
   st.write(f"Bienvenido/a Pasto Verde, {st.session_state.user.name}! 🌿")
   st.write("¡Llevando pasto fresco a tus mascotas, una caja a la vez!")
   
-  session = Session()
-  products = session.query(Product).all()
-  st.subheader("Nuestros Servicios")
-  for product in products:
-      st.write(f"- {product.name}: ${product.price:.2f}")
-      st.write(product.description)
-  session.close()
+  # Video section
+  st.subheader("Conozca Pasto Verde")
+  video_file = open('PastoVerdeHN/PASTO VERDE AD FINAL.mp4', 'rb')
+  video_bytes = video_file.read()
+  st.video(video_bytes)
 
 def place_order():
   st.subheader("🛒 Realizar pedido")
