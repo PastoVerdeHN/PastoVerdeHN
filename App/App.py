@@ -78,16 +78,16 @@ def auth0_authentication():
               session = Session()
               user = session.query(User).filter_by(email=user_info['email']).first()
               if not user:
-  user = User(
-      id=user_info['sub'],
-      name=user_info['name'],
-      email=user_info['email'],
-      type='customer',
-      address=''
-  )
-  session.add(user)
-  session.commit()
-  send_welcome_email(user.email, user.name)
+                  user = User(
+                      id=user_info['sub'],
+                      name=user_info['name'],
+                      email=user_info['email'],
+                      type='customer',
+                      address=''
+                  )
+                  session.add(user)
+                  session.commit()
+                  send_welcome_email(user.email, user.name)
               
               st.session_state.user = user
               st.session_state.auth_status = "authenticated"
