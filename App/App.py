@@ -146,11 +146,10 @@ def home_page():
   st.write(f"Bienvenido/a Pasto Verde, {st.session_state.user.name}! 🌿")
   st.write("¡Llevando pasto fresco a tus mascotas, una caja a la vez!")
   
-  # Video section
   st.subheader("Conozca Pasto Verde")
-  video_file = open('PastoVerdeHN/PASTO VERDE AD FINAL.mp4', 'rb')
-  video_bytes = video_file.read()
-  st.video(video_bytes)
+  
+  video_url = "https://github.com/PastoVerdeHN/PastoVerdeHN/raw/main/PASTO%20VERDE%20AD%20FINAL.mp4"
+  st.video(video_url)
 
 def place_order():
   st.subheader("🛒 Realizar pedido")
