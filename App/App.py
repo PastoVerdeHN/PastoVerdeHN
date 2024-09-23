@@ -15,6 +15,9 @@ from models import User, Product, Order, setup_database
 from geopy.geocoders import Nominatim
 import time
 import streamlit.components.v1 as components
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 # Streamlit page configuration
 st.set_page_config(
@@ -75,15 +78,16 @@ def auth0_authentication():
               session = Session()
               user = session.query(User).filter_by(email=user_info['email']).first()
               if not user:
-                  user = User(
-                      id=user_info['sub'],
-                      name=user_info['name'],
-                      email=user_info['email'],
-                      type='customer',
-                      address=''
-                  )
-                  session.add(user)
-                  session.commit()
+  user = User(
+      id=user_info['sub'],
+      name=user_info['name'],
+      email=user_info['email'],
+      type='customer',
+      address=''
+  )
+  session.add(user)
+  session.commit()
+  send_welcome_email(user.email, user.name)
               
               st.session_state.user = user
               st.session_state.auth_status = "authenticated"
@@ -497,6 +501,58 @@ def about_us():
   ¡Mascotas felices, dueños felices!
   Únete a nosotros para hacer que el día de tu mascota sea un poco más verde y mucho más divertido.
   """)
+
+
+def send_welcome_email(user_email, user_name):
+  sender_email = st.secrets["email"]["sender_email"]
+  sender_password = st.secrets["email"]["sender_password"]
+
+  message = MIMEMultipart("alternative")
+  message["Subject"] = "Welcome to Pasto Verde!"
+  message["From"] = sender_email
+  message["To"] = user_email
+
+  text = f"""\
+  Hola {user_name},
+  
+  ¡Bienvenido a Pasto Verde! Gracias por registrarte en nuestra plataforma.
+  
+  Estamos emocionados de tenerte con nosotros y esperamos que disfrutes de nuestros servicios de entrega de pasto fresco para tus mascotas.
+  
+  Si tienes alguna pregunta, no dudes en contactarnos.
+  
+  ¡Que tengas un gran día!
+  
+  El equipo de Pasto Verde
+  """
+
+  html = f"""\
+  <html>
+    <body>
+      <p>Hola {user_name},</p>
+      <p>¡Bienvenido a Pasto Verde! Gracias por registrarte en nuestra plataforma.</p>
+      <p>Estamos emocionados de tenerte con nosotros y esperamos que disfrutes de nuestros servicios de entrega de pasto fresco para tus mascotas.</p>
+      <p>Si tienes alguna pregunta, no dudes en contactarnos.</p>
+      <p>¡Que tengas un gran día!</p>
+      <p>El equipo de Pasto Verde</p>
+    </body>
+  </html>
+  """
+
+  part1 = MIMEText(text, "plain")
+  part2 = MIMEText(html, "html")
+
+  message.attach(part1)
+  message.attach(part2)
+
+  try:
+      with smtplib.SMTP("smtp-mail.outlook.com", 587) as server:
+          server.starttls()
+          server.login(sender_email, sender_password)
+          server.sendmail(sender_email, user_email, message.as_string())
+      print(f"Welcome email sent to {user_email}")
+  except Exception as e:
+      print(f"Error sending email to {user_email}: {str(e)}")
 
 def admin_dashboard():
   if st.session_state.user.type != 'admin':
