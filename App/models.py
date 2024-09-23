@@ -22,11 +22,10 @@ class User(Base):
   email = Column(String, unique=True, nullable=False)
   type = Column(Enum(UserType), nullable=False)
   address = Column(String)
-  phone_number = Column(String)
+  phone_number = Column(String, nullable=True)  # Make this nullable
   created_at = Column(DateTime, default=datetime.utcnow)
   last_login = Column(DateTime)
   is_active = Column(Boolean, default=True)
-  orders = relationship("Order", back_populates="user")
 
   @validates('email')
   def validate_email(self, key, address):
@@ -85,8 +84,6 @@ class PaymentTransaction(Base):
 
 def setup_database(database_url):
   engine = create_engine(database_url, echo=True)
-  try:
-      Base.metadata.create_all(engine)
-  except Exception as e:
-      print(f"Error creating tables: {e}")
+  Base.metadata.drop_all(engine)  # This line drops all tables
+  Base.metadata.create_all(engine)  # This line creates all tables
   return sessionmaker(bind=engine)
