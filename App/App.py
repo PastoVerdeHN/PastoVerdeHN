@@ -11,7 +11,7 @@ import os
 from dotenv import load_dotenv
 from auth0_component import login_button
 from branca.element import Template, MacroElement
-from models import User, Product, Order, setup_database
+from models import User, Product, Order, Subscription, PaymentTransaction, setup_database, UserType, OrderStatus
 from geopy.geocoders import Nominatim
 import time
 import streamlit.components.v1 as components
@@ -82,16 +82,21 @@ def auth0_authentication():
                       id=user_info['sub'],
                       name=user_info['name'],
                       email=user_info['email'],
-                      type='customer',
-                      address=''
+                      type=UserType.customer,
+                      address='',
+                      created_at=datetime.utcnow()
                   )
                   session.add(user)
                   session.commit()
                   send_welcome_email(user.email, user.name)
               
+              user.last_login = datetime.utcnow()
+              session.commit()
+              
               st.session_state.user = user
               st.session_state.auth_status = "authenticated"
               st.success(f"Bienvenido, {user.name}!")
+              session.close()
   return st.session_state.user
 
 def main():
@@ -110,7 +115,7 @@ def main():
           "ℹ️ Sobre Nosotros": about_us,
       }
       
-      if user.type == 'admin':
+      if user.type == UserType.admin:
           menu_items["📊 Admin Dashboard"] = admin_dashboard
       
       cols = st.columns(len(menu_items))
@@ -277,6 +282,32 @@ def place_order():
           st.write(f"Dirección de entrega: {full_address}")
 
       if st.button("Confirmar pedido"):
+          # Create new order
+          new_order = Order(
+              id=generate_order_id(),
+              user_id=st.session_state.user.id,
+              product_id=1,  # Assuming product_id 1 is for grass
+              quantity=1,
+              delivery_address=full_address,
+              status=OrderStatus.pending,
+              total_price=lempira_price
+          )
+          session.add(new_order)
+          
+          # If it's a subscription, create a subscription record
+          if selected_plan != "Sin Suscripción":
+              new_subscription = Subscription(
+                  user_id=st.session_state.user.id,
+                  plan_name=selected_plan,
+                  start_date=datetime.utcnow(),
+                  is_active=True
+              )
+              session.add(new_subscription)
+          
+          session.commit()
+          
+          st.success(f"Pedido confirmado. ID de pedido: {new_order.id}")
+          
           if selected_plan == "Suscripción Anual":
               paypal_html = '''
               <div id="paypal-button-container-P-4E978587FL636905DM3UPY3Q"></div>
@@ -390,13 +421,14 @@ def display_user_orders():
   orders = session.query(Order).filter_by(user_id=st.session_state.user.id).all()
   
   for order in orders:
-      with st.expander(f"Order ID: {order.id} - Status: {order.status}"):
+      with st.expander(f"Order ID: {order.id} - Status: {order.status.value}"):
           st.write(f"Delivery Date: {order.date}")
           st.write(f"Delivery Address: {order.delivery_address}")
+          st.write(f"Total Price: L. {order.total_price:.2f}")
           if order.product_id:
               product = session.query(Product).filter_by(id=order.product_id).first()
               if product:
-                  st.write(f"Product: {product.name} - Price: ${product.price:.2f}")
+                  st.write(f"Product: {product.name}")
 
   session.close()
 
@@ -499,7 +531,6 @@ def about_us():
   Únete a nosotros para hacer que el día de tu mascota sea un poco más verde y mucho más divertido.
   """)
 
-
 def send_welcome_email(user_email, user_name):
   sender_email = st.secrets["email"]["sender_email"]
   sender_password = st.secrets["email"]["sender_password"]
@@ -552,7 +583,7 @@ def send_welcome_email(user_email, user_name):
       print(f"Error sending email to {user_email}: {str(e)}")
 
 def admin_dashboard():
-  if st.session_state.user.type != 'admin':
+  if st.session_state.user.type != UserType.admin:
       st.error("You don't have permission to access this page.")
       return
   st.subheader("📊 Admin Dashboard")
@@ -560,20 +591,17 @@ def admin_dashboard():
   session = Session()
   
   total_orders = session.query(Order).count()
-  total_revenue = session.query(func.sum(Product.price)).join(Order).scalar() or 0
+  total_revenue = session.query(func.sum(Order.total_price)).scalar() or 0
   
   st.write(f"Total Orders: {total_orders}")
-  st.write(f"Total Revenue: ${total_revenue:.2f}")
+  st.write(f"Total Revenue: L. {total_revenue:.2f}")
   
   st.subheader("Recent Orders")
   recent_orders = session.query(Order).order_by(Order.date.desc()).limit(10).all()
   for order in recent_orders:
-      st.write(f"Order ID: {order.id} - User: {order.user.name} - Product: {order.product.name} - Date: {order.date}")
+      st.write(f"Order ID: {order.id} - User: {order.user.name} - Total Price: L. {order.total_price:.2f} - Date: {order.date}")
   
   session.close()
-  st.sidebar.markdown("---")
-  if st.sidebar.button("Pagina Web"):
-      st.switch_page("pages/pagina_web.py")
 
 if __name__ == "__main__":
   main()
