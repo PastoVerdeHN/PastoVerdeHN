@@ -26,6 +26,7 @@ class User(Base):
   created_at = Column(DateTime, default=datetime.utcnow)
   last_login = Column(DateTime)
   is_active = Column(Boolean, default=True)
+  welcome_email_sent = Column(Boolean, default=False)  # New field to track email status
   orders = relationship("Order", back_populates="user")
 
   @validates('email')
@@ -85,6 +86,5 @@ class PaymentTransaction(Base):
 
 def setup_database(database_url):
   engine = create_engine(database_url, echo=True)
-  Base.metadata.drop_all(engine)  # This line drops all tables
-  Base.metadata.create_all(engine)  # This line creates all tables
+  Base.metadata.create_all(engine)  # Create all tables
   return sessionmaker(bind=engine)
