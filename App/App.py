@@ -124,11 +124,7 @@ def main():
   st.title("Pasto Verde - Entrega de pasto para mascotas")
   user = auth0_authentication()  # Get the user from authentication
 
-if user:
-  # Display a personalized welcome message
-  st.write(f"Hola {user.name}, bienvenido a Pasto Verde! 🌿")  # Personalized greeting
-  st.write(f"User email: {user.email}")
-  st.write(f"User type: {user.type}")
+  if user:
     
       if 'current_page' not in st.session_state:
           st.session_state.current_page = "🏠 Inicio"  # Default page
