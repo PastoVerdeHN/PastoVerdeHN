@@ -128,6 +128,7 @@ def auth0_authentication():
               session.close()
   
   return st.session_state.user
+  
               else:
                   # Check if the user is an admin
                   if user.email == ADMIN_EMAIL:
