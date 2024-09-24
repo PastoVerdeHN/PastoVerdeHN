@@ -124,7 +124,7 @@ def main():
       # Display a personalized welcome message
       st.write(f"Hola {user.name}, bienvenido a Pasto Verde! 🌿")  # Personalized greeting
       st.write(f"User email: {user.email}")
-      st.write(f"User type: {user.type}"
+      st.write(f"User type: {user.type}")
 
       if 'current_page' not in st.session_state:
           st.session_state.current_page = "🏠 Inicio"  # Default page
