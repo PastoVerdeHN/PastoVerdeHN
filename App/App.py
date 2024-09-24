@@ -537,11 +537,13 @@ def send_welcome_email(user_email, user_name):
   sender_email = st.secrets["email"]["sender_email"]
   sender_password = st.secrets["email"]["sender_password"]
 
+  # Create the root message and fill in the from, to, and subject headers
   message = MIMEMultipart("related")
   message["Subject"] = "Welcome to Pasto Verde!"
   message["From"] = sender_email
   message["To"] = user_email
 
+  # Create the body of the message (a plain-text and an HTML version)
   text = f"""\
   Hola {user_name},
   
@@ -570,9 +572,11 @@ def send_welcome_email(user_email, user_name):
   </html>
   """
 
+  # Record the MIME types of both parts - text/plain and text/html
   part1 = MIMEText(text, "plain")
   part2 = MIMEText(html, "html")
 
+  # Attach parts into message container.
   message.attach(part1)
   message.attach(part2)
 
