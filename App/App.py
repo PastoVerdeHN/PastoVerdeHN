@@ -556,15 +556,15 @@ def send_welcome_email(user_email, user_name):
 
   html = f"""\
   <html>
-    <body>
-      <p>Hola {user_name},</p>
-      <p>¡Bienvenido a Pasto Verde! Gracias por registrarte en nuestra plataforma.</p>
-      <p>Estamos emocionados de tenerte con nosotros y esperamos que disfrutes de nuestros servicios de entrega de pasto fresco para tus mascotas.</p>
-      <p>Si tienes alguna pregunta, no dudes en contactarnos.</p>
-      <p>¡Que tengas un gran día!</p>
-      <p>El equipo de Pasto Verde</p>
-    </body>
-  </html>
+  <body>
+    <p>Hola {user_name}, 👋</p>
+    <p>¡Bienvenido a Pasto Verde! 🌿 Gracias por registrarte en nuestra plataforma.</p>
+    <p>Estamos emocionados de tenerte con nosotros 🐾 y esperamos que disfrutes de nuestros servicios de entrega de pasto fresco para tus mascotas. 🐕🐈</p>
+    <p>Si tienes alguna pregunta, no dudes en contactarnos. 📞💬</p>
+    <p>¡Que tengas un gran día! ☀️</p>
+    <p>El equipo de Pasto Verde 🌱</p>
+  </body>
+</html>
   """
 
   part1 = MIMEText(text, "plain")
