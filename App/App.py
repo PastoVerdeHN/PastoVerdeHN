@@ -64,15 +64,6 @@ def auth0_authentication():
   if st.session_state.user is None:
       auth_choice = st.sidebar.radio("Elige acción", ["🔑 Entrar"])
       
-def auth0_authentication():
-  if 'user' not in st.session_state:
-      st.session_state.user = None
-  if 'auth_status' not in st.session_state:
-      st.session_state.auth_status = None
-
-  if st.session_state.user is None:
-      auth_choice = st.sidebar.radio("Elige acción", ["🔑 Entrar"])
-      
       if auth_choice == "🔑 Entrar":
           try:
               AUTH0_CLIENT_ID = st.secrets["auth0"]["AUTH0_CLIENT_ID"]
@@ -105,30 +96,6 @@ def auth0_authentication():
                   )
                   session.add(user)
                   session.commit()
-              else:
-                  # Check if the user is an admin
-                  if user.email == ADMIN_EMAIL:
-                      user.type = UserType.admin  # Set user type to admin if necessary
-
-              # Debugging output
-              st.write(f"User email: {user.email}")
-              st.write(f"User type: {user.type}")
-
-              if not user.welcome_email_sent:
-                  send_welcome_email(user.email, user.name)  # Ensure this function is defined
-                  user.welcome_email_sent = True
-                  session.commit()
-              
-              user.last_login = datetime.utcnow()
-              session.commit()
-              
-              st.session_state.user = user
-              st.session_state.auth_status = "authenticated"
-              st.success(f"Bienvenido, {user.name}!")
-              session.close()
-  
-  return st.session_state.user
-  
               else:
                   # Check if the user is an admin
                   if user.email == ADMIN_EMAIL:
