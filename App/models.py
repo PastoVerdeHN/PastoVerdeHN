@@ -22,10 +22,11 @@ class User(Base):
   email = Column(String, unique=True, nullable=False)
   type = Column(Enum(UserType), nullable=False)
   address = Column(String)
-  phone_number = Column(String, nullable=True)  # Make this nullable
+  phone_number = Column(String, nullable=True)
   created_at = Column(DateTime, default=datetime.utcnow)
   last_login = Column(DateTime)
   is_active = Column(Boolean, default=True)
+  orders = relationship("Order", back_populates="user")
 
   @validates('email')
   def validate_email(self, key, address):
