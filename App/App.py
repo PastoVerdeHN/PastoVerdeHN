@@ -60,6 +60,7 @@ def auth0_authentication():
       st.session_state.user = None
   if 'auth_status' not in st.session_state:
       st.session_state.auth_status = None
+
   if st.session_state.user is None:
       auth_choice = st.sidebar.radio("Elige acción", ["🔑 Entrar"])
       
@@ -88,20 +89,20 @@ def auth0_authentication():
                       id=user_info['sub'],
                       name=user_info['name'],
                       email=user_info['email'],
-                      type=UserType.customer,
+                      type=UserType.admin if user_info['email'] == ADMIN_EMAIL else UserType.customer,  # Set type based on email
                       address='',
                       created_at=datetime.utcnow(),
                       welcome_email_sent=False
                   )
                   session.add(user)
                   session.commit()
-              
-              # Check if the user is an admin
-              if user.email == ADMIN_EMAIL:
-                  user.type = UserType.admin  # Set user type to admin
-              
+              else:
+                  # Check if the user is an admin
+                  if user.email == ADMIN_EMAIL:
+                      user.type = UserType.admin  # Set user type to admin if necessary
+
               if not user.welcome_email_sent:
-                  send_welcome_email(user.email, user.name)
+                  send_welcome_email(user.email, user.name)  # Ensure this function is defined
                   user.welcome_email_sent = True
                   session.commit()
               
@@ -119,12 +120,15 @@ def main():
   st.title("Pasto Verde - Entrega de pasto para mascotas")
   user = auth0_authentication()  # Get the user from authentication
 
-  if user:  # Check if user is authenticated
+  if user:
+      st.write(f"User email: {user.email}")
+      st.write(f"User type: {user.type}")
+
       if 'current_page' not in st.session_state:
           st.session_state.current_page = "🏠 Inicio"  # Default page
       
       menu_items = {
-          "🏠 Inicio": home_page,
+          "🏠 Inicio": home_page,  # Ensure these functions are defined
           "🛒  Ordene Ahora": place_order,
           "📦 Mis Órdenes": display_user_orders,
           "🗺️ Zona De Envios": display_map,
@@ -132,7 +136,7 @@ def main():
       }
       
       if user.type == UserType.admin:
-          menu_items["📊 Admin Dashboard"] = admin_dashboard
+          menu_items["📊 Admin Dashboard"] = admin_dashboard  # Ensure this function is defined
       
       cols = st.columns(len(menu_items))
       for i, (emoji_label, func) in enumerate(menu_items.items()):
