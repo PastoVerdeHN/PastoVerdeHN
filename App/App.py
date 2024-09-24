@@ -582,7 +582,8 @@ def send_welcome_email(user_email, user_name):
   if response.status_code == 200:
       img_data = response.content
       image = MIMEImage(img_data)
-      image.add_header('Content-ID', '<image1>')
+      image.add_header('Content-ID', '<image1>')  # Ensure this matches the HTML
+      image.add_header('Content-Disposition', 'inline', filename="Email Banner.jpg")
       message.attach(image)
   else:
       print("Failed to download image from GitHub")
