@@ -552,17 +552,21 @@ def send_welcome_email(user_email, user_name):
   message["To"] = user_email
 
   text = f"""\
-  Hola {user_name},
-  
-  ¡Bienvenido a Pasto Verde! Gracias por registrarte en nuestra plataforma.
-  
-  Estamos emocionados de tenerte con nosotros y esperamos que disfrutes de nuestros servicios de entrega de pasto fresco para tus mascotas.
-  
-  Si tienes alguna pregunta, no dudes en contactarnos.
-  
-  ¡Que tengas un gran día!
-  
-  El equipo de Pasto Verde
+🌿🐾🐕🐈
+
+Hola {user_name}, 👋
+
+¡Bienvenido a Pasto Verde! 🌿 Gracias por registrarte en nuestra plataforma.
+
+Estamos emocionados de tenerte con nosotros 🐾 y esperamos que disfrutes de nuestros servicios de entrega de pasto fresco para tus mascotas. 🐕🐈
+
+Si tienes alguna pregunta, no dudes en contactarnos. 📞💬
+
+¡Que tengas un gran día! ☀️
+
+El equipo de Pasto Verde 🌱
+
+🌿🐾🐕🐈
   """
 
   html = f"""\
