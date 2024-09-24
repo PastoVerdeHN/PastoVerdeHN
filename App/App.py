@@ -18,6 +18,8 @@ import streamlit.components.v1 as components
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.mime.image import MIMEImage
+import requests
 
 # Streamlit page configuration
 st.set_page_config(
