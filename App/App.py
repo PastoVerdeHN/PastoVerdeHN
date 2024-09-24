@@ -117,24 +117,22 @@ def auth0_authentication():
 
 def main():
   st.title("Pasto Verde - Entrega de pasto para mascotas")
-  user = auth0_authentication()
-  
-if user:
-  if 'current_page' not in st.session_state:
-      st.session_state.current_page = "🏠 Inicio"  # Default page
-  
-  menu_items = {
-      "🏠 Inicio": home_page,
-      "🛒  Ordene Ahora": place_order,
-      "📦 Mis Órdenes": display_user_orders,
-      "🗺️ Zona De Envios": display_map,
-      "ℹ️ Sobre Nosotros": about_us,
-  }
-  
-  if user.type == UserType.admin:
-      menu_items["📊 Admin Dashboard"] = admin_dashboard
-  
-  # Rest of your menu logic...
+  user = auth0_authentication()  # Get the user from authentication
+
+  if user:  # Check if user is authenticated
+      if 'current_page' not in st.session_state:
+          st.session_state.current_page = "🏠 Inicio"  # Default page
+      
+      menu_items = {
+          "🏠 Inicio": home_page,
+          "🛒  Ordene Ahora": place_order,
+          "📦 Mis Órdenes": display_user_orders,
+          "🗺️ Zona De Envios": display_map,
+          "ℹ️ Sobre Nosotros": about_us,
+      }
+      
+      if user.type == UserType.admin:
+          menu_items["📊 Admin Dashboard"] = admin_dashboard
       
       cols = st.columns(len(menu_items))
       for i, (emoji_label, func) in enumerate(menu_items.items()):
@@ -155,8 +153,6 @@ if user:
               del st.session_state[key]
           st.success("Logged out successfully.")
           st.rerun()
-      
-
   else:
       st.write("Por favor inicie sesión para acceder a los servicios de Pasto Verde")
     
