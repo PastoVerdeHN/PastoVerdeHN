@@ -26,8 +26,13 @@ class User(Base):
   created_at = Column(DateTime, default=datetime.utcnow)
   last_login = Column(DateTime)
   is_active = Column(Boolean, default=True)
-  welcome_email_sent = Column(Boolean, default=False)  # New field to track email status
+  welcome_email_sent = Column(Boolean, default=False)
   orders = relationship("Order", back_populates="user")
+
+  @validates('email')
+  def validate_email(self, key, address):
+      assert '@' in address
+      return address
 
 class Product(Base):
   __tablename__ = 'products'
@@ -82,10 +87,7 @@ class PaymentTransaction(Base):
 def setup_database(database_url):
   engine = create_engine(database_url, echo=True)
   
-  # Drop all existing tables
-  Base.metadata.drop_all(engine)
-  
-  # Create all tables
+  # Create all tables if they don't exist
   Base.metadata.create_all(engine)
   
   return sessionmaker(bind=engine)
