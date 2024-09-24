@@ -81,5 +81,11 @@ class PaymentTransaction(Base):
 
 def setup_database(database_url):
   engine = create_engine(database_url, echo=True)
-  Base.metadata.create_all(engine)  # Create all tables
+  
+  # Drop all existing tables
+  Base.metadata.drop_all(engine)
+  
+  # Create all tables
+  Base.metadata.create_all(engine)
+  
   return sessionmaker(bind=engine)
