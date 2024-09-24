@@ -70,6 +70,7 @@ def auth0_authentication():
           except KeyError:
               st.error("Auth0 configuration not found. Please set AUTH0_CLIENT_ID and AUTH0_DOMAIN in Streamlit secrets.")
               return None
+          
           user_info = login_button(
               AUTH0_CLIENT_ID, 
               domain=AUTH0_DOMAIN,
@@ -79,7 +80,9 @@ def auth0_authentication():
           if user_info and st.session_state.auth_status != "authenticated":
               session = Session()
               user = session.query(User).filter_by(email=user_info['email']).first()
+              
               if not user:
+                  # New user registration
                   user = User(
                       id=user_info['sub'],
                       name=user_info['name'],
@@ -91,6 +94,13 @@ def auth0_authentication():
                   session.add(user)
                   session.commit()
                   send_welcome_email(user.email, user.name)
+                  user.welcome_email_sent = True  # Mark email as sent
+                  session.commit()
+              elif not user.welcome_email_sent:
+                  # Existing user but email not sent
+                  send_welcome_email(user.email, user.name)
+                  user.welcome_email_sent = True
+                  session.commit()
               
               user.last_login = datetime.utcnow()
               session.commit()
@@ -533,13 +543,6 @@ def about_us():
   Únete a nosotros para hacer que el día de tu mascota sea un poco más verde y mucho más divertido.
   """)
 
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.mime.image import MIMEImage
-import requests
-import streamlit as st
-
 def send_welcome_email(user_email, user_name):
   sender_email = st.secrets["email"]["sender_email"]
   sender_password = st.secrets["email"]["sender_password"]
@@ -603,7 +606,6 @@ def send_welcome_email(user_email, user_name):
       print(f"Welcome email sent to {user_email}")
   except Exception as e:
       print(f"Error sending email to {user_email}: {str(e)}")
-
 def admin_dashboard():
   if st.session_state.user.type != UserType.admin:
       st.error("You don't have permission to access this page.")
