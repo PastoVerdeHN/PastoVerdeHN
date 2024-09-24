@@ -29,11 +29,6 @@ class User(Base):
   welcome_email_sent = Column(Boolean, default=False)  # New field to track email status
   orders = relationship("Order", back_populates="user")
 
-  @validates('email')
-  def validate_email(self, key, address):
-      assert '@' in address
-      return address
-
 class Product(Base):
   __tablename__ = 'products'
   id = Column(Integer, primary_key=True)
