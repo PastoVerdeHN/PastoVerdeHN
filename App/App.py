@@ -535,7 +535,7 @@ def send_welcome_email(user_email, user_name):
   sender_email = st.secrets["email"]["sender_email"]
   sender_password = st.secrets["email"]["sender_password"]
 
-  message = MIMEMultipart("alternative")
+  message = MIMEMultipart("related")
   message["Subject"] = "Welcome to Pasto Verde!"
   message["From"] = sender_email
   message["To"] = user_email
@@ -563,8 +563,9 @@ def send_welcome_email(user_email, user_name):
     <p>Si tienes alguna pregunta, no dudes en contactarnos. 📞💬</p>
     <p>¡Que tengas un gran día! ☀️</p>
     <p>El equipo de Pasto Verde 🌱</p>
+    <img src="cid:image1" alt="Pasto Verde Logo" style="width:300px;height:auto;">
   </body>
-</html>
+  </html>
   """
 
   part1 = MIMEText(text, "plain")
@@ -572,6 +573,17 @@ def send_welcome_email(user_email, user_name):
 
   message.attach(part1)
   message.attach(part2)
+
+  # Download the image from GitHub
+  image_url = "https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/Email%20Banner.jpg"
+  response = requests.get(image_url)
+  if response.status_code == 200:
+      img_data = response.content
+      image = MIMEImage(img_data)
+      image.add_header('Content-ID', '<image1>')
+      message.attach(image)
+  else:
+      print("Failed to download image from GitHub")
 
   try:
       with smtplib.SMTP("smtp-mail.outlook.com", 587) as server:
