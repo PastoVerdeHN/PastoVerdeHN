@@ -124,7 +124,7 @@ def main():
   st.title("Pasto Verde - Entrega de pasto para mascotas")
   user = auth0_authentication()  # Get the user from authentication
 
-  if user:
+if user:
   # Display a personalized welcome message
   st.write(f"Hola {user.name}, bienvenido a Pasto Verde! 🌿")  # Personalized greeting
   st.write(f"User email: {user.email}")
