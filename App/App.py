@@ -306,10 +306,9 @@ def place_order():
               total_price *= 11  # Multiply by 11 for annual subscription (1 month free)
               st.write("¡Tienes un mes gratis! Solo pagas por 11 meses.")
           elif selected_plan == "Suscripción Semestral":
-              total_price = lempira_price * 6  # Total for semi-annual is 6 months
+              total_price = lempira_price  # Display the correct total for semi-annual
               st.write(f"Precio total para 6 meses: L. {total_price:.2f}")
           else:
-              total_price = lempira_price  # For monthly or one-time purchase
               st.write(f"Precio: L. {lempira_price:.2f} por mes")
           
           st.write("Cambio de dólar: 1$ = L.25.00")
@@ -320,7 +319,6 @@ def place_order():
           st.write(f"Fecha de entrega: {delivery_date}")
           st.write(f"Horario de entrega: {delivery_time_frame}")
           st.write(f"Total: L. {total_price:.2f}")
-          st.write("**Nota:** En el checkout, se incluye una caja de madera premium con los planes de suscripción.")
 
       if st.button("Confirmar pedido"):
           # Create new order
@@ -453,6 +451,24 @@ def place_order():
               </script>
               '''
               components.html(paypal_html, height=300)
+
+  session.close()
+
+def display_user_orders():
+  st.subheader("📦 Mis Órdenes")
+  
+  session = Session()
+  orders = session.query(Order).filter_by(user_id=st.session_state.user.id).all()
+  
+  for order in orders:
+      with st.expander(f"Order ID: {order.id} - Status: {order.status.value}"):
+          st.write(f"Delivery Date: {order.date}")
+          st.write(f"Delivery Address: {order.delivery_address}")
+          st.write(f"Total Price: L. {order.total_price:.2f}")
+          if order.product_id:
+              product = session.query(Product).filter_by(id=order.product_id).first()
+              if product:
+                  st.write(f"Product: {product.name}")
 
   session.close()
 
