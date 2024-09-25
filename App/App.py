@@ -128,11 +128,12 @@ def main():
           st.session_state.current_page = "🏠 Inicio"  # Default page
       
       menu_items = {
-          "🏠 Inicio": home_page,  # Ensure these functions are defined
+          "🏠 Inicio": home_page,
           "🛒  Ordene Ahora": place_order,
           "📦 Mis Órdenes": display_user_orders,
           "🗺️ Zona De Envios": display_map,
           "ℹ️ Sobre Nosotros": about_us,
+          "📖 Manual de Usuario": user_manual  # New menu item
       }
       
       if user.type == UserType.admin:
@@ -159,7 +160,7 @@ def main():
           st.rerun()
   else:
       st.write("Por favor inicie sesión para acceder a los servicios de Pasto Verde")
-    
+      
       # Move the image to the bottom of the sidebar
       st.sidebar.markdown("---")
       image_url = "https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/main/STREAMLIT%20PAGE%20ICON.png"
@@ -494,6 +495,40 @@ def display_user_orders():
               st.progress(0)  # Default to 0 if status is unknown
 
   session.close()
+def user_manual():
+  st.subheader("📖 Manual de Usuario")
+  st.write("""
+  Bienvenido al Manual de Usuario de Pasto Verde. Aquí encontrarás información útil para navegar y utilizar la aplicación de manera efectiva.
+  
+  ## ¿Qué es Pasto Verde?
+  Pasto Verde es un servicio de entrega de pasto fresco para tus mascotas. Ofrecemos diferentes planes de suscripción y opciones de compra única.
+
+  ## ¿Cómo registrarse?
+  1. Haz clic en el botón "Entrar" en la barra lateral.
+  2. Completa el formulario de registro con tu información.
+  3. Recibirás un correo electrónico de bienvenida.
+
+  ## ¿Cómo realizar un pedido?
+  1. Selecciona el plan que deseas en la sección "Ordene Ahora".
+  2. Ingresa tu dirección de entrega.
+  3. Revisa tu pedido y haz clic en "Confirmar pedido".
+
+  ## ¿Cómo ver mis órdenes?
+  - Ve a la sección "Mis Órdenes" para ver el estado de tus pedidos anteriores.
+
+  ## ¿Cómo contactar al soporte?
+  Si tienes alguna pregunta o necesitas ayuda, puedes contactarnos a través del correo electrónico proporcionado en la sección "Sobre Nosotros".
+
+  ## Preguntas Frecuentes (FAQ)
+  **¿Puedo cancelar mi suscripción?**
+  Sí, puedes cancelar tu suscripción en cualquier momento. Simplemente contáctanos.
+
+  **¿Qué métodos de pago aceptan?**
+  Aceptamos pagos a través de PayPal y tarjetas de crédito.
+
+  **¿Cómo puedo cambiar mi dirección de entrega?**
+  Puedes actualizar tu dirección de entrega en la sección de "Ordene Ahora" antes de confirmar tu pedido.
+  """)
 
 def display_map():
   st.subheader("🗺️ Zona de Entrega")
