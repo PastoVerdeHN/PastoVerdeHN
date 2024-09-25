@@ -306,9 +306,10 @@ def place_order():
               total_price *= 11  # Multiply by 11 for annual subscription (1 month free)
               st.write("¡Tienes un mes gratis! Solo pagas por 11 meses.")
           elif selected_plan == "Suscripción Semestral":
-              total_price = lempira_price  # Display the correct total for semi-annual
+              total_price = lempira_price * 6  # Total for semi-annual is 6 months
               st.write(f"Precio total para 6 meses: L. {total_price:.2f}")
           else:
+              total_price = lempira_price  # For monthly or one-time purchase
               st.write(f"Precio: L. {lempira_price:.2f} por mes")
           
           st.write("Cambio de dólar: 1$ = L.25.00")
@@ -319,6 +320,7 @@ def place_order():
           st.write(f"Fecha de entrega: {delivery_date}")
           st.write(f"Horario de entrega: {delivery_time_frame}")
           st.write(f"Total: L. {total_price:.2f}")
+          st.write("**Nota:** En el checkout, se incluye una caja de madera premium con los planes de suscripción.")
 
       if st.button("Confirmar pedido"):
           # Create new order
