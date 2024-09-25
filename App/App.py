@@ -324,7 +324,7 @@ def place_order():
           
           session.commit()
           
-          st.success(f"Pedido Procesando⌛ -Por favor confirmar el pago para coordinar la entrega de su orden. Numero de pedido: {new_order.id}")
+          st.success(f"*Pedido Procesando⌛* Por favor confirmar el pago para coordinar la entrega de su orden.                           Numero de pedido: {new_order.id}")
           
           if selected_plan == "Suscripción Anual":
               paypal_html = '''
