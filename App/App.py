@@ -351,6 +351,7 @@ if st.button("Confirmar pedido"):
 
     # Trigger the balloon animation
     st.balloons()
+  
           # PayPal integration
           if selected_plan == "Suscripción Anual":
               paypal_html = '''
