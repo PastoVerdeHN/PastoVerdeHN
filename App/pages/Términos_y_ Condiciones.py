@@ -8,8 +8,10 @@ def main():
     image_url = "https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/main/STREAMLIT%20PAGE%20ICON.png"
     st.sidebar.image(image_url, use_column_width=True, caption="La Naturaleza A Los Pies De Tus Mascota")
 
-    st.write("""
-     ¡Bienvenido a los términos de servicio de Pasto Verde! Al utilizar nuestros servicios, usted acepta los siguientes términos y condiciones:
+def terms_and_privacy():
+  st.subheader("📜 Términos de Servicio de Pasto Verde")
+  st.write("""
+  ¡Bienvenido a los términos de servicio de Pasto Verde! Al utilizar nuestros servicios, usted acepta los siguientes términos y condiciones:
 
   **Dirección de Entrega**  
   El cliente es responsable de proporcionar una dirección de entrega correcta y accesible para recibir las alfombras de césped natural. Pasto Verde no se hace responsable por cualquier daño o deterioro ocurrido a la alfombra de césped después de la entrega exitosa en la dirección proporcionada.
@@ -71,7 +73,8 @@ def main():
 
   En Pasto Verde, valoramos tu confianza en nosotros. Si tienes alguna pregunta o inquietud sobre nuestra política de privacidad, no dudes en contactarnos. Estamos aquí para ayudarte y asegurarnos de que tu experiencia con nosotros sea de la más alta calidad.
 
-  Last updated: September 04, 2024")
+  Last updated: September 04, 2024
+  """)
 
     if st.button("Inicio"):
         st.switch_page("App.py")
