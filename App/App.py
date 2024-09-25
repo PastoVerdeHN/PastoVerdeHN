@@ -349,6 +349,10 @@ def place_order():
           
           st.success(f"*Pedido Procesando⌛* Por favor confirmar el pago para coordinar la entrega de su orden.                           Numero de pedido: {new_order.id}")
 
+         # Trigger the balloon animation
+  st.balloons()
+
+
           # PayPal integration
           if selected_plan == "Suscripción Anual":
               paypal_html = '''
