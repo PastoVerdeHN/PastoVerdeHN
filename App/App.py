@@ -322,37 +322,35 @@ def place_order():
           st.write(f"Total: L. {total_price:.2f}")
           st.write("**Nota:** En el checkout, se incluye una caja de madera con los planes de suscripción. One-time setup fee")
 
-      if st.button("Confirmar pedido"):
-          # Create new order
-          new_order = Order(
-              id=generate_order_id(),
-              user_id=st.session_state.user.id,
-              product_id=1,  # Assuming product_id 1 is for grass
-              quantity=1,
-              delivery_address=full_address,
-              status=OrderStatus.pending,
-              total_price=total_price  # Use the calculated total price
-          )
-          session.add(new_order)
-          
-          # If it's a subscription, create a subscription record
-          if selected_plan != "Sin Suscripción":
-              new_subscription = Subscription(
-                  user_id=st.session_state.user.id,
-                  plan_name=selected_plan,
-                  start_date=datetime.utcnow(),
-                  is_active=True
-              )
-              session.add(new_subscription)
-          
-          session.commit()
-          
-          st.success(f"*Pedido Procesando⌛* Por favor confirmar el pago para coordinar la entrega de su orden.                           Numero de pedido: {new_order.id}")
+if st.button("Confirmar pedido"):
+    # Create new order
+    new_order = Order(
+        id=generate_order_id(),
+        user_id=st.session_state.user.id,
+        product_id=1,  # Assuming product_id 1 is for grass
+        quantity=1,
+        delivery_address=full_address,
+        status=OrderStatus.pending,
+        total_price=total_price  # Use the calculated total price
+    )
+    session.add(new_order)
+    
+    # If it's a subscription, create a subscription record
+    if selected_plan != "Sin Suscripción":
+        new_subscription = Subscription(
+            user_id=st.session_state.user.id,
+            plan_name=selected_plan,
+            start_date=datetime.utcnow(),
+            is_active=True
+        )
+        session.add(new_subscription)
+    
+    session.commit()
+    
+    st.success(f"*Pedido Procesando⌛* Por favor confirmar el pago para coordinar la entrega de su orden. Numero de pedido: {new_order.id}")
 
-         # Trigger the balloon animation
-  st.balloons()
-
-
+    # Trigger the balloon animation
+    st.balloons()
           # PayPal integration
           if selected_plan == "Suscripción Anual":
               paypal_html = '''
