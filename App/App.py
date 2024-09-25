@@ -320,7 +320,7 @@ def place_order():
           st.write(f"Fecha de entrega: {delivery_date}")
           st.write(f"Horario de entrega: {delivery_time_frame}")
           st.write(f"Total: L. {total_price:.2f}")
-          st.write("**Nota:** En el checkout, se incluye una caja de madera premium con los planes de suscripción.")
+          st.write("**Nota:** En el checkout, se incluye una caja de madera con los planes de suscripción. One-time setup fee")
 
       if st.button("Confirmar pedido"):
           # Create new order
