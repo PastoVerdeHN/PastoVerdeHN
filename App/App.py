@@ -291,6 +291,9 @@ def place_order():
   user_phone = st.text_input("Número de teléfono", value="")
   delivery_date = st.date_input("Fecha de entrega", value=datetime.today())
 
+  # Delivery Time Frame Selection
+  delivery_time_frame = st.radio("Selecciona un horario de entrega:", ("AM (8am - 12pm)", "PM (12pm - 4pm)"))
+
   # Order Review
   if selected_plan and st.session_state.map_center:
       with st.expander("Resumen del Pedido", expanded=True):
@@ -299,12 +302,14 @@ def place_order():
           lempira_price = plans[selected_plan]['price']
           total_price = lempira_price
           
-          if selected_plan != "Sin Suscripción":
-              if selected_plan == "Suscripción Anual":
-                  total_price *= 12  # Multiply by 12 for annual subscription
-              st.write(f"Precio: L. {lempira_price:.2f} por mes")
+          if selected_plan == "Suscripción Anual":
+              total_price *= 11  # Multiply by 11 for annual subscription (1 month free)
+              st.write("¡Tienes un mes gratis! Solo pagas por 11 meses.")
+          elif selected_plan == "Suscripción Semestral":
+              total_price = lempira_price  # Display the correct total for semi-annual
+              st.write(f"Precio total para 6 meses: L. {total_price:.2f}")
           else:
-              st.write(f"Precio: L. {lempira_price:.2f}")
+              st.write(f"Precio: L. {lempira_price:.2f} por mes")
           
           st.write("Cambio de dólar: 1$ = L.25.00")
           st.write(f"Dirección de entrega: {full_address}")
@@ -312,6 +317,7 @@ def place_order():
           st.write(f"Correo electrónico: {user_email}")
           st.write(f"Número de teléfono: {user_phone}")
           st.write(f"Fecha de entrega: {delivery_date}")
+          st.write(f"Horario de entrega: {delivery_time_frame}")
           st.write(f"Total: L. {total_price:.2f}")
 
       if st.button("Confirmar pedido"):
