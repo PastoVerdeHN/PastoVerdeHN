@@ -187,7 +187,7 @@ def place_order():
               "Entrega cada dos semanas",
               "Envío gratis",
               "Descuento del 29%",
-              "Descuento adicional del 40%", 
+              "Descuento adicional del 40%",
               "Personalización incluida",
               "Primer mes gratis"
           ]
@@ -208,7 +208,7 @@ def place_order():
           "price": 1080.00,
           "features": [
               "Entrega cada dos semanas",
-              "Envío gratis", 
+              "Envío gratis",
               "Descuento del 29%",
               "Descuento adicional del 10%"
           ]
@@ -285,19 +285,34 @@ def place_order():
   if additional_references:
       full_address += f" ({additional_references})"
 
+  # User Information
+  user_full_name = st.text_input("Nombre completo", value=st.session_state.user.name)
+  user_email = st.text_input("Correo electrónico", value=st.session_state.user.email)
+  user_phone = st.text_input("Número de teléfono", value="")
+  delivery_date = st.date_input("Fecha de entrega", value=datetime.today())
+
   # Order Review
   if selected_plan and st.session_state.map_center:
       with st.expander("Resumen del Pedido", expanded=True):
           st.write(f"Plan seleccionado: **{selected_plan}**")
           
           lempira_price = plans[selected_plan]['price']
+          total_price = lempira_price
+          
           if selected_plan != "Sin Suscripción":
+              if selected_plan == "Suscripción Anual":
+                  total_price *= 12  # Multiply by 12 for annual subscription
               st.write(f"Precio: L. {lempira_price:.2f} por mes")
           else:
               st.write(f"Precio: L. {lempira_price:.2f}")
           
           st.write("Cambio de dólar: 1$ = L.25.00")
           st.write(f"Dirección de entrega: {full_address}")
+          st.write(f"Nombre completo: {user_full_name}")
+          st.write(f"Correo electrónico: {user_email}")
+          st.write(f"Número de teléfono: {user_phone}")
+          st.write(f"Fecha de entrega: {delivery_date}")
+          st.write(f"Total: L. {total_price:.2f}")
 
       if st.button("Confirmar pedido"):
           # Create new order
@@ -308,7 +323,7 @@ def place_order():
               quantity=1,
               delivery_address=full_address,
               status=OrderStatus.pending,
-              total_price=lempira_price
+              total_price=total_price  # Use the calculated total price
           )
           session.add(new_order)
           
@@ -325,32 +340,33 @@ def place_order():
           session.commit()
           
           st.success(f"*Pedido Procesando⌛* Por favor confirmar el pago para coordinar la entrega de su orden.                           Numero de pedido: {new_order.id}")
-          
+
+          # PayPal integration
           if selected_plan == "Suscripción Anual":
               paypal_html = '''
               <div id="paypal-button-container-P-4E978587FL636905DM3UPY3Q"></div>
               <script src="https://www.paypal.com/sdk/js?client-id=Ad_76woIrZWXf2QX3KYxFd-iAKTTCqxTtLYB0GOYK4weEQYf52INL5SREytqj4mY84BOVy9wWTsrvcxI&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
               <script>
-                paypal.Buttons({
-                    style: {
-                        shape: 'pill',
-                        color: 'black',
-                        layout: 'horizontal',
-                        label: 'subscribe'
-                    },
-                    createSubscription: function(data, actions) {
-                      return actions.subscription.create({
-                        plan_id: 'P-4E978587FL636905DM3UPY3Q'
-                      });
-                    },
-                    onApprove: function(data, actions) {
-                      alert('¡Suscripción Anual realizada con éxito! 🎉 ID de suscripción: ' + data.subscriptionID);
-                      window.location.reload();
-                    },
-                    onError: function(err) {
-                      alert('Error al procesar el pago. Intenta de nuevo.');
-                    }
-                }).render('#paypal-button-container-P-4E978587FL636905DM3UPY3Q');
+                  paypal.Buttons({
+                      style: {
+                          shape: 'pill',
+                          color: 'black',
+                          layout: 'horizontal',
+                          label: 'subscribe'
+                      },
+                      createSubscription: function(data, actions) {
+                          return actions.subscription.create({
+                              plan_id: 'P-4E978587FL636905DM3UPY3Q'
+                          });
+                      },
+                      onApprove: function(data, actions) {
+                          alert('¡Suscripción Anual realizada con éxito! 🎉 ID de suscripción: ' + data.subscriptionID);
+                          window.location.reload();
+                      },
+                      onError: function(err) {
+                          alert('Error al procesar el pago. Intenta de nuevo.');
+                      }
+                  }).render('#paypal-button-container-P-4E978587FL636905DM3UPY3Q');
               </script>
               '''
               components.html(paypal_html, height=300)
@@ -359,26 +375,26 @@ def place_order():
               <div id="paypal-button-container-P-8JD80124L6471951GM3UKKHA"></div>
               <script src="https://www.paypal.com/sdk/js?client-id=Ad_76woIrZWXf2QX3KYxFd-iAKTTCqxTtLYB0GOYK4weEQYf52INL5SREytqj4mY84BOVy9wWTsrvcxI&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
               <script>
-                paypal.Buttons({
-                    style: {
-                        shape: 'pill',
-                        color: 'blue',
-                        layout: 'horizontal',
-                        label: 'subscribe'
-                    },
-                    createSubscription: function(data, actions) {
-                      return actions.subscription.create({
-                        plan_id: 'P-8JD80124L6471951GM3UKKHA'
-                      });
-                    },
-                    onApprove: function(data, actions) {
-                      alert('¡Pedido realizado con éxito! 🎉');
-                      window.location.reload();
-                    },
-                    onError: function(err) {
-                      alert('Error al procesar el pago. Intenta de nuevo.');
-                    }
-                }).render('#paypal-button-container-P-8JD80124L6471951GM3UKKHA');
+                  paypal.Buttons({
+                      style: {
+                          shape: 'pill',
+                          color: 'blue',
+                          layout: 'horizontal',
+                          label: 'subscribe'
+                      },
+                      createSubscription: function(data, actions) {
+                          return actions.subscription.create({
+                              plan_id: 'P-8JD80124L6471951GM3UKKHA'
+                          });
+                      },
+                      onApprove: function(data, actions) {
+                          alert('¡Pedido realizado con éxito! 🎉');
+                          window.location.reload();
+                      },
+                      onError: function(err) {
+                          alert('Error al procesar el pago. Intenta de nuevo.');
+                      }
+                  }).render('#paypal-button-container-P-8JD80124L6471951GM3UKKHA');
               </script>
               '''
               components.html(paypal_html, height=300)
@@ -387,26 +403,26 @@ def place_order():
               <div id="paypal-button-container-P-79741958WR506740HM3UPLFA"></div>
               <script src="https://www.paypal.com/sdk/js?client-id=Ad_76woIrZWXf2QX3KYxFd-iAKTTCqxTtLYB0GOYK4weEQYf52INL5SREytqj4mY84BOVy9wWTsrvcxI&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
               <script>
-                paypal.Buttons({
-                    style: {
-                        shape: 'pill',
-                        color: 'gold',
-                        layout: 'horizontal',
-                        label: 'subscribe'
-                    },
-                    createSubscription: function(data, actions) {
-                      return actions.subscription.create({
-                        plan_id: 'P-79741958WR506740HM3UPLFA'
-                      });
-                    },
-                    onApprove: function(data, actions) {
-                      alert('¡Pedido realizado con éxito! 🎉 ID de suscripción: ' + data.subscriptionID);
-                      window.location.reload();
-                    },
-                    onError: function(err) {
-                      alert('Error al procesar el pago. Intenta de nuevo.');
-                    }
-                }).render('#paypal-button-container-P-79741958WR506740HM3UPLFA');
+                  paypal.Buttons({
+                      style: {
+                          shape: 'pill',
+                          color: 'gold',
+                          layout: 'horizontal',
+                          label: 'subscribe'
+                      },
+                      createSubscription: function(data, actions) {
+                          return actions.subscription.create({
+                              plan_id: 'P-79741958WR506740HM3UPLFA'
+                          });
+                      },
+                      onApprove: function(data, actions) {
+                          alert('¡Pedido realizado con éxito! 🎉 ID de suscripción: ' + data.subscriptionID);
+                          window.location.reload();
+                      },
+                      onError: function(err) {
+                          alert('Error al procesar el pago. Intenta de nuevo.');
+                      }
+                  }).render('#paypal-button-container-P-79741958WR506740HM3UPLFA');
               </script>
               '''
               components.html(paypal_html, height=300)
@@ -415,17 +431,17 @@ def place_order():
               <script src="https://www.paypal.com/sdk/js?client-id=BAAmZb8q_th0dhU_yFYAOp1HcFnZXsBa-Hf3qv-QhyDOOit1Qvkjc5_3rBFkG8s4VjvmVOyqrh_B7n1Ic0&components=hosted-buttons&disable-funding=venmo&currency=USD"></script>
               <div id="paypal-container-AMM5P24GTYSR8"></div>
               <script>
-                paypal.HostedButtons({
-                  hostedButtonId: "AMM5P24GTYSR8",
-                  onApprove: function(data) {
-                    alert('¡Compra realizada con éxito! 🎉 ID de transacción: ' + data.orderID);
-                    window.location.reload();
-                  },
-                  onError: function(err) {
-                    alert('Error al procesar el pago. Intenta de nuevo.');
-                    console.error('PayPal error:', err);
-                  }
-                }).render("#paypal-container-AMM5P24GTYSR8");
+                  paypal.HostedButtons({
+                      hostedButtonId: "AMM5P24GTYSR8",
+                      onApprove: function(data) {
+                          alert('¡Compra realizada con éxito! 🎉 ID de transacción: ' + data.orderID);
+                          window.location.reload();
+                      },
+                      onError: function(err) {
+                          alert('Error al procesar el pago. Intenta de nuevo.');
+                          console.error('PayPal error:', err);
+                      }
+                  }).render("#paypal-container-AMM5P24GTYSR8");
               </script>
               '''
               components.html(paypal_html, height=300)
