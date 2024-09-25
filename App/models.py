@@ -10,10 +10,11 @@ class UserType(enum.Enum):
   customer = "customer"
   admin = "admin"
 
-class OrderStatus(enum.Enum):
-  pending = "pending"
-  completed = "completed"
-  cancelled = "cancelled"
+class OrderStatus(Enum):
+  pending = "Pending"
+  confirmed = "Confirmed"
+  shipped = "Shipped"
+  delivered = "Delivered"
 
 class User(Base):
   __tablename__ = 'users'
