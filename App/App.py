@@ -20,10 +20,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.image import MIMEImage
 import requests
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from modules.home import home_page
+from modules import home
 
 
 
