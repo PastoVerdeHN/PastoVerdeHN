@@ -375,6 +375,21 @@ def place_order():
                               purchase_units: [{{
                                   amount: {{
                                       value: '{total_price / 25:.2f}'  // Convert Lempira to USD
+                                  }},
+                                  description: '{selected_plan}',  // Use the selected plan name as the description
+                                  custom_id: 'Instrucciones: {additional_references}',  // Use additional references as instructions
+                                  shipping: {{
+                                      name: {{
+                                          full_name: '{user_full_name}'
+                                      }},
+                                      address: {{
+                                          address_line_1: '{specific_address}',
+                                          address_line_2: '{additional_references}',
+                                          admin_area_2: 'Tegucigalpa',  // City
+                                          admin_area_1: 'FM',  // State
+                                          postal_code: '11101',  // Example postal code
+                                          country_code: 'HN'  // Country code
+                                      }}
                                   }}
                               }}]
                           }});
