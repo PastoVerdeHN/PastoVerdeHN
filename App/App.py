@@ -498,7 +498,7 @@ def place_order():
   session.close()
 
   @app.post("/update_order")
-async def update_order(request: Request):
+  async def update_order(request: Request):
     data = await request.json()
     order_id = data.get("order_id")
     transaction_id = data.get("transaction_id")
