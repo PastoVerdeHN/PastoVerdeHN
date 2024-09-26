@@ -392,7 +392,7 @@ def place_order():
                   }}).render('#paypal-button-container');
               </script>
               '''
-              components.html(paypal_html, height=600)
+              components.html(paypal_html, height=1200)
           elif selected_plan == "Suscripción Mensual":
               paypal_html = f'''
               <div id="paypal-button-container-P-8JD80124L6471951GM3UKKHA"></div>
