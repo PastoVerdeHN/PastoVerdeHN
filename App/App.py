@@ -363,47 +363,46 @@ def place_order():
           st.balloons()
 
           # PayPal integration
-if selected_plan == "Sin Suscripción":
-  if promo_code.upper() == "VERDEHN":
-      # PayPal button for discounted price
-      paypal_html = '''
-      <script src="https://www.paypal.com/sdk/js?client-id=BAAmZb8q_th0dhU_yFYAOp1HcFnZXsBa-Hf3qv-QhyDOOit1Qvkjc5_3rBFkG8s4VjvmVOyqrh_B7n1Ic0&components=hosted-buttons&disable-funding=venmo&currency=USD"></script>
-      <div id="paypal-container-QJEJ468BAFZWC"></div>
-      <script>
-          paypal.HostedButtons({
-              hostedButtonId: "QJEJ468BAFZWC",
-              onApprove: function(data) {
-                  alert('¡Compra realizada con éxito! 🎉 ID de transacción: ' + data.orderID);
-                  window.location.reload();
-              },
-              onError: function(err) {
-                  alert('Error al procesar el pago. Intenta de nuevo.');
-                  console.error('PayPal error:', err);
-              }
-          }).render("#paypal-container-QJEJ468BAFZWC");
-      </script>
-      '''
-  else:
-      # PayPal button for regular price
-      paypal_html = '''
-      <script src="https://www.paypal.com/sdk/js?client-id=BAAmZb8q_th0dhU_yFYAOp1HcFnZXsBa-Hf3qv-QhyDOOit1Qvkjc5_3rBFkG8s4VjvmVOyqrh_B7n1Ic0&components=hosted-buttons&disable-funding=venmo&currency=USD"></script>
-      <div id="paypal-container-AMM5P24GTYSR8"></div>
-      <script>
-          paypal.HostedButtons({
-              hostedButtonId: "AMM5P24GTYSR8",
-              onApprove: function(data) {
-                  alert('¡Compra realizada con éxito! 🎉 ID de transacción: ' + data.orderID);
-                  window.location.reload();
-              },
-              onError: function(err) {
-                  alert('Error al procesar el pago. Intenta de nuevo.');
-                  console.error('PayPal error:', err);
-              }
-          }).render("#paypal-container-AMM5P24GTYSR8");
-      </script>
-      '''
-  components.html(paypal_html, height=400)
-  
+          if selected_plan == "Sin Suscripción":
+              if promo_code.upper() == "VERDEHN":
+                  # PayPal button for discounted price
+                  paypal_html = '''
+                  <script src="https://www.paypal.com/sdk/js?client-id=BAAmZb8q_th0dhU_yFYAOp1HcFnZXsBa-Hf3qv-QhyDOOit1Qvkjc5_3rBFkG8s4VjvmVOyqrh_B7n1Ic0&components=hosted-buttons&disable-funding=venmo&currency=USD"></script>
+                  <div id="paypal-container-QJEJ468BAFZWC"></div>
+                  <script>
+                      paypal.HostedButtons({
+                          hostedButtonId: "QJEJ468BAFZWC",
+                          onApprove: function(data) {
+                              alert('¡Compra realizada con éxito! 🎉 ID de transacción: ' + data.orderID);
+                              window.location.reload();
+                          },
+                          onError: function(err) {
+                              alert('Error al procesar el pago. Intenta de nuevo.');
+                              console.error('PayPal error:', err);
+                          }
+                      }).render("#paypal-container-QJEJ468BAFZWC");
+                  </script>
+                  '''
+              else:
+                  # PayPal button for regular price
+                  paypal_html = '''
+                  <script src="https://www.paypal.com/sdk/js?client-id=BAAmZb8q_th0dhU_yFYAOp1HcFnZXsBa-Hf3qv-QhyDOOit1Qvkjc5_3rBFkG8s4VjvmVOyqrh_B7n1Ic0&components=hosted-buttons&disable-funding=venmo&currency=USD"></script>
+                  <div id="paypal-container-AMM5P24GTYSR8"></div>
+                  <script>
+                      paypal.HostedButtons({
+                          hostedButtonId: "AMM5P24GTYSR8",
+                          onApprove: function(data) {
+                              alert('¡Compra realizada con éxito! 🎉 ID de transacción: ' + data.orderID);
+                              window.location.reload();
+                          },
+                          onError: function(err) {
+                              alert('Error al procesar el pago. Intenta de nuevo.');
+                              console.error('PayPal error:', err);
+                          }
+                      }).render("#paypal-container-AMM5P24GTYSR8");
+                  </script>
+                  '''
+              components.html(paypal_html, height=400)
           elif selected_plan == "Suscripción Mensual":
               paypal_html = '''
               <div id="paypal-button-container-P-8JD80124L6471951GM3UKKHA"></div>
@@ -460,28 +459,36 @@ if selected_plan == "Sin Suscripción":
               </script>
               '''
               components.html(paypal_html, height=300)
-          else:  # Sin Suscripción (one-time purchase)
+          elif selected_plan == "Suscripción Anual":
               paypal_html = '''
-              <script src="https://www.paypal.com/sdk/js?client-id=BAAmZb8q_th0dhU_yFYAOp1HcFnZXsBa-Hf3qv-QhyDOOit1Qvkjc5_3rBFkG8s4VjvmVOyqrh_B7n1Ic0&components=hosted-buttons&disable-funding=venmo&currency=USD"></script>
-              <div id="paypal-container-AMM5P24GTYSR8"></div>
+              <div id="paypal-button-container-P-4E978587FL636905DM3UPY3Q"></div>
+              <script src="https://www.paypal.com/sdk/js?client-id=Ad_76woIrZWXf2QX3KYxFd-iAKTTCqxTtLYB0GOYK4weEQYf52INL5SREytqj4mY84BOVy9wWTsrvcxI&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
               <script>
-                  paypal.HostedButtons({
-                      hostedButtonId: "AMM5P24GTYSR8",
-                      onApprove: function(data) {
-                          alert('¡Compra realizada con éxito! 🎉 ID de transacción: ' + data.orderID);
+                  paypal.Buttons({
+                      style: {
+                          shape: 'pill',
+                          color: 'black',
+                          layout: 'horizontal',
+                          label: 'subscribe'
+                      },
+                      createSubscription: function(data, actions) {
+                          return actions.subscription.create({
+                              plan_id: 'P-4E978587FL636905DM3UPY3Q'
+                          });
+                      },
+                      onApprove: function(data, actions) {
+                          alert('¡Suscripción Anual realizada con éxito! 🎉 ID de suscripción: ' + data.subscriptionID);
                           window.location.reload();
                       },
                       onError: function(err) {
                           alert('Error al procesar el pago. Intenta de nuevo.');
-                          console.error('PayPal error:', err);
                       }
-                  }).render("#paypal-container-AMM5P24GTYSR8");
+                  }).render('#paypal-button-container-P-4E978587FL636905DM3UPY3Q');
               </script>
               '''
-              components.html(paypal_html, height=400)
+              components.html(paypal_html, height=300)
 
   session.close()
-
 def display_user_orders():
   st.subheader("📦 Mis Órdenes")
   
