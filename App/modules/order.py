@@ -8,7 +8,7 @@ from streamlit_folium import folium_static
 from geopy.geocoders import Nominatim
 from branca.element import Template, MacroElement
 import streamlit.components.v1 as components
-from models import User, Product, Order, Subscription, PaymentTransaction, OrderStatus, UserType
+from modules.models import User, Product, Order, Subscription, PaymentTransaction, OrderStatus, UserType
 from dotenv import load_dotenv
 import os
 
