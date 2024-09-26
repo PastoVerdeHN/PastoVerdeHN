@@ -402,7 +402,7 @@ if selected_plan == "Sin Suscripción":
           }).render("#paypal-container-AMM5P24GTYSR8");
       </script>
       '''
-  components.html(paypal_html, height=400)  
+  components.html(paypal_html, height=400)
           elif selected_plan == "Suscripción Mensual":
               paypal_html = '''
               <div id="paypal-button-container-P-8JD80124L6471951GM3UKKHA"></div>
