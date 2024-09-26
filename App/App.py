@@ -293,11 +293,11 @@ def place_order():
   delivery_date = st.date_input("Fecha de entrega", value=datetime.today())
 
   # Delivery Time Frame Selection
-options = ["AM (7am - 12pm)"]
+  delivery_time_frame = st.radio("Selecciona un horario de entrega:", ("AM (7am - 12pm)"))
 
-# Promo Code Input and Disclaimer
-promo_code = st.text_input("Código promocional (opcional)", value="")
-st.caption("Nota: Los códigos promocionales solo son válidos para productos sin suscripción.")
+  # Promo Code Input and Disclaimer
+  promo_code = st.text_input("Código promocional (opcional)", value="")
+  st.caption("Nota: Los códigos promocionales solo son válidos para productos sin suscripción.")
 
   # Order Review
   if selected_plan and st.session_state.map_center:
