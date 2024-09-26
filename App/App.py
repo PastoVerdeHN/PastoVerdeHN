@@ -176,8 +176,8 @@ def home_page():
   st.video(video_url)
 
 def place_order():
-  st.subheader("🛒 Realizar pedido")
-  session = Session()
+    st.subheader("🛒 Realizar pedido")
+    session = Session()
 
     # Plan options
     plans = {
@@ -369,138 +369,138 @@ def place_order():
             # Trigger the balloon animation
             st.balloons()
 
-          # PayPal integration
-          paypal_client_id = st.secrets["paypal"]["client_id"]  # Access the PayPal Client ID from Streamlit secrets
-          if selected_plan == "Sin Suscripción":
-              paypal_html = f'''
-              <script src="https://www.paypal.com/sdk/js?client-id={paypal_client_id}&currency=USD"></script>
-              <div id="paypal-button-container"></div>
-              <script>
-                  paypal.Buttons({{
-                      createOrder: function(data, actions) {{
-                          return actions.order.create({{
-                              purchase_units: [{{
-                                  amount: {{
-                                      value: '{total_price / 25:.2f}'  // Convert Lempira to USD
-                                  }},
-                                  description: '{selected_plan}',  // Use the selected plan name as the description
-                                  custom_id: 'Instrucciones: {additional_references}',  // Use additional references as instructions
-                                  shipping: {{
-                                      name: {{
-                                          full_name: '{user_full_name}'
-                                      }},
-                                      address: {{
-                                          address_line_1: '{specific_address}',
-                                          address_line_2: '{additional_references}',
-                                          admin_area_2: 'Tegucigalpa',  // City
-                                          admin_area_1: 'FM',  // State
-                                          postal_code: '11101',  // Example postal code
-                                          country_code: 'HN'  // Country code
-                                      }}
-                                  }}
-                              }}]
-                          }});
-                      }},
-                      onApprove: function(data, actions) {{
-                          return actions.order.capture().then(function(details) {{
-                              alert('¡Compra realizada con éxito! 🎉 ID de transacción: ' + details.id);
-                              window.location.reload();
-                          }});
-                      }},
-                      onError: function(err) {{
-                          alert('Error al procesar el pago. Intenta de nuevo.');
-                          console.error('PayPal error:', err);
-                      }}
-                  }}).render('#paypal-button-container');
-              </script>
-              '''
-              components.html(paypal_html, height=1200)
-          elif selected_plan == "Suscripción Mensual":
-              paypal_html = f'''
-              <div id="paypal-button-container-P-8JD80124L6471951GM3UKKHA"></div>
-              <script src="https://www.paypal.com/sdk/js?client-id={paypal_client_id}&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
-              <script>
-                  paypal.Buttons({{
-                      style: {{
-                          shape: 'pill',
-                          color: 'blue',
-                          layout: 'horizontal',
-                          label: 'subscribe'
-                      }},
-                      createSubscription: function(data, actions) {{
-                          return actions.subscription.create({{
-                              plan_id: 'P-8JD80124L6471951GM3UKKHA'
-                          }});
-                      }},
-                      onApprove: function(data, actions) {{
-                          alert('¡Pedido realizado con éxito! 🎉');
-                          window.location.reload();
-                      }},
-                      onError: function(err) {{
-                          alert('Error al procesar el pago. Intenta de nuevo.');
-                      }}
-                  }}).render('#paypal-button-container-P-8JD80124L6471951GM3UKKHA');
-              </script>
-              '''
-              components.html(paypal_html, height=300)
-          elif selected_plan == "Suscripción Semestral":
-              paypal_html = f'''
-              <div id="paypal-button-container-P-79741958WR506740HM3UPLFA"></div>
-              <script src="https://www.paypal.com/sdk/js?client-id={paypal_client_id}&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
-              <script>
-                  paypal.Buttons({{
-                      style: {{
-                          shape: 'pill',
-                          color: 'gold',
-                          layout: 'horizontal',
-                          label: 'subscribe'
-                      }},
-                      createSubscription: function(data, actions) {{
-                          return actions.subscription.create({{
-                              plan_id: 'P-79741958WR506740HM3UPLFA'
-                          }});
-                      }},
-                      onApprove: function(data, actions) {{
-                          alert('¡Pedido realizado con éxito! 🎉 ID de suscripción: ' + data.subscriptionID);
-                          window.location.reload();
-                      }},
-                      onError: function(err) {{
-                          alert('Error al procesar el pago. Intenta de nuevo.');
-                      }}
-                  }}).render('#paypal-button-container-P-79741958WR506740HM3UPLFA');
-              </script>
-              '''
-              components.html(paypal_html, height=300)
-          elif selected_plan == "Suscripción Anual":
-              paypal_html = f'''
-              <div id="paypal-button-container-P-4E978587FL636905DM3UPY3Q"></div>
-              <script src="https://www.paypal.com/sdk/js?client-id={paypal_client_id}&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
-              <script>
-                  paypal.Buttons({{
-                      style: {{
-                          shape: 'pill',
-                          color: 'black',
-                          layout: 'horizontal',
-                          label: 'subscribe'
-                      }},
-                      createSubscription: function(data, actions) {{
-                          return actions.subscription.create({{
-                              plan_id: 'P-4E978587FL636905DM3UPY3Q'
-                          }});
-                      }},
-                      onApprove: function(data, actions) {{
-                          alert('¡Suscripción Anual realizada con éxito! 🎉 ID de suscripción: ' + data.subscriptionID);
-                          window.location.reload();
-                      }},
-                      onError: function(err) {{
-                          alert('Error al procesar el pago. Intenta de nuevo.');
-                      }}
-                  }}).render('#paypal-button-container-P-4E978587FL636905DM3UPY3Q');
-              </script>
-              '''
-              components.html(paypal_html, height=300)
+        # PayPal integration
+        paypal_client_id = st.secrets["paypal"]["client_id"]  # Access the PayPal Client ID from Streamlit secrets
+        if selected_plan == "Sin Suscripción":
+            paypal_html = f'''
+            <script src="https://www.paypal.com/sdk/js?client-id={paypal_client_id}&currency=USD"></script>
+            <div id="paypal-button-container"></div>
+            <script>
+                paypal.Buttons({{
+                    createOrder: function(data, actions) {{
+                        return actions.order.create({{
+                            purchase_units: [{{
+                                amount: {{
+                                    value: '{total_price / 25:.2f}'  // Convert Lempira to USD
+                                }},
+                                description: '{selected_plan}',  // Use the selected plan name as the description
+                                custom_id: 'Instrucciones: {additional_references}',  // Use additional references as instructions
+                                shipping: {{
+                                    name: {{
+                                        full_name: '{user_full_name}'
+                                    }},
+                                    address: {{
+                                        address_line_1: '{specific_address}',
+                                        address_line_2: '{additional_references}',
+                                        admin_area_2: 'Tegucigalpa',  // City
+                                        admin_area_1: 'FM',  // State
+                                        postal_code: '11101',  // Example postal code
+                                        country_code: 'HN'  // Country code
+                                    }}
+                                }}
+                            }}]
+                        }});
+                    }},
+                    onApprove: function(data, actions) {{
+                        return actions.order.capture().then(function(details) {{
+                            alert('¡Compra realizada con éxito! 🎉 ID de transacción: ' + details.id);
+                            window.location.reload();
+                        }});
+                    }},
+                    onError: function(err) {{
+                        alert('Error al procesar el pago. Intenta de nuevo.');
+                        console.error('PayPal error:', err);
+                    }}
+                }}).render('#paypal-button-container');
+            </script>
+            '''
+            components.html(paypal_html, height=1200)
+        elif selected_plan == "Suscripción Mensual":
+            paypal_html = f'''
+            <div id="paypal-button-container-P-8JD80124L6471951GM3UKKHA"></div>
+            <script src="https://www.paypal.com/sdk/js?client-id={paypal_client_id}&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
+            <script>
+                paypal.Buttons({{
+                    style: {{
+                        shape: 'pill',
+                        color: 'blue',
+                        layout: 'horizontal',
+                        label: 'subscribe'
+                    }},
+                    createSubscription: function(data, actions) {{
+                        return actions.subscription.create({{
+                            plan_id: 'P-8JD80124L6471951GM3UKKHA'
+                        }});
+                    }},
+                    onApprove: function(data, actions) {{
+                        alert('¡Pedido realizado con éxito! 🎉');
+                        window.location.reload();
+                    }},
+                    onError: function(err) {{
+                        alert('Error al procesar el pago. Intenta de nuevo.');
+                    }}
+                }}).render('#paypal-button-container-P-8JD80124L6471951GM3UKKHA');
+            </script>
+            '''
+            components.html(paypal_html, height=300)
+        elif selected_plan == "Suscripción Semestral":
+            paypal_html = f'''
+            <div id="paypal-button-container-P-79741958WR506740HM3UPLFA"></div>
+            <script src="https://www.paypal.com/sdk/js?client-id={paypal_client_id}&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
+            <script>
+                paypal.Buttons({{
+                    style: {{
+                        shape: 'pill',
+                        color: 'gold',
+                        layout: 'horizontal',
+                        label: 'subscribe'
+                    }},
+                    createSubscription: function(data, actions) {{
+                        return actions.subscription.create({{
+                            plan_id: 'P-79741958WR506740HM3UPLFA'
+                        }});
+                    }},
+                    onApprove: function(data, actions) {{
+                        alert('¡Pedido realizado con éxito! 🎉 ID de suscripción: ' + data.subscriptionID);
+                        window.location.reload();
+                    }},
+                    onError: function(err) {{
+                        alert('Error al procesar el pago. Intenta de nuevo.');
+                    }}
+                }}).render('#paypal-button-container-P-79741958WR506740HM3UPLFA');
+            </script>
+            '''
+            components.html(paypal_html, height=300)
+    elif selected_plan == "Suscripción Anual":
+        paypal_html = f'''
+        <div id="paypal-button-container-P-4E978587FL636905DM3UPY3Q"></div>
+        <script src="https://www.paypal.com/sdk/js?client-id={paypal_client_id}&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
+        <script>
+            paypal.Buttons({{
+                style: {{
+                    shape: 'pill',
+                    color: 'black',
+                    layout: 'horizontal',
+                    label: 'subscribe'
+                }},
+                createSubscription: function(data, actions) {{
+                    return actions.subscription.create({{
+                        plan_id: 'P-4E978587FL636905DM3UPY3Q'
+                    }});
+                }},
+                onApprove: function(data, actions) {{
+                    alert('¡Suscripción Anual realizada con éxito! 🎉 ID de suscripción: ' + data.subscriptionID);
+                    window.location.reload();
+                }},
+                onError: function(err) {{
+                    alert('Error al procesar el pago. Intenta de nuevo.');
+                }}
+            }}).render('#paypal-button-container-P-4E978587FL636905DM3UPY3Q');
+        </script>
+        '''
+        components.html(paypal_html, height=300)
 
-  session.close()
+    session.close()
 def display_user_orders():
   st.subheader("📦 Mis Órdenes")
   
