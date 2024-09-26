@@ -22,6 +22,7 @@ from email.mime.image import MIMEImage
 import requests
 from modules.home import home_page
 
+
 # Streamlit page configuration
 st.set_page_config(
   page_title="Pasto Verde - Naturaleza en Casa para tus Mascotas",
