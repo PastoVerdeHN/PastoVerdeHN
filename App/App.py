@@ -65,8 +65,7 @@ def auth0_authentication():
   if st.session_state.user is None:
       auth_choice = st.sidebar.radio("Elige acción", ["🔑 Entrar"])
       
-      auth_choice == "🔑 Entrar":
-    
+      if auth_choice == "🔑 Entrar":
           try:
               AUTH0_CLIENT_ID = st.secrets["auth0"]["AUTH0_CLIENT_ID"]
               AUTH0_DOMAIN = st.secrets["auth0"]["AUTH0_DOMAIN"]
@@ -78,14 +77,14 @@ def auth0_authentication():
           user_info = login_button(
               AUTH0_CLIENT_ID, 
               domain=AUTH0_DOMAIN,
-              redirect_uri="http://localhost:8501/callback"  # Adjust this you're not running locally
+              redirect_uri="http://localhost:8501/callback"  # Adjust this if you're not running locally
           )
           
-          user_info and st.session_state.auth_status != "authenticated":
+          if user_info and st.session_state.auth_status != "authenticated":
               session = Session()
               user = session.query(User).filter_by(email=user_info['email']).first()
               
-              not user:
+              if not user:
                   # New user registration
                   user = User(
                       id=user_info['sub'],
@@ -334,7 +333,7 @@ def place_order():
           st.write(f"Total: L. {total_price:.2f}")
           st.write("**Nota:** En el checkout, se incluye una caja de madera con los planes de suscripción. One-time setup fee")
 
-        if st.button("Confirmar pedido"):
+          if st.button("Confirmar pedido"):
         # Create new order
         new_order = Order(
             id=generate_order_id(),
