@@ -65,7 +65,7 @@ def auth0_authentication():
   if st.session_state.user is None:
       auth_choice = st.sidebar.radio("Elige acción", ["🔑 Entrar"])
       
-  if auth_choice == "🔑 Entrar":
+      auth_choice == "🔑 Entrar":
     
           try:
               AUTH0_CLIENT_ID = st.secrets["auth0"]["AUTH0_CLIENT_ID"]
@@ -81,37 +81,40 @@ def auth0_authentication():
               redirect_uri="http://localhost:8501/callback"  # Adjust this you're not running locally
           )
           
-if user_info and st.session_state.auth_status != "authenticated":
-    session = Session()
-    user = session.query(User).filter_by(email=user_info['email']).first()
-    if not user:
-        # New user registration
-        user = User(
-            id=user_info['sub'],
-            name=user_info['name'],
-            email=user_info['email'],
-            type=UserType.admin if user_info['email'] == ADMIN_EMAIL else UserType.customer,
-            address='',
-            created_at=datetime.utcnow(),
-            welcome_email_sent=False
-        )
-        session.add(user)
-        session.commit()
-    else:
-        # Check if the user is an admin
-        if user.email == ADMIN_EMAIL:
-            user.type = UserType.admin
-        # Set user type to admin if necessary
-        if not user.welcome_email_sent:
-            send_welcome_email(user.email, user.name)  # Ensure this function is defined
-            user.welcome_email_sent = True
-        session.commit()
-    user.last_login = datetime.utcnow()
-    session.commit()
-    st.session_state.user = user
-    st.session_state.auth_status = "authenticated"
-    st.success(f"Bienvenido, {user.name}!")
-    session.close()
+          user_info and st.session_state.auth_status != "authenticated":
+              session = Session()
+              user = session.query(User).filter_by(email=user_info['email']).first()
+              
+              not user:
+                  # New user registration
+                  user = User(
+                      id=user_info['sub'],
+                      name=user_info['name'],
+                      email=user_info['email'],
+                      type=UserType.admin if user_info['email'] == ADMIN_EMAIL else UserType.customer,  # Set type based on email
+                      address='',
+                      created_at=datetime.utcnow(),
+                      welcome_email_sent=False
+                  )
+                  session.add(user)
+                  session.commit()
+              else:
+                  # Check if the user is an admin
+                  if user.email == ADMIN_EMAIL:
+                      user.type = UserType.admin  # Set user type to admin if necessary
+
+              if not user.welcome_email_sent:
+                  send_welcome_email(user.email, user.name)  # Ensure this function is defined
+                  user.welcome_email_sent = True
+                  session.commit()
+              
+              user.last_login = datetime.utcnow()
+              session.commit()
+              
+              st.session_state.user = user
+              st.session_state.auth_status = "authenticated"
+              st.success(f"Bienvenido, {user.name}!")
+              session.close()
   
   return st.session_state.user
 
