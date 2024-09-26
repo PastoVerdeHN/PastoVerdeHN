@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 from modules.models import User, Product, Order, Subscription, PaymentTransaction, OrderStatus, setup_database
 from dotenv import load_dotenv
 import os
-import random
 
 # Load environment variables
 load_dotenv()
@@ -37,7 +36,8 @@ def display_user_orders():
                     st.write(f"**Fecha de entrega:** {order.date}")
                     st.write(f"**Dirección de entrega:** {order.delivery_address}")
                     st.write(f"**Precio total:** L. {order.total_price:.2f}")
-                    
+
+                    # Fetch product details for each order
                     if order.product_id:
                         product = session.query(Product).filter_by(id=order.product_id).first()
                         if product:
@@ -53,3 +53,4 @@ def display_user_orders():
                         st.progress(0)  # Default to 0 if status is unknown
         except Exception as e:
             st.error(f"Error al cargar las órdenes: {str(e)}")
+            # Consider logging the error for debugging
