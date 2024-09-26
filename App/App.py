@@ -465,7 +465,7 @@ def place_order():
                   }).render("#paypal-container-AMM5P24GTYSR8");
               </script>
               '''
-              components.html(paypal_html, height=300)
+              components.html(paypal_html, height=400)
 
   session.close()
 
