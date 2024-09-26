@@ -22,6 +22,7 @@ from email.mime.image import MIMEImage
 import requests
 from modules.home import home_page
 from modules.order import place_order
+from user_orders import user_orders
 
 print("Importing home module")
 
