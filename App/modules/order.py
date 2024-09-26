@@ -1,4 +1,27 @@
 import streamlit as st
+from streamlit.runtime.scriptrunner import get_script_run_ctx
+import pandas as pd
+import folium
+from streamlit_folium import folium_static
+from datetime import datetime
+import random
+from sqlalchemy import create_engine, func
+from sqlalchemy.orm import sessionmaker
+import os
+from dotenv import load_dotenv
+from auth0_component import login_button
+from branca.element import Template, MacroElement
+from models import User, Product, Order, Subscription, PaymentTransaction, setup_database, UserType, OrderStatus
+from geopy.geocoders import Nominatim
+import time
+import streamlit.components.v1 as components
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.image import MIMEImage
+import requests
+from modules.home import home_page
+from modules.home import place_order
 
 def place_order():
   st.subheader("🛒 Realizar pedido")
