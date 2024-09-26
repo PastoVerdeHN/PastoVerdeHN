@@ -1,27 +1,34 @@
 import streamlit as st
-from streamlit.runtime.scriptrunner import get_script_run_ctx
-import pandas as pd
-import folium
-from streamlit_folium import folium_static
 from datetime import datetime
 import random
 from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker
-import os
-from dotenv import load_dotenv
-from auth0_component import login_button
-from branca.element import Template, MacroElement
-from models import User, Product, Order, Subscription, PaymentTransaction, setup_database, UserType, OrderStatus
+import folium
+from streamlit_folium import folium_static
 from geopy.geocoders import Nominatim
-import time
+from branca.element import Template, MacroElement
 import streamlit.components.v1 as components
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-from email.mime.image import MIMEImage
-import requests
-from modules.home import home_page
-from modules.home import place_order
+from models import User, Product, Order, Subscription, PaymentTransaction, OrderStatus, UserType
+from dotenv import load_dotenv
+import os
+
+# If you're using any secrets or environment variables
+load_dotenv()
+
+# Database setup (if needed in this file)
+try:
+    database_url = st.secrets["database"]["url"]
+except KeyError:
+    database_url = os.getenv("DATABASE_URL")
+
+if not database_url:
+    st.error("Database URL not found. Please set it in Streamlit secrets or as an environment variable.")
+    st.stop()
+
+# Setup database session
+engine = create_engine(database_url)
+Session = sessionmaker(bind=engine)
+
 
 def place_order():
   st.subheader("🛒 Realizar pedido")
