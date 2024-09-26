@@ -295,6 +295,10 @@ def place_order():
   # Delivery Time Frame Selection
   delivery_time_frame = st.radio("Selecciona un horario de entrega:", ("AM (8am - 12pm)", "PM (12pm - 4pm)"))
 
+  # Promo Code Input and Disclaimer
+  promo_code = st.text_input("Código promocional (opcional)", value="")
+  st.caption("Nota: Los códigos promocionales solo son válidos para productos sin suscripción.")
+
   # Order Review
   if selected_plan and st.session_state.map_center:
       with st.expander("Resumen del Pedido", expanded=True):
@@ -327,10 +331,6 @@ def place_order():
           st.write(f"Horario de entrega: {delivery_time_frame}")
           st.write(f"Total: L. {total_price:.2f}")
           st.write("**Nota:** En el checkout, se incluye una caja de madera con los planes de suscripción. One-time setup fee")
-
-      # Promo Code Input and Disclaimer above the Confirm Button
-      promo_code = st.text_input("Código promocional (opcional)", value="")
-      st.caption("Nota: Los códigos promocionales solo son válidos para productos sin suscripción.")
 
       if st.button("Confirmar pedido"):
           # Create new order
