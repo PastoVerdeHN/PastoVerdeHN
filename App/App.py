@@ -21,6 +21,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.image import MIMEImage
 import requests
 from modules.home import home_page
+from modules.home import place_order
 
 print("Importing home module")
 
