@@ -293,10 +293,7 @@ def place_order():
   delivery_date = st.date_input("Fecha de entrega", value=datetime.today())
 
   # Delivery Time Frame Selection
-options = [
-    "AM (7am - 12pm)",
-    "PM (NO DISPONIBLE)"
-]
+options = ["AM (7am - 12pm)", "PM (NO DISPONIBLE)"]
 
 delivery_time_frame = st.radio(
     "Selecciona un horario de entrega:",
