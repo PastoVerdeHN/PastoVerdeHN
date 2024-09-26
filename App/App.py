@@ -20,6 +20,10 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.image import MIMEImage
 import requests
+from fastapi import FastAPI, Request
+from fastapi.middleware.wsgi import WSGIMiddleware
+
+app = FastAPI()
 
 # Streamlit page configuration
 st.set_page_config(
