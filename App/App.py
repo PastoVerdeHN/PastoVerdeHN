@@ -62,7 +62,7 @@ def auth0_authentication():
   if 'auth_status' not in st.session_state:
       st.session_state.auth_status = None
 
-      st.session_state.user is None:
+  if st.session_state.user is None:
       auth_choice = st.sidebar.radio("Elige acción", ["🔑 Entrar"])
       
       auth_choice == "🔑 Entrar":
