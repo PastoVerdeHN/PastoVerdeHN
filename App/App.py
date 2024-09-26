@@ -368,44 +368,46 @@ def place_order():
               paypal_html = f'''
               <script src="https://www.paypal.com/sdk/js?client-id={paypal_client_id}&currency=USD"></script>
               <div id="paypal-button-container"></div>
-              <script>
-                  paypal.Buttons({{
-                      createOrder: function(data, actions) {{
-                          return actions.order.create({{
-                              purchase_units: [{{
-                                  amount: {{
-                                      value: '{total_price / 25:.2f}'  // Convert Lempira to USD
-                                  }},
-                                  description: '{selected_plan}',  // Use the selected plan name as the description
-                                  custom_id: 'Instrucciones: {additional_references}',  // Use additional references as instructions
-                                  shipping: {{
-                                      name: {{
-                                          full_name: '{user_full_name}'
-                                      }},
-                                      address: {{
-                                          address_line_1: '{specific_address}',
-                                          address_line_2: '{additional_references}',
-                                          admin_area_2: 'Tegucigalpa',  // City
-                                          admin_area_1: 'FM',  // State
-                                          postal_code: '11101',  // Example postal code
-                                          country_code: 'HN'  // Country code
-                                      }}
-                                  }}
-                              }}]
-                          }});
-                      }},
-                      onApprove: function(data, actions) {{
-                          return actions.order.capture().then(function(details) {{
-                              alert('¡Compra realizada con éxito! 🎉 ID de transacción: ' + details.id);
-                              window.location.reload();
-                          }});
-                      }},
-                      onError: function(err) {{
-                          alert('Error al procesar el pago. Intenta de nuevo.');
-                          console.error('PayPal error:', err);
-                      }}
-                  }}).render('#paypal-button-container');
-              </script>
+<div id="paypal-button-container"></div>
+<script src="https://www.paypal.com/sdk/js?client-id={paypal_client_id}&currency=USD"></script>
+<script>
+    paypal.Buttons({{
+        createOrder: function(data, actions) {{
+            return actions.order.create({{
+                purchase_units: [{{
+                    amount: {{
+                        value: '{total_price / 25:.2f}'  // Convert Lempira to USD
+                    }},
+                    description: '{selected_plan}',  // Use the selected plan name as the description
+                    custom_id: 'Instrucciones: {additional_references}',  // Use additional references as instructions
+                    shipping: {{
+                        name: {{
+                            full_name: '{user_full_name}'
+                        }},
+                        address: {{
+                            address_line_1: '{specific_address}',
+                            address_line_2: '{additional_references}',
+                            admin_area_2: 'Tegucigalpa',  // City
+                            admin_area_1: 'FM',  // State
+                            postal_code: '11101',  // Example postal code
+                            country_code: 'HN'  // Country code
+                        }}
+                    }}
+                }}]
+            }});
+        }},
+        onApprove: function(data, actions) {{
+            return actions.order.capture().then(function(details) {{
+                alert('¡Compra realizada con éxito! 🎉 ID de transacción: ' + details.id);
+                window.location.reload();
+            }});
+        }},
+        onError: function(err) {{
+            alert('Error al procesar el pago. Intenta de nuevo.');
+            console.error('PayPal error:', err);
+        }}
+    }}).render('#paypal-button-container');
+</script>
               '''
               components.html(paypal_html, height=1200)
           elif selected_plan == "Suscripción Mensual":
@@ -494,41 +496,61 @@ def place_order():
               components.html(paypal_html, height=300)
 
   session.close()
+
+  @app.post("/update_order")
+async def update_order(request: Request):
+    data = await request.json()
+    order_id = data.get("order_id")
+    transaction_id = data.get("transaction_id")
+    status = data.get("status")
+    
+    session = Session()
+    order = session.query(Order).filter_by(id=order_id).first()
+    if order:
+        order.transaction_id = transaction_id
+        order.status = OrderStatus[status]
+        session.commit()
+        session.close()
+        return {"success": True}
+    else:
+        session.close()
+        return {"success": False}
+
 def display_user_orders():
-  st.subheader("📦 Mis Órdenes")
-  
-  session = Session()
-  orders = session.query(Order).filter_by(user_id=st.session_state.user.id).all()
-  
-  # Define order status mapping
-  status_mapping = {
-      OrderStatus.pending: ("Pago Pendiente", 0),
-      OrderStatus.confirmed: ("Orden Confirmada", 33),
-      OrderStatus.shipped: ("Orden Enviada", 66),
-      OrderStatus.delivered: ("Orden Entregada", 100)
-  }
-  
-  for order in orders:
-      with st.expander(f"Order ID: {order.id} - Status: {order.status.value}"):
-          st.write(f"**Fecha de entrega:** {order.date}")
-          st.write(f"**Dirección de entrega:** {order.delivery_address}")
-          st.write(f"**Precio total:** L. {order.total_price:.2f}")
-          
-          if order.product_id:
-              product = session.query(Product).filter_by(id=order.product_id).first()
-              if product:
-                  st.write(f"**Producto:** {product.name}")
+    st.subheader("📦 Mis Órdenes")
+    session = Session()
+    orders = session.query(Order).filter_by(user_id=st.session_state.user.id).all()
 
-          # Display progress bar based on order status
-          if order.status in status_mapping:
-              status_label, progress_value = status_mapping[order.status]
-              st.write(f"**Estado del pedido:** {status_label}")
-              progress_bar = st.progress(progress_value)
-          else:
-              st.write("**Estado del pedido:** Desconocido")
-              st.progress(0)  # Default to 0 if status is unknown
+    status_mapping = {
+        OrderStatus.pending: ("Pago Pendiente", 0),
+        OrderStatus.confirmed: ("Orden Confirmada", 33),
+        OrderStatus.shipped: ("Orden Enviada", 66),
+        OrderStatus.delivered: ("Orden Entregada", 100)
+    }
 
-  session.close()
+    for order in orders:
+        with st.expander(f"Order ID: {order.id} - Status: {order.status.value}"):
+            st.write(f"**Fecha de entrega:** {order.date}")
+            st.write(f"**Dirección de entrega:** {order.delivery_address}")
+            st.write(f"**Precio total:** L. {order.total_price:.2f}")
+            
+            if order.transaction_id:
+                st.write(f"**ID de transacción PayPal:** {order.transaction_id}")
+            
+            if order.product_id:
+                product = session.query(Product).filter_by(id=order.product_id).first()
+                if product:
+                    st.write(f"**Producto:** {product.name}")
+
+            if order.status in status_mapping:
+                status_label, progress_value = status_mapping[order.status]
+                st.write(f"**Estado del pedido:** {status_label}")
+                progress_bar = st.progress(progress_value)
+            else:
+                st.write("**Estado del pedido:** Desconocido")
+                st.progress(0)
+
+    session.close()
 def user_manual():
   st.subheader("📖 Manual de Usuario")
   st.write("""
