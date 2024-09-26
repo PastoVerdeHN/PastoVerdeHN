@@ -66,6 +66,7 @@ def auth0_authentication():
       auth_choice = st.sidebar.radio("Elige acción", ["🔑 Entrar"])
       
       auth_choice == "🔑 Entrar":
+    
           try:
               AUTH0_CLIENT_ID = st.secrets["auth0"]["AUTH0_CLIENT_ID"]
               AUTH0_DOMAIN = st.secrets["auth0"]["AUTH0_DOMAIN"]
