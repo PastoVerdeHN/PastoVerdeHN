@@ -22,6 +22,8 @@ from email.mime.image import MIMEImage
 import requests
 from modules import home_page
 
+print("Importing home module")
+
 
 
 
