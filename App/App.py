@@ -272,16 +272,7 @@ def place_order():
             st.error(f"Error en el servicio de geolocalización: {str(e)}")
 
     # Create map
-    m = folium.Map(location=st.session_state.map_center, zoom_start=15)
-    marker = folium.Marker(
-        st.session_state.map_center,
-        draggable=True,
-        popup="Arrastrar para actualizar la ubicación"
-    )
-    marker.add_to(m)
-
-    # Use folium_static with width and height parameters
-    folium_static(m, width=700, height=500)
+    map_with_marker(st.session_state.map_center)
 
     # Get the marker's position after it's been moved
     marker_position = st.session_state.get('marker_position', st.session_state.map_center)
@@ -386,22 +377,123 @@ def place_order():
     paypal_client_id = st.secrets["paypal"]["client_id"]  # Access the PayPal Client ID from Streamlit secrets
 
     if selected_plan == "Sin Suscripción":
-        paypal_html = f''''''
+        paypal_html = f'''
+        <div id="paypal-button-container-P-5YX36388YD5611829MWLXMYY"></div>
+        <script src="https://www.paypal.com/sdk/js?client-id={paypal_client_id}&vault=true&intent=subscription"></script>
+        <script>
+          paypal.Buttons({{
+            style: {{
+                shape: 'rect',
+                color: 'gold',
+                layout: 'vertical',
+                label: 'subscribe'
+            }},
+            createSubscription: function(data, actions) {{
+              return actions.subscription.create({{
+                /* Creates the subscription */
+                plan_id: 'P-5YX36388YD5611829MWLXMYY'
+              }});
+            }},
+            onApprove: function(data, actions) {{
+              alert('¡Pedido realizado con éxito! 🎉');
+              window.location.reload();
+            }},
+            onError: function(err) {{
+              alert('Error al procesar el pago. Intenta de nuevo.');
+            }}
+          }}).render('#paypal-button-container-P-5YX36388YD5611829MWLXMYY'); // Renders the PayPal button
+        </script>
+        '''
         components.html(paypal_html, height=1200)
     elif selected_plan == "Suscripción Mensual":
-        paypal_html = f''' '''
+        paypal_html = f'''
+        <div id="paypal-button-container-P-8JD80124L6471951GM3UKLKQ"></div>
+        <script src="https://www.paypal.com/sdk/js?client-id={paypal_client_id}&vault=true&intent=subscription"></script>
+        <script>
+          paypal.Buttons({{
+            style: {{
+                shape: 'rect',
+                color: 'gold',
+                layout: 'vertical',
+                label: 'subscribe'
+            }},
+            createSubscription: function(data, actions) {{
+              return actions.subscription.create({{
+                /* Creates the subscription */
+                plan_id: 'P-8JD80124L6471951GM3UKLKQ'
+              }});
+            }},
+            onApprove: function(data, actions) {{
+              alert('¡Pedido realizado con éxito! 🎉');
+              window.location.reload();
+            }},
+            onError: function(err) {{
+              alert('Error al procesar el pago. Intenta de nuevo.');
+            }}
+          }}).render('#paypal-button-container-P-8JD80124L6471951GM3UKLKQ'); // Renders the PayPal button
+        </script>
+        '''
         components.html(paypal_html, height=300)
     elif selected_plan == "Suscripción Semestral":
-        paypal_html = f''' '''
+        paypal_html = f'''
+        <div id="paypal-button-container-P-4YC89345RA9300726M3UKJWQ"></div>
+        <script src="https://www.paypal.com/sdk/js?client-id={paypal_client_id}&vault=true&intent=subscription"></script>
+        <script>
+          paypal.Buttons({{
+            style: {{
+                shape: 'rect',
+                color: 'gold',
+                layout: 'vertical',
+                label: 'subscribe'
+            }},
+            createSubscription: function(data, actions) {{
+              return actions.subscription.create({{
+                /* Creates the subscription */
+                plan_id: 'P-4YC89345RA9300726M3UKJWQ'
+              }});
+            }},
+            onApprove: function(data, actions) {{
+              alert('¡Pedido realizado con éxito! 🎉');
+              window.location.reload();
+            }},
+            onError: function(err) {{
+              alert('Error al procesar el pago. Intenta de nuevo.');
+            }}
+          }}).render('#paypal-button-container-P-4YC89345RA9300726M3UKJWQ'); // Renders the PayPal button
+        </script>
+        '''
         components.html(paypal_html, height=300)
     elif selected_plan == "Suscripción Anual":
-        paypal_html = f''' '''
+        paypal_html = f'''
+        <div id="paypal-button-container-P-6WN43967L6701562AM3UKJLQ"></div>
+        <script src="https://www.paypal.com/sdk/js?client-id={paypal_client_id}&vault=true&intent=subscription"></script>
+        <script>
+          paypal.Buttons({{
+            style: {{
+                shape: 'rect',
+                color: 'gold',
+                layout: 'vertical',
+                label: 'subscribe'
+            }},
+            createSubscription: function(data, actions) {{
+              return actions.subscription.create({{
+                /* Creates the subscription */
+                plan_id: 'P-6WN43967L6701562AM3UKJLQ'
+              }});
+            }},
+            onApprove: function(data, actions) {{
+              alert('¡Pedido realizado con éxito! 🎉');
+              window.location.reload();
+            }},
+            onError: function(err) {{
+              alert('Error al procesar el pago. Intenta de nuevo.');
+            }}
+          }}).render('#paypal-button-container-P-6WN43967L6701562AM3UKJLQ'); // Renders the PayPal button
+        </script>
+        '''
         components.html(paypal_html, height=300)
 
     session.close()
-
-# Add these functions at the end of your script
-import streamlit.components.v1 as components
 
 def map_with_marker(location, zoom=15):
     map_html = f"""
@@ -409,11 +501,11 @@ def map_with_marker(location, zoom=15):
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <script>
-        var map = L.map('map').setView({location}, {zoom});
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {{
+        var map = L.map('map').setView([{location[0]}, {location[1]}], {zoom});
+        L.tileLayer('https://{{s}}.tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png', {{
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }}).addTo(map);
-        var marker = L.marker({location}, {{draggable: true}}).addTo(map);
+        var marker = L.marker([{location[0]}, {location[1]}], {{draggable: true}}).addTo(map);
         marker.on('dragend', function(e) {{
             var position = marker.getLatLng();
             Streamlit.setComponentValue({{
@@ -440,14 +532,12 @@ if st.session_state.get('marker_moved'):
     ]
     st.experimental_rerun()
 
-from streamlit.components.v1 import html
-
 def handle_marker_moved(lat, lng):
     st.session_state.marker_moved = True
     st.session_state.marker_lat = lat
     st.session_state.marker_lng = lng
 
-html("""
+components.html("""
 <script>
     if (window.Streamlit) {
         Streamlit.setComponentReady();
