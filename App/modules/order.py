@@ -1,3 +1,5 @@
+import streamlit as st
+
 def place_order():
   st.subheader("🛒 Realizar pedido")
   session = Session()
