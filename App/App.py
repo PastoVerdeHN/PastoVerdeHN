@@ -295,18 +295,19 @@ def place_order():
   # Delivery Time Frame Selection
 options = ["AM (7am - 12pm)", "PM (NO DISPONIBLE)"]
 
+# Delivery Time Frame Selection
+options = ["AM (7am - 12pm)", "PM (NO DISPONIBLE)"]
 delivery_time_frame = st.radio(
     "Selecciona un horario de entrega:",
     options,
     index=0,
     disabled=[False, True]
 )
-
 st.write(f"Has seleccionado: {delivery_time_frame}")
 
-  # Promo Code Input and Disclaimer
-  promo_code = st.text_input("Código promocional (opcional)", value="")
-  st.caption("Nota: Los códigos promocionales solo son válidos para productos sin suscripción.")
+# Promo Code Input and Disclaimer
+promo_code = st.text_input("Código promocional (opcional)", value="")
+st.caption("Nota: Los códigos promocionales solo son válidos para productos sin suscripción.")
 
   # Order Review
   if selected_plan and st.session_state.map_center:
