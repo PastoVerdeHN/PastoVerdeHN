@@ -60,9 +60,7 @@ if not database_url:
 
 Session = setup_database(database_url)
 
-# Helper functions
-def generate_order_id():
-  return f"ORD-{random.randint(10000, 99999)}"
+
 
 def auth0_authentication():
   if 'user' not in st.session_state:
