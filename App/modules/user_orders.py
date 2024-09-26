@@ -8,11 +8,15 @@ import random
 # Load environment variables
 load_dotenv()
 
+SessionLocal = setup_database(DATABASE_URL)  # This creates a session maker
+
 def display_user_orders():
     st.subheader("📦 Mis Órdenes")
     
-    with Session() as session:
+    # Create a new session from the session maker
+    with SessionLocal() as session:  # Use SessionLocal here
         try:
+            # Fetch orders for the logged-in user
             orders = session.query(Order).filter_by(user_id=st.session_state.user.id).all()
             if not orders:
                 st.warning("No tienes órdenes.")
@@ -26,6 +30,7 @@ def display_user_orders():
                 OrderStatus.delivered: ("Orden Entregada", 100)
             }
             
+            # Loop through each order and display details
             for order in orders:
                 with st.expander(f"Order ID: {order.id} - Status: {order.status.value}"):
                     st.write(f"**Fecha de entrega:** {order.date}")
