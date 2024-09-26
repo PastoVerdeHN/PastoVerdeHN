@@ -20,6 +20,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.image import MIMEImage
 import requests
+from flask import jsonify
 
 # Streamlit page configuration
 st.set_page_config(
@@ -332,168 +333,285 @@ def place_order():
           st.write(f"Total: L. {total_price:.2f}")
           st.write("**Nota:** En el checkout, se incluye una caja de madera con los planes de suscripción. One-time setup fee")
 
-      if st.button("Confirmar pedido"):
-          # Create new order
-          new_order = Order(
-              id=generate_order_id(),
-              user_id=st.session_state.user.id,
-              product_id=1,  # Assuming product_id 1 is for grass
-              quantity=1,
-              delivery_address=full_address,
-              status=OrderStatus.pending,
-              total_price=total_price  # Use the calculated total price
-          )
-          session.add(new_order)
-          
-          # If it's a subscription, create a subscription record
-          if selected_plan != "Sin Suscripción":
-              new_subscription = Subscription(
-                  user_id=st.session_state.user.id,
-                  plan_name=selected_plan,
-                  start_date=datetime.utcnow(),
-                  is_active=True
-              )
-              session.add(new_subscription)
-          
-          session.commit()
-          
-          st.success(f"*Pedido Procesando⌛* Por favor confirmar el pago para coordinar la entrega de su orden. Numero de pedido: {new_order.id}")
+    if st.button("Confirmar pedido"):
+        # Create new order
+        new_order = Order(
+            id=generate_order_id(),
+            user_id=st.session_state.user.id,
+            product_id=1,  # Assuming product_id 1 is for grass
+            quantity=1,
+            delivery_address=full_address,
+            status=OrderStatus.pending,
+            total_price=total_price,
+            paypal_transaction_id=None  # Initialize as None
+        )
+        session.add(new_order)
+        session.commit()
+        
+        st.success(f"*Pedido Procesando⌛* Por favor confirmar el pago para coordinar la entrega de su orden. Numero de pedido: {new_order.id}")
 
-          # Trigger the balloon animation
-          st.balloons()
+        # Trigger the balloon animation
+        st.balloons()
 
-          # PayPal integration
-          paypal_client_id = st.secrets["paypal"]["client_id"]  # Access the PayPal Client ID from Streamlit secrets
-          if selected_plan == "Sin Suscripción":
-              paypal_html = f'''
-              <script src="https://www.paypal.com/sdk/js?client-id={paypal_client_id}&currency=USD"></script>
-              <div id="paypal-button-container"></div>
-              <script>
-                  paypal.Buttons({{
-                      createOrder: function(data, actions) {{
-                          return actions.order.create({{
-                              purchase_units: [{{
-                                  amount: {{
-                                      value: '{total_price / 25:.2f}'  // Convert Lempira to USD
-                                  }},
-                                  description: '{selected_plan}',  // Use the selected plan name as the description
-                                  custom_id: 'Instrucciones: {additional_references}',  // Use additional references as instructions
-                                  shipping: {{
-                                      name: {{
-                                          full_name: '{user_full_name}'
-                                      }},
-                                      address: {{
-                                          address_line_1: '{specific_address}',
-                                          address_line_2: '{additional_references}',
-                                          admin_area_2: 'Tegucigalpa',  // City
-                                          admin_area_1: 'FM',  // State
-                                          postal_code: '11101',  // Example postal code
-                                          country_code: 'HN'  // Country code
-                                      }}
-                                  }}
-                              }}]
-                          }});
-                      }},
-                      onApprove: function(data, actions) {{
-                          return actions.order.capture().then(function(details) {{
-                              alert('¡Compra realizada con éxito! 🎉 ID de transacción: ' + details.id);
-                              window.location.reload();
-                          }});
-                      }},
-                      onError: function(err) {{
-                          alert('Error al procesar el pago. Intenta de nuevo.');
-                          console.error('PayPal error:', err);
-                      }}
-                  }}).render('#paypal-button-container');
-              </script>
-              '''
-              components.html(paypal_html, height=1200)
-          elif selected_plan == "Suscripción Mensual":
-              paypal_html = f'''
-              <div id="paypal-button-container-P-8JD80124L6471951GM3UKKHA"></div>
-              <script src="https://www.paypal.com/sdk/js?client-id={paypal_client_id}&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
-              <script>
-                  paypal.Buttons({{
-                      style: {{
-                          shape: 'pill',
-                          color: 'blue',
-                          layout: 'horizontal',
-                          label: 'subscribe'
-                      }},
-                      createSubscription: function(data, actions) {{
-                          return actions.subscription.create({{
-                              plan_id: 'P-8JD80124L6471951GM3UKKHA'
-                          }});
-                      }},
-                      onApprove: function(data, actions) {{
-                          alert('¡Pedido realizado con éxito! 🎉');
-                          window.location.reload();
-                      }},
-                      onError: function(err) {{
-                          alert('Error al procesar el pago. Intenta de nuevo.');
-                      }}
-                  }}).render('#paypal-button-container-P-8JD80124L6471951GM3UKKHA');
-              </script>
-              '''
-              components.html(paypal_html, height=300)
-          elif selected_plan == "Suscripción Semestral":
-              paypal_html = f'''
-              <div id="paypal-button-container-P-79741958WR506740HM3UPLFA"></div>
-              <script src="https://www.paypal.com/sdk/js?client-id={paypal_client_id}&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
-              <script>
-                  paypal.Buttons({{
-                      style: {{
-                          shape: 'pill',
-                          color: 'gold',
-                          layout: 'horizontal',
-                          label: 'subscribe'
-                      }},
-                      createSubscription: function(data, actions) {{
-                          return actions.subscription.create({{
-                              plan_id: 'P-79741958WR506740HM3UPLFA'
-                          }});
-                      }},
-                      onApprove: function(data, actions) {{
-                          alert('¡Pedido realizado con éxito! 🎉 ID de suscripción: ' + data.subscriptionID);
-                          window.location.reload();
-                      }},
-                      onError: function(err) {{
-                          alert('Error al procesar el pago. Intenta de nuevo.');
-                      }}
-                  }}).render('#paypal-button-container-P-79741958WR506740HM3UPLFA');
-              </script>
-              '''
-              components.html(paypal_html, height=300)
-          elif selected_plan == "Suscripción Anual":
-              paypal_html = f'''
-              <div id="paypal-button-container-P-4E978587FL636905DM3UPY3Q"></div>
-              <script src="https://www.paypal.com/sdk/js?client-id={paypal_client_id}&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
-              <script>
-                  paypal.Buttons({{
-                      style: {{
-                          shape: 'pill',
-                          color: 'black',
-                          layout: 'horizontal',
-                          label: 'subscribe'
-                      }},
-                      createSubscription: function(data, actions) {{
-                          return actions.subscription.create({{
-                              plan_id: 'P-4E978587FL636905DM3UPY3Q'
-                          }});
-                      }},
-                      onApprove: function(data, actions) {{
-                          alert('¡Suscripción Anual realizada con éxito! 🎉 ID de suscripción: ' + data.subscriptionID);
-                          window.location.reload();
-                      }},
-                      onError: function(err) {{
-                          alert('Error al procesar el pago. Intenta de nuevo.');
-                      }}
-                  }}).render('#paypal-button-container-P-4E978587FL636905DM3UPY3Q');
-              </script>
-              '''
-              components.html(paypal_html, height=300)
+        # PayPal integration
+        paypal_client_id = st.secrets["paypal"]["client_id"]
+        if selected_plan == "Sin Suscripción":
+            paypal_html = f'''
+            <script src="https://www.paypal.com/sdk/js?client-id={paypal_client_id}&currency=USD"></script>
+            <div id="paypal-button-container"></div>
+            <script>
+                paypal.Buttons({{
+                    createOrder: function(data, actions) {{
+                        return actions.order.create({{
+                            purchase_units: [{{
+                                amount: {{
+                                    value: '{total_price / 25:.2f}'
+                                }},
+                                description: '{selected_plan}',
+                                custom_id: 'Instrucciones: {additional_references}',
+                                shipping: {{
+                                    name: {{
+                                        full_name: '{user_full_name}'
+                                    }},
+                                    address: {{
+                                        address_line_1: '{specific_address}',
+                                        address_line_2: '{additional_references}',
+                                        admin_area_2: 'Tegucigalpa',
+                                        admin_area_1: 'FM',
+                                        postal_code: '11101',
+                                        country_code: 'HN'
+                                    }}
+                                }}
+                            }}]
+                        }});
+                    }},
+                    onApprove: function(data, actions) {{
+                        return actions.order.capture().then(function(details) {{
+                            fetch('/update_order', {{
+                                method: 'POST',
+                                headers: {{
+                                    'Content-Type': 'application/json',
+                                }},
+                                body: JSON.stringify({{
+                                    order_id: '{new_order.id}',
+                                    paypal_transaction_id: details.id,
+                                    new_status: 'confirmed'
+                                }})
+                            }}).then(response => response.json())
+                            .then(data => {{
+                                if (data.success) {{
+                                    alert('¡Compra realizada con éxito! 🎉 ID de transacción: ' + details.id);
+                                    window.location.reload();
+                                }} else {{
+                                    alert('Error al actualizar el pedido. Por favor, contacta al soporte.');
+                                }}
+                            }});
+                        }});
+                    }},
+                    onError: function(err) {{
+                        alert('Error al procesar el pago. Intenta de nuevo.');
+                        console.error('PayPal error:', err);
+                    }}
+                }}).render('#paypal-button-container');
+            </script>
+            '''
+            components.html(paypal_html, height=1200)
+        elif selected_plan == "Suscripción Mensual":
+            paypal_html = f'''
+            <div id="paypal-button-container-P-8JD80124L6471951GM3UKKHA"></div>
+            <script src="https://www.paypal.com/sdk/js?client-id={paypal_client_id}&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
+            <script>
+                paypal.Buttons({{
+                    style: {{
+                        shape: 'pill',
+                        color: 'blue',
+                        layout: 'horizontal',
+                        label: 'subscribe'
+                    }},
+                    createSubscription: function(data, actions) {{
+                        return actions.subscription.create({{
+                            plan_id: 'P-8JD80124L6471951GM3UKKHA'
+                        }});
+                    }},
+                    onApprove: function(data, actions) {{
+                        fetch('/update_order', {{
+                            method: 'POST',
+                            headers: {{
+                                'Content-Type': 'application/json',
+                            }},
+                            body: JSON.stringify({{
+                                order_id: '{new_order.id}',
+                                paypal_transaction_id: data.subscriptionID,
+                                new_status: 'confirmed'
+                            }})
+                        }}).then(response => response.json())
+                        .then(data => {{
+                            if (data.success) {{
+                                alert('¡Pedido realizado con éxito! 🎉 ID de suscripción: ' + data.subscriptionID);
+                                window.location.reload();
+                            }} else {{
+                                alert('Error al actualizar el pedido. Por favor, contacta al soporte.');
+                            }}
+                        }});
+                    }},
+                    onError: function(err) {{
+                        alert('Error al procesar el pago. Intenta de nuevo.');
+                    }}
+                }}).render('#paypal-button-container-P-8JD80124L6471951GM3UKKHA');
+            </script>
+            '''
+            components.html(paypal_html, height=300)
+        elif selected_plan == "Suscripción Semestral":
+            paypal_html = f'''
+            <div id="paypal-button-container-P-79741958WR506740HM3UPLFA"></div>
+            <script src="https://www.paypal.com/sdk/js?client-id={paypal_client_id}&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
+            <script>
+                paypal.Buttons({{
+                    style: {{
+                        shape: 'pill',
+                        color: 'gold',
+                        layout: 'horizontal',
+                        label: 'subscribe'
+                    }},
+                    createSubscription: function(data, actions) {{
+                        return actions.subscription.create({{
+                            plan_id: 'P-79741958WR506740HM3UPLFA'
+                        }});
+                    }},
+                    onApprove: function(data, actions) {{
+                        fetch('/update_order', {{
+                            method: 'POST',
+                            headers: {{
+                                'Content-Type': 'application/json',
+                            }},
+                            body: JSON.stringify({{
+                                order_id: '{new_order.id}',
+                                paypal_transaction_id: data.subscriptionID,
+                                new_status: 'confirmed'
+                            }})
+                        }}).then(response => response.json())
+                        .then(data => {{
+                            if (data.success) {{
+                                alert('¡Pedido realizado con éxito! 🎉 ID de suscripción: ' + data.subscriptionID);
+                                window.location.reload();
+                            }} else {{
+                                alert('Error al actualizar el pedido. Por favor, contacta al soporte.');
+                            }}
+                        }});
+                    }},
+                    onError: function(err) {{
+                        alert('Error al procesar el pago. Intenta de nuevo.');
+                    }}
+                }}).render('#paypal-button-container-P-79741958WR506740HM3UPLFA');
+            </script>
+            '''
+            components.html(paypal_html, height=300)
+        elif selected_plan == "Suscripción Anual":
+            paypal_html = f'''
+            <div id="paypal-button-container-P-4E978587FL636905DM3UPY3Q"></div>
+            <script src="https://www.paypal.com/sdk/js?client-id={paypal_client_id}&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
+            <script>
+                paypal.Buttons({{
+                    style: {{
+                        shape: 'pill',
+                        color: 'black',
+                        layout: 'horizontal',
+                        label: 'subscribe'
+                    }},
+                    createSubscription: function(data, actions) {{
+                        return actions.subscription.create({{
+                            plan_id: 'P-4E978587FL636905DM3UPY3Q'
+                        }});
+                    }},
+                    onApprove: function(data, actions) {{
+                        fetch('/update_order', {{
+                            method: 'POST',
+                            headers: {{
+                                'Content-Type': 'application/json',
+                            }},
+                            body: JSON.stringify({{
+                                order_id: '{new_order.id}',
+                                paypal_transaction_id: data.subscriptionID,
+                                new_status: 'confirmed'
+                            }})
+                        }}).then(response => response.json())
+                        .then(data => {{
+                            if (data.success) {{
+                                alert('¡Suscripción Anual realizada con éxito! 🎉 ID de suscripción: ' + data.subscriptionID);
+                                window.location.reload();
+                            }} else {{
+                                alert('Error al actualizar el pedido. Por favor, contacta al soporte.');
+                            }}
+                        }});
+                    }},
+                    onError: function(err) {{
+                        alert('Error al procesar el pago. Intenta de nuevo.');
+                    }}
+                }}).render('#paypal-button-container-P-4E978587FL636905DM3UPY3Q');
+            </script>
+            '''
+            components.html(paypal_html, height=300)
 
-  session.close()
+    session.close()
+
+# Add this new route to handle order updates
+@st.route('/update_order', methods=['POST'])
+def update_order():
+    data = st.json()
+    order_id = data['order_id']
+    paypal_transaction_id = data['paypal_transaction_id']
+    new_status = data['new_status']
+    
+    session = Session()
+    order = session.query(Order).filter_by(id=order_id).first()
+    if order:
+        order.status = OrderStatus[new_status]
+        order.paypal_transaction_id = paypal_transaction_id
+        session.commit()
+        session.close()
+        return jsonify({'success': True})
+    else:
+        session.close()
+        return jsonify({'success': False})
+
+# Replace the existing display_user_orders function with this updated version
+def display_user_orders():
+    st.subheader("📦 Mis Órdenes")
+    
+    session = Session()
+    orders = session.query(Order).filter_by(user_id=st.session_state.user.id).all()
+    
+    status_mapping = {
+        OrderStatus.pending: ("Pago Pendiente", 0),
+        OrderStatus.confirmed: ("Orden Confirmada", 33),
+        OrderStatus.shipped: ("Orden Enviada", 66),
+        OrderStatus.delivered: ("Orden Entregada", 100)
+    }
+    
+    for order in orders:
+        with st.expander(f"Order ID: {order.id} - Status: {order.status.value}"):
+            st.write(f"**Fecha de entrega:** {order.date}")
+            st.write(f"**Dirección de entrega:** {order.delivery_address}")
+            st.write(f"**Precio total:** L. {order.total_price:.2f}")
+            
+            if order.product_id:
+                product = session.query(Product).filter_by(id=order.product_id).first()
+                if product:
+                    st.write(f"**Producto:** {product.name}")
+            
+            if order.paypal_transaction_id:
+                st.write(f"**PayPal Transaction ID:** {order.paypal_transaction_id}")
+
+            if order.status in status_mapping:
+                status_label, progress_value = status_mapping[order.status]
+                st.write(f"**Estado del pedido:** {status_label}")
+                progress_bar = st.progress(progress_value)
+            else:
+                st.write("**Estado del pedido:** Desconocido")
+                st.progress(0)
+
+    session.close()
+
 def display_user_orders():
   st.subheader("📦 Mis Órdenes")
   
