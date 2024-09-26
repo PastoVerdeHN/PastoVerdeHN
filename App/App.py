@@ -333,7 +333,7 @@ def place_order():
           st.write(f"Total: L. {total_price:.2f}")
           st.write("**Nota:** En el checkout, se incluye una caja de madera con los planes de suscripción. One-time setup fee")
 
-    if st.button("Confirmar pedido"):
+          if st.button("Confirmar pedido"):
         # Create new order
         new_order = Order(
             id=generate_order_id(),
