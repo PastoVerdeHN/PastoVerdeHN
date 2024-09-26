@@ -31,6 +31,7 @@ class User(Base):
   is_active = Column(Boolean, default=True)
   welcome_email_sent = Column(Boolean, default=False)
   orders = relationship("Order", back_populates="user")
+  transaction_id = Column(String)
 
   @validates('email')
   def validate_email(self, key, address):
