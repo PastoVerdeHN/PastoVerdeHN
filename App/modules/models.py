@@ -3,6 +3,11 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, validates
 from datetime import datetime
 import enum
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
 
 Base = declarative_base()
 
@@ -12,9 +17,9 @@ class UserType(enum.Enum):
 
 class OrderStatus(enum.Enum):
     pending = "pending"
-    confirmed = "confirmed"  # Added confirmed status
-    shipped = "shipped"      # Added shipped status
-    delivered = "delivered"  # Added delivered status
+    confirmed = "confirmed"
+    shipped = "shipped"
+    delivered = "delivered"
     completed = "completed"
     cancelled = "cancelled"
 
@@ -61,7 +66,7 @@ class Order(Base):
     payment_status = Column(String, default="pending")
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, onupdate=datetime.utcnow)
-    transaction_id = Column(String, nullable=True)  # Added the transaction_id field
+    transaction_id = Column(String, nullable=True)
     user = relationship("User", back_populates="orders")
     product = relationship("Product")
 
@@ -95,3 +100,8 @@ def setup_database(database_url):
     Base.metadata.create_all(engine)
     
     return sessionmaker(bind=engine)
+
+# Load the DATABASE_URL from the environment variables
+database_url = os.getenv("DATABASE_URL")
+SessionLocal = setup_database(database_url)
+
