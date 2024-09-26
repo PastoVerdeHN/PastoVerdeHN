@@ -7,8 +7,17 @@ import os
 # Load environment variables
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL")  # Ensure this is set to your database URL
-SessionLocal = setup_database(DATABASE_URL)  # This creates a session maker
+# Database setup
+try:
+  database_url = st.secrets["database"]["url"]
+except KeyError:
+  database_url = os.getenv("DATABASE_URL")
+
+if not database_url:
+  st.error("Database URL not found. Please set it in Streamlit secrets or as an environment variable.")
+  st.stop()
+
+Session = setup_database(database_url)
 
 def display_user_orders():
     st.subheader("📦 Mis Órdenes")
