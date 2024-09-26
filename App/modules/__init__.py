@@ -1,2 +1,2 @@
 from .home import home_page
-from .home import place_order
+from .order import place_order
