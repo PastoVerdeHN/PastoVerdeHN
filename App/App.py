@@ -20,6 +20,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.image import MIMEImage
 import requests
+from modules.home import home_page
 
 # Streamlit page configuration
 st.set_page_config(
@@ -166,14 +167,6 @@ def main():
       image_url = "https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/main/STREAMLIT%20PAGE%20ICON.png"
       st.sidebar.image(image_url, use_column_width=True, caption="La Naturaleza A Los Pies De Tus Mascota")
     
-def home_page():
-  st.write(f"Bienvenido/a Pasto Verde, {st.session_state.user.name}! 🌿")
-  st.write("¡Llevando pasto fresco a tus mascotas, una caja a la vez!")
-  
-  st.subheader("Conozca Pasto Verde")
-  
-  video_url = "https://github.com/PastoVerdeHN/PastoVerdeHN/raw/main/PASTO%20VERDE%20AD%20FINAL.mp4"
-  st.video(video_url)
 
 def place_order():
   st.subheader("🛒 Realizar pedido")
