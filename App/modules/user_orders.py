@@ -1,6 +1,6 @@
 import streamlit as st
 from sqlalchemy.orm import Session
-from modules.models import User, Product, Order, Subscription, PaymentTransaction, OrderStatus
+from modules.models import User, Product, Order, Subscription, PaymentTransaction, OrderStatus, setup_database
 from dotenv import load_dotenv
 import os
 import random
@@ -8,6 +8,7 @@ import random
 # Load environment variables
 load_dotenv()
 
+DATABASE_URL = os.getenv("DATABASE_URL")  # Ensure this is set to your database URL
 SessionLocal = setup_database(DATABASE_URL)  # This creates a session maker
 
 def display_user_orders():
