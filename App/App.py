@@ -241,7 +241,7 @@ def place_order():
 
     # Promo Code Input
     promo_code = st.text_input("Código promocional (opcional)", value="")
-st.caption("Nota: Los códigos promocionales solo son válidos para productos sin suscripción.")
+    st.caption("Nota: Los códigos promocionales solo son válidos para productos sin suscripción.")
 
     # Address Input and Map
     st.subheader("Dirección de entrega")
