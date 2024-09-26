@@ -81,7 +81,7 @@ def auth0_authentication():
               redirect_uri="http://localhost:8501/callback"  # Adjust this you're not running locally
           )
           
-          user_info and st.session_state.auth_status != "authenticated":
+          if user_info and st.session_state.auth_status != "authenticated":
               session = Session()
               user = session.query(User).filter_by(email=user_info['email']).first()
               
