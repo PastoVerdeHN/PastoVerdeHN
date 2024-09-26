@@ -1,6 +1,9 @@
 import streamlit as st  # For the Streamlit app components
 from sqlalchemy.orm import Session  # For database session management
 from models import Order, Product, OrderStatus  # Assuming these are your ORM models
+import os  # For environment variable handling
+from dotenv import load_dotenv  # To load environment variables from a .env file
+import random  # For generating random order IDs (if needed)
 
 def display_user_orders():
   st.subheader("📦 Mis Órdenes")
