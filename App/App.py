@@ -48,10 +48,6 @@ st.markdown(
 # Load environment variables
 load_dotenv()
 
-
-
-
-
 def auth0_authentication():
   if 'user' not in st.session_state:
       st.session_state.user = None
