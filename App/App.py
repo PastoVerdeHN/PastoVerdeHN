@@ -106,14 +106,12 @@ if user_info and st.session_state.auth_status != "authenticated":
             send_welcome_email(user.email, user.name)  # Ensure this function is defined
             user.welcome_email_sent = True
         session.commit()
-              
-              user.last_login = datetime.utcnow()
-              session.commit()
-              
-              st.session_state.user = user
-              st.session_state.auth_status = "authenticated"
-              st.success(f"Bienvenido, {user.name}!")
-              session.close()
+    user.last_login = datetime.utcnow()
+    session.commit()
+    st.session_state.user = user
+    st.session_state.auth_status = "authenticated"
+    st.success(f"Bienvenido, {user.name}!")
+    session.close()
   
   return st.session_state.user
 
