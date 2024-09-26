@@ -20,7 +20,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.image import MIMEImage
 import requests
-from .modules.home import home_page
+from App.modules.home import home_page
 
 
 # Streamlit page configuration
