@@ -1,7 +1,7 @@
 import streamlit as st
 
 
-   def home_page():
+def home_page():
        st.write(f"Bienvenido/a Pasto Verde, {st.session_state.user.name}! 🌿")
        st.write("¡Llevando pasto fresco a tus mascotas, una caja a la vez!")
        
