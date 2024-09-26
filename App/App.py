@@ -647,6 +647,7 @@ def display_user_orders():
               st.progress(0)  # Default to 0 if status is unknown
 
   session.close()
+  
 def user_manual():
   st.subheader("📖 Manual de Usuario")
   st.write("""
