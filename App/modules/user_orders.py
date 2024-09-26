@@ -1,3 +1,7 @@
+import streamlit as st  # For the Streamlit app components
+from sqlalchemy.orm import Session  # For database session management
+from models import Order, Product, OrderStatus  # Assuming these are your ORM models
+
 def display_user_orders():
   st.subheader("📦 Mis Órdenes")
   
