@@ -11,7 +11,7 @@ import os
 from dotenv import load_dotenv
 from auth0_component import login_button
 from branca.element import Template, MacroElement
-from models import User, Product, Order, Subscription, PaymentTransaction, setup_database, UserType, OrderStatus
+from modules.models import Order, Product, OrderStatusimport User, Product, Order, Subscription, PaymentTransaction, setup_database, UserType, OrderStatus
 from geopy.geocoders import Nominatim
 import time
 import streamlit.components.v1 as components
