@@ -29,6 +29,10 @@ if not database_url:
 engine = create_engine(database_url)
 Session = sessionmaker(bind=engine)
 
+# Helper functions
+def generate_order_id():
+  return f"ORD-{random.randint(10000, 99999)}"
+
 
 def place_order():
   st.subheader("🛒 Realizar pedido")
