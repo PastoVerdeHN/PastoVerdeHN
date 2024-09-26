@@ -241,6 +241,7 @@ def place_order():
 
     # Promo Code Input
     promo_code = st.text_input("Código promocional (opcional)", value="")
+st.caption("Nota: Los códigos promocionales solo son válidos para productos sin suscripción.")
 
     # Address Input and Map
     st.subheader("Dirección de entrega")
@@ -307,7 +308,7 @@ def place_order():
             total_price = lempira_price
             
             # Apply promo code discount for "Sin Suscripción"
-            if selected_plan == "Sin Suscripción" and promo_code == "VerdeHN":
+            if selected_plan == "Sin Suscripción" and promo_code == "VERDEHN":
                 discount = total_price * 0.20
                 total_price -= discount
                 st.write(f"¡Código promocional aplicado! Descuento: L. {discount:.2f}")
