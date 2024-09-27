@@ -64,11 +64,17 @@ Session = setup_database(database_url)
 
 def main():
   st.title("Pasto Verde - Entrega de pasto para mascotas")
-  user = auth0_authentication()  # Get the user from authentication
+  
+  # Database setup
+  database_url = st.secrets["database"]["url"]
+  Session = setup_database(database_url)  # Ensure this function is defined
+
+  # Call the authentication function
+  user = auth0_authentication(Session)  # Pass the session to the function
 
   if user:
       # Display a personalized welcome message
-      st.write(f"Hola {user.name}, bienvenido a Pasto Verde! 🌿")  # Personalized greeting
+      st.write(f"Hola {user.name}, bienvenido a Pasto Verde! 🌿")
 
       if 'current_page' not in st.session_state:
           st.session_state.current_page = "🏠 Inicio"  # Default page
