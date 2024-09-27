@@ -64,7 +64,7 @@ Session = setup_database(database_url)
 
 def main():
   st.title("Pasto Verde - Entrega de pasto para mascotas")
-  user = auth0_authentication()  # Get the user from authentication
+  user = auth0_authentication(Session)
 
   if user:
       # Display a personalized welcome message
