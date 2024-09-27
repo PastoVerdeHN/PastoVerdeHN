@@ -120,10 +120,55 @@ def display_map():
   # Add the "BUY NOW" button
   if st.button("BUY NOW"):
       st.session_state.current_page = "🛒  Ordene Ahora"  # Change to the order page
-      # Use a placeholder to trigger the page change
-      st.experimental_set_query_params(page="order")  # Set a query parameter to trigger a rerun
+      # No need for rerun or flags, just let the main loop handle it
 
-  # Check if the page parameter is set to "order"
-  if st.experimental_get_query_params().get("page") == ["order"]:
-      st.session_state.current_page = "🛒  Ordene Ahora"  # Change to the order page
-      st.experimental_set_query_params()  # Clear the query parameters
+# In your main function, ensure you handle the page rendering correctly
+def main():
+  st.title("Pasto Verde - Entrega de pasto para mascotas")
+  user = auth0_authentication()  # Get the user from authentication
+
+  if user:
+      # Display a personalized welcome message
+      st.write(f"Hola {user.name}, bienvenido a Pasto Verde! 🌿")  # Personalized greeting
+
+      if 'current_page' not in st.session_state:
+          st.session_state.current_page = "🏠 Inicio"  # Default page
+      
+      menu_items = {
+          "🏠 Inicio": home_page,
+          "🛒  Ordene Ahora": place_order,
+          "📦 Mis Órdenes": display_user_orders,
+          "🗺️ Zona De Envios": display_map,
+          "ℹ️ Sobre Nosotros": about_us,
+          "📖 Manual de Usuario": user_manual  # New menu item
+      }
+      
+      if user.type == UserType.admin:
+          menu_items["📊 Admin Dashboard"] = admin_dashboard  # Ensure this function is defined
+      
+      cols = st.columns(len(menu_items))
+      for i, (emoji_label, func) in enumerate(menu_items.items()):
+          if cols[i].button(emoji_label):
+              st.session_state.current_page = emoji_label
+      
+      # Debugging line
+      st.write(f"Current page: {st.session_state.current_page}")  
+      
+      try:
+          menu_items[st.session_state.current_page]()
+      except KeyError:
+          st.session_state.current_page = "🏠 Inicio"  # Fallback to default page
+          menu_items[st.session_state.current_page]()
+      
+      if st.sidebar.button("🚪 Finalizar la sesión"):
+          for key in list(st.session_state.keys()):
+              del st.session_state[key]
+          st.success("Logged out successfully.")
+          st.rerun()
+  else:
+      st.write("Por favor inicie sesión para acceder a los servicios de Pasto Verde")
+      
+      # Move the image to the bottom of the sidebar
+      st.sidebar.markdown("---")
+      image_url = "https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/main/STREAMLIT%20PAGE%20ICON.png"
+      st.sidebar.image(image_url, use_column_width=True, caption="La Naturaleza A Los Pies De Tus Mascota")
