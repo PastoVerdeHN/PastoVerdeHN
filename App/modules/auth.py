@@ -4,6 +4,7 @@ from datetime import datetime
 from modules.models import User, UserType
 from auth0_component import login_button
 from .models import setup_database
+from modules.email import send_welcome_email
 
 
 # Database setup
