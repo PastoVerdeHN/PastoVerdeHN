@@ -117,7 +117,13 @@ def display_map():
               "Todos los pedidos vienen en cajas de cartón reciclable que puedes simplemente reciclar "
               "cuando llegue el nuevo reemplazo. ♻️🐾📦")
 
- # Add the "BUY NOW" button
+  # Add the "BUY NOW" button
   if st.button("BUY NOW"):
       st.session_state.current_page = "🛒  Ordene Ahora"  # Change to the order page
-      # No need to rerun, the main loop will handle the page change
+      # Set a flag to indicate that the button was clicked
+      st.session_state.button_clicked = True
+
+  # Check if the button was clicked and redirect
+  if 'button_clicked' in st.session_state and st.session_state.button_clicked:
+      st.session_state.current_page = "🛒  Ordene Ahora"  # Change to the order page
+      st.session_state.button_clicked = False  # Reset the flag
