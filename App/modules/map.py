@@ -54,10 +54,10 @@ def display_map():
       },
 "Zona Sur": {
     "coordinates": [
-        [14.0600, -87.2700],  # Extended left boundary
+        [14.0600, -87.2900],  # Extended left boundary
         [14.0600, -87.1300],  # Extended right boundary
         [14.0300, -87.1300],  # Bottom right
-        [14.0300, -87.2700]   # Bottom left
+        [14.0300, -87.2900]   # Bottom left
     ],
     "color": "#0000FF"  # Blue
 }
