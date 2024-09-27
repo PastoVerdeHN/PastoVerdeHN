@@ -52,15 +52,15 @@ def display_map():
           ],
           "color": "#FF00FF"  # Magenta
       },
-      "Zona Sur": {
-          "coordinates": [
-              [14.0700, -87.2400],
-              [14.0700, -87.1700],
-              [14.0300, -87.1700],
-              [14.0300, -87.2400]
-          ],
-          "color": "#0000FF"  # Blue
-      }
+"Zona Sur": {
+    "coordinates": [
+        [14.0600, -87.2500],  # Adjusted left boundary
+        [14.0600, -87.1500],  # Adjusted right boundary
+        [14.0300, -87.1500],  # Bottom right
+        [14.0300, -87.2500]   # Bottom left
+    ],
+    "color": "#0000FF"  # Blue
+}
   }
   
   # Add polygons for each zone
