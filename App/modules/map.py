@@ -120,10 +120,10 @@ def display_map():
   # Add the "BUY NOW" button
   if st.button("BUY NOW"):
       st.session_state.current_page = "🛒  Ordene Ahora"  # Change to the order page
-      # Set a flag to indicate that the button was clicked
-      st.session_state.button_clicked = True
+      # Use a placeholder to trigger the page change
+      st.experimental_set_query_params(page="order")  # Set a query parameter to trigger a rerun
 
-  # Check if the button was clicked and redirect
-  if 'button_clicked' in st.session_state and st.session_state.button_clicked:
+  # Check if the page parameter is set to "order"
+  if st.experimental_get_query_params().get("page") == ["order"]:
       st.session_state.current_page = "🛒  Ordene Ahora"  # Change to the order page
-      st.session_state.button_clicked = False  # Reset the flag
+      st.experimental_set_query_params()  # Clear the query parameters
