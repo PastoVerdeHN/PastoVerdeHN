@@ -56,26 +56,15 @@ except KeyError:
   database_url = os.getenv("DATABASE_URL")
 
 if not database_url:
-st.error("Database URL not found. Please set it in Streamlit secrets or as an environment variable.")
-st.stop()
+  st.error("Database URL not found. Please set it in Streamlit secrets or as an environment variable.")
+  st.stop()
 
 Session = setup_database(database_url)
 
 
 def main():
   st.title("Pasto Verde - Entrega de pasto para mascotas")
-
-# Database setup
-      database_url = st.secrets["database"]["url"]
-       Session = setup_database(database_url)  # Ensure this function is defined
-
- # Call the authentication function
-       user = auth0_authentication(Session)  # Add this line
-
-       if user:
-           # Your existing logic for authenticated users...
-       else:
-           st.write("Por favor inicie sesión para acceder a los servicios de Pasto Verde")
+  user = auth0_authentication()  # Get the user from authentication
 
   if user:
       # Display a personalized welcome message
