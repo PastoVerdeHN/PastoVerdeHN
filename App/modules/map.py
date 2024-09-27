@@ -16,7 +16,7 @@ def display_map():
   
   # Define delivery zones (adjusted to reduce overlap)
   zones = {
-      "Zona Norte": {
+      "Zona 1": {
           "coordinates": [
               [14.1300, -87.2800],
               [14.1300, -87.1300],
@@ -25,7 +25,7 @@ def display_map():
           ],
           "color": "#00FF00"  # Green
       },
-      "Zona Centro": {
+      "Zona 2": {
           "coordinates": [
               [14.0950, -87.2200],
               [14.0950, -87.1850],
@@ -34,7 +34,7 @@ def display_map():
           ],
           "color": "#FF0000"  # Red
       },
-      "Zona Este": {
+      "Zona 3": {
           "coordinates": [
               [14.0950, -87.1850],
               [14.0950, -87.1300],
@@ -43,7 +43,7 @@ def display_map():
           ],
           "color": "#FFFF00"  # Yellow
       },
-      "Zona Oeste": {
+      "Zona 4": {
           "coordinates": [
               [14.0950, -87.2800],
               [14.0950, -87.2200],
@@ -52,15 +52,33 @@ def display_map():
           ],
           "color": "#FF00FF"  # Magenta
       },
-"Zona Sur": {
-    "coordinates": [
-        [14.0600, -87.2800],  # Extended left boundary
-        [14.0600, -87.1300],  # Extended right boundary
-        [14.0300, -87.1300],  # Bottom right
-        [14.0300, -87.2800]   # Bottom left
-    ],
-    "color": "#0000FF"  # Blue
-}
+      "Zona 5": {
+          "coordinates": [
+              [14.0600, -87.2800],  # Extended left boundary
+              [14.0600, -87.1300],  # Extended right boundary
+              [14.0300, -87.1300],  # Bottom right
+              [14.0300, -87.2800]   # Bottom left
+          ],
+          "color": "#0000FF"  # Blue
+      },
+      "Zona 6": {
+          "coordinates": [
+              [14.2000, -87.2000],
+              [14.2000, -87.1500],
+              [14.1700, -87.1500],
+              [14.1700, -87.2000]
+          ],
+          "color": "#FFA500"  # Orange
+      },
+      "Zona 7": {
+          "coordinates": [
+              [14.1000, -87.3000],
+              [14.1000, -87.2500],
+              [14.0700, -87.2500],
+              [14.0700, -87.3000]
+          ],
+          "color": "#800080"  # Purple
+      }
   }
   
   # Add polygons for each zone
