@@ -118,5 +118,5 @@ def display_map():
               "cuando llegue el nuevo reemplazo. ♻️🐾📦")
 
   # Add the "BUY NOW" button
-  if st.button("BUY NOW"):
+  if st.button("Comprar Ahora"):
       st.session_state.current_page = "🛒  Ordene Ahora"  
