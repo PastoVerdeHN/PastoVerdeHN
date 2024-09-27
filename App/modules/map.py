@@ -1,4 +1,4 @@
-viimport folium
+import folium
 from folium.plugins import MarkerCluster
 from streamlit_folium import folium_static
 from jinja2 import Template
