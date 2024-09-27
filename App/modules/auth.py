@@ -4,6 +4,21 @@ from datetime import datetime
 from modules.models import User, UserType
 from auth0_component import login_button
 
+# Load environment variables
+load_dotenv()
+
+# Database setup
+try:
+  database_url = st.secrets["database"]["url"]
+except KeyError:
+  database_url = os.getenv("DATABASE_URL")
+
+if not database_url:
+  st.error("Database URL not found. Please set it in Streamlit secrets or as an environment variable.")
+  st.stop()
+
+Session = setup_database(database_url)
+
 def auth0_authentication():
   if 'user' not in st.session_state:
       st.session_state.user = None
