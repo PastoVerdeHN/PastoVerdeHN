@@ -120,4 +120,3 @@ def display_map():
   # Add the "BUY NOW" button
   if st.button("BUY NOW"):
       st.session_state.current_page = "🛒  Ordene Ahora"  # Change to the order page
-      st.experimental_rerun()  # Rerun the app to reflect the change
