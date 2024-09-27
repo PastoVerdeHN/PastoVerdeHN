@@ -152,7 +152,7 @@ def place_order():
   delivery_date = st.date_input("Fecha de entrega", value=datetime.today())
 
   # Delivery Time Frame Selection
-  delivery_time_frame = st.radio("Horario de entrega Lunes a Sabado:", ("AM (8am - 12pm)"))
+  delivery_time_frame = st.radio("Horario de entrega Lunes a Sabado:", ("AM (7am - 12pm)"))
 
   # Promo Code Input and Disclaimer
   promo_code = st.text_input("Código promocional (opcional)", value="")
