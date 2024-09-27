@@ -7,6 +7,7 @@ import streamlit as st
 
 def display_map():
   st.subheader("🗺️ Zona de Entrega")
+    st.subheader("ENVIOS GRATUITOS A LAS 7 ZONAS DEL MAPA")
   
   # Coordinates for Tegucigalpa
   tegucigalpa_coords = [14.0818, -87.2068]
