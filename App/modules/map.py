@@ -6,6 +6,7 @@ from folium import MacroElement
 import streamlit as st
 
 def display_map():
+  st.subheader("🗺️ Zona de Entrega")
   st.subheader("🗺️🚚  envío gratuito a todas las zonas en el Mapa")
   
   # Coordinates for Tegucigalpa
