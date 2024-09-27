@@ -1,5 +1,4 @@
 import folium
-from folium.plugins import MarkerCluster
 from streamlit_folium import folium_static
 from jinja2 import Template
 from folium import MacroElement
@@ -14,7 +13,7 @@ def display_map():
   # Create a map centered on Tegucigalpa
   m = folium.Map(location=tegucigalpa_coords, zoom_start=12)
   
-  # Define delivery zones (adjusted to reduce overlap)
+  # Define delivery zones with adjusted coordinates
   zones = {
       "Zona Norte": {
           "coordinates": [
@@ -46,17 +45,17 @@ def display_map():
       "Zona Oeste": {
           "coordinates": [
               [14.1000, -87.2500],
-              [14.1000, -87.2200],
-              [14.0600, -87.2200],
-              [14.0600, -87.2500]
+              [14.1000, -87.1700],
+              [14.0500, -87.1700],
+              [14.0500, -87.2500]
           ],
           "color": "#FF00FF"  # Magenta
       },
       "Zona Sur": {
           "coordinates": [
-              [14.0700, -87.2400],
-              [14.0700, -87.1700],
-              [14.0300, -87.1700],
+              [14.0600, -87.2400],  # Lowered and widened
+              [14.0600, -87.1500],  # Lowered and widened
+              [14.0300, -87.1500],
               [14.0300, -87.2400]
           ],
           "color": "#0000FF"  # Blue
@@ -91,3 +90,6 @@ def display_map():
   
   # Display the map
   folium_static(m)
+
+# Call the function to display the map
+display_map()
