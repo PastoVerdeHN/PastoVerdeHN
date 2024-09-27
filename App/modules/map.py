@@ -55,8 +55,8 @@ def display_map():
       "Zona 5": {
           "coordinates": [
               [14.0600, -87.2800],  # Extended left boundary
-              [14.0600, -87.1300],  # Extended right boundary
-              [14.0300, -87.1300],  # Bottom right
+              [14.0600, -87.1500],  # Extended right boundary
+              [14.0300, -87.1500],  # Bottom right
               [14.0300, -87.2800]   # Bottom left
           ],
           "color": "#0000FF"  # Blue
