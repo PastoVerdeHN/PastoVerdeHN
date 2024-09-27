@@ -65,11 +65,11 @@ Session = setup_database(database_url)
 def main():
   st.title("Pasto Verde - Entrega de pasto para mascotas")
 
-         # Database setup
+# Database setup
        database_url = st.secrets["database"]["url"]
        Session = setup_database(database_url)  # Ensure this function is defined
 
-       # Call the authentication function
+ # Call the authentication function
        user = auth0_authentication(Session)  # Add this line
 
        if user:
