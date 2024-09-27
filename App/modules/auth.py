@@ -4,8 +4,7 @@ from datetime import datetime
 from modules.models import User, UserType
 from auth0_component import login_button
 
-# Load environment variables
-load_dotenv()
+
 
 # Database setup
 try:
