@@ -25,6 +25,7 @@ from modules.order import place_order
 from modules.user_orders import display_user_orders
 from modules.auth import auth0_authentication
 from modules.email import send_welcome_email
+from modules.map import display_map
 
 
 print("Importing home module")
