@@ -64,20 +64,20 @@ def display_map():
       },
       "Zona 6": {
           "coordinates": [
-         [14.1100, -87.1450],  # Santa Lucía
-         [14.1100, -87.0650],
-         [14.1400, -87.0650],
-         [14.1400, -87.1450]
-     ],
+              [14.1100, -87.1450],  # Santa Lucía
+              [14.1100, -87.0650],
+              [14.1400, -87.0650],
+              [14.1400, -87.1450]
+          ],
           "color": "#FFA500"  # Orange
       },
       "Zona 7": {
           "coordinates": [
-         [14.1350, -87.0650],  # Valle de Ángeles
-         [14.1350, -87.0299],
-         [14.1800, -87.0299],
-         [14.1800, -87.0650]
-     ],
+              [14.1350, -87.0650],  # Valle de Ángeles
+              [14.1350, -87.0299],
+              [14.1800, -87.0299],
+              [14.1800, -87.0650]
+          ],
           "color": "#800080"  # Purple
       }
   }
@@ -110,3 +110,12 @@ def display_map():
   
   # Display the map
   folium_static(m)
+
+  # Add message about Pasto Verde Boxes
+  st.markdown("### 📦 Pasto Verde Boxes")
+  st.markdown("Todos nuestros **Pasto Verde Boxes** vienen listos para usar tan pronto como los recibes. "
+              "Todos los pedidos vienen en cajas de cartón reciclable que puedes simplemente reciclar "
+              "cuando llegue el nuevo reemplazo. ♻️🐾📦")
+
+# Call the function to display the map
+display_map()
