@@ -60,26 +60,7 @@ def display_map():
         [14.0300, -87.2800]   # Bottom left
     ],
     "color": "#0000FF"  # Blue
-},
-          "Santa Lucia": {
-          "coordinates": [
-              [14.2000, -87.2000],
-              [14.2000, -87.1500],
-              [14.1700, -87.1500],
-              [14.1700, -87.2000]
-          ],
-          "color": "#FFA500"  # Orange
-      },
-      "Valle de Angeles": {
-          "coordinates": [
-              [14.1000, -87.3000],
-              [14.1000, -87.2500],
-              [14.0700, -87.2500],
-              [14.0700, -87.3000]
-          ],
-          "color": "#800080"  # Purple
-      }
-  }
+}
   }
   
   # Add polygons for each zone
