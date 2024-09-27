@@ -17,7 +17,7 @@ def display_map():
   
   # Define delivery zones (adjusted to reduce overlap)
   zones = {
-      "Zona 1": {
+      "Zona 5": {
           "coordinates": [
               [14.1300, -87.2800],
               [14.1300, -87.1450],
@@ -26,7 +26,7 @@ def display_map():
           ],
           "color": "#00FF00"  # Green
       },
-      "Zona 2": {
+      "Zona 3": {
           "coordinates": [
               [14.0950, -87.2200],
               [14.0950, -87.1850],
@@ -35,7 +35,7 @@ def display_map():
           ],
           "color": "#FF0000"  # Red
       },
-      "Zona 3": {
+      "Zona 4": {
           "coordinates": [
               [14.0950, -87.1850],
               [14.0950, -87.1400],
@@ -44,7 +44,7 @@ def display_map():
           ],
           "color": "#FFFF00"  # Yellow
       },
-      "Zona 4": {
+      "Zona 2": {
           "coordinates": [
               [14.0950, -87.2800],
               [14.0950, -87.2200],
@@ -53,7 +53,7 @@ def display_map():
           ],
           "color": "#FF00FF"  # Magenta
       },
-      "Zona 5": {
+      "Zona 1": {
           "coordinates": [
               [14.0600, -87.2800],  # Extended left boundary
               [14.0600, -87.1600],  # Extended right boundary
