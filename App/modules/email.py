@@ -4,7 +4,6 @@ from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 import requests
 import streamlit as st
-from modules.email import send_welcome_email
 
 
 def send_welcome_email(user_email, user_name):
