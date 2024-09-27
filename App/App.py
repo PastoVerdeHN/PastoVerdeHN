@@ -66,7 +66,7 @@ def main():
   st.title("Pasto Verde - Entrega de pasto para mascotas")
 
 # Database setup
-       database_url = st.secrets["database"]["url"]
+      database_url = st.secrets["database"]["url"]
        Session = setup_database(database_url)  # Ensure this function is defined
 
  # Call the authentication function
