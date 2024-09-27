@@ -117,6 +117,7 @@ def display_map():
               "Todos los pedidos vienen en cajas de cartón reciclable que puedes simplemente reciclar "
               "cuando llegue el nuevo reemplazo. ♻️🐾📦")
 
-  # Add the "BUY NOW" button
+ # Add the "BUY NOW" button
   if st.button("BUY NOW"):
       st.session_state.current_page = "🛒  Ordene Ahora"  # Change to the order page
+      # No need to rerun, the main loop will handle the page change
