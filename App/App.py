@@ -141,7 +141,7 @@ def main():
       logging.info("User not authenticated. Displaying login prompt.")
       
       # Display login option in sidebar
-      auth_choice = st.sidebar.radio("Elige acción", ["🔑 Entrar"])
+      auth_choice = st.sidebar.radio("Elige acción", ["🔑 Entrar"], key="auth_choice_radio")
       if auth_choice == "🔑 Entrar":
           # Display the login button
           # The auth0_authentication function handles the login process
