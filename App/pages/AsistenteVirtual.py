@@ -2,7 +2,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 # Retrieve the iframe URL from the secrets file
-iframe_url = st.secrets["iframe_url"]
+iframe_url = st.secrets["iframe_url"]["url"]
 
 # Create the iframe HTML using the secret URL
 iframe_html = f"""
@@ -12,6 +12,6 @@ iframe_html = f"""
 # Render the iframe using Streamlit's components.html function
 components.html(iframe_html, height=500)
 
-  # Add a navigation button (optional)
-  if st.button("Inicio"):
-      st.switch_page("App.py")  # Ensure "App.py" is the correct target page name
+# Add a navigation button (optional)
+if st.button("Inicio"):
+    st.switch_page("App.py")  # Ensure "App.py" is the correct target page name
