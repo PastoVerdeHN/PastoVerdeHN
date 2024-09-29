@@ -17,7 +17,6 @@ def app():
     # Load the link from the secrets.toml file
     try:
         link = st.secrets["asistente_virtual_link"]["link"]
-        st.write(f"Debug: Link loaded from secrets: {link}")
     except KeyError as e:
         st.error(f"Error accessing secret: {e}")
         st.stop()
