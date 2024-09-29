@@ -10,7 +10,7 @@ iframe_html = f"""
 """
 
 # Render the iframe using Streamlit's components.html function
-components.html(iframe_html, height=500)
+components.html(iframe_html, height=1000)
 
 # Add a navigation button (optional)
 if st.button("Inicio"):
