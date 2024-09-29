@@ -40,7 +40,5 @@ def app():
         scrolling=False
     )
 
-    if st.button("Inicio"):
-
 if __name__ == "__main__":
     app()
