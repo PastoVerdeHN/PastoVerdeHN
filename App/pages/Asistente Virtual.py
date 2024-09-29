@@ -14,6 +14,15 @@ def app():
 
     st.title("Asistente Virtual")
 
+        # Add a submessage about the AI nature of the assistant
+    st.markdown("""
+    <div style="padding: 10px; background-color: #f0f2f6; border-radius: 5px; margin-bottom: 20px;">
+    <p style="font-style: italic; color: #4a4a4a;">
+    Bienvenido a nuestro Asistente Virtual impulsado por IA. Estoy aquí para responder a cualquier pregunta que tengas sobre Pasto Verde, nuestros productos, o cuidado de mascotas. No dudes en preguntar lo que quieras - ¡estoy listo para ayudarte!
+    </p>
+    </div>
+    """, unsafe_allow_html=True)
+
     # Load the link from the secrets.toml file
     try:
         link = st.secrets["asistente_virtual_link"]["link"]
