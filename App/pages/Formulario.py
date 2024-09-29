@@ -39,6 +39,9 @@ def app():
         height=container_height,
         scrolling=False
     )
+      # Add a navigation button (optional)
+  if st.button("Inicio"):
+      st.switch_page("App.py")  # Ensure "App.py" is the correct target page name
 
 
 if __name__ == "__main__":
