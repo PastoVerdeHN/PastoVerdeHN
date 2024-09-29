@@ -40,9 +40,6 @@ def app():
         scrolling=False
     )
 
-    # Debugging statement
-    st.write("Iframe HTML generated successfully.")
-
     if st.button("Inicio"):
         st.experimental_rerun()
 
