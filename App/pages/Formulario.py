@@ -40,9 +40,6 @@ def app():
         scrolling=False
     )
 
-    # Add a navigation button (optional)
-if st.button("Inicio")
-
 
 if __name__ == "__main__":
     app()
