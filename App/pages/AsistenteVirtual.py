@@ -12,6 +12,4 @@ iframe_html = f"""
 # Render the iframe using Streamlit's components.html function
 components.html(iframe_html, height=500)
 
-# Add a navigation button (optional)
-if st.button("Inicio"):
-    st.switch_page("App.py")  # Ensure "App.py" is the correct target page name
+
