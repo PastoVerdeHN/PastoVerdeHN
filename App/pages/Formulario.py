@@ -41,7 +41,6 @@ def app():
     )
 
     if st.button("Inicio"):
-        st.experimental_rerun()
 
 if __name__ == "__main__":
     app()
