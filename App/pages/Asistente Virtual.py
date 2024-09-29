@@ -15,13 +15,24 @@ def app():
     st.title("Asistente Virtual")
 
     # Load the link from the secrets.toml file
-    link = st.secrets["asistente_virtual_link"]
+    try:
+        link = st.secrets["asistente_virtual_link"]["link"]
+        st.write(f"Debug: Link loaded from secrets: {link}")
+    except KeyError as e:
+        st.error(f"Error accessing secret: {e}")
+        st.stop()
+
     # Embed the link into the Streamlit app
-    st.components.v1.iframe(
-        src=link,
-        height=600,  # Adjust the height as needed
-        scrolling=True
-    )
+    try:
+        st.components.v1.iframe(
+            src=link,
+            height=600,  # Adjust the height as needed
+            scrolling=True
+        )
+    except Exception as e:
+        st.error(f"Error embedding iframe: {e}")
+        st.write("Attempting to display link as text:")
+        st.write(link)
 
     # Add a navigation button
     if st.button("Inicio"):
