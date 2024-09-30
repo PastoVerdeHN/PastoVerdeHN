@@ -101,9 +101,6 @@ def main():
   
   # Rest of your main function code...
   # (Keep all your existing code here)
-
-if __name__ == "__main__":
-  main()
   
   # Check if there's a logout message to display
   if 'logout_message' in st.session_state:
