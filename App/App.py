@@ -45,7 +45,7 @@ logging.basicConfig(
 )
 
 # --- SHARED ON ALL PAGES ---
-st.logo("https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/STREAMLIT%20PAGE%20ICON.png")
+st.logo("https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/MENU%20LOGO.png")
 
 # Streamlit page configuration
 st.set_page_config(
