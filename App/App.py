@@ -71,33 +71,39 @@ if not database_url:
 
 Session = setup_database(database_url)
 
+import streamlit as st
+
 def show_policy_popup():
   if 'policy_accepted' not in st.session_state:
       st.session_state.policy_accepted = False
 
   if not st.session_state.policy_accepted:
-      placeholder = st.empty()
-      with placeholder.container():
-          st.markdown("### Política de Privacidad y Cookies")
-          st.markdown("Por favor, acepta nuestra política de privacidad y cookies para continuar usando este sitio.")
-          col1, col2 = st.columns(2)
-          if col1.button("Aceptar"):
-              st.session_state.policy_accepted = True
-              placeholder.empty()
-          if col2.button("Rechazar"):
-              st.error("Debes aceptar la política para usar este sitio.")
-              st.stop()
+      st.markdown("### Política de Privacidad y Cookies")
+      st.markdown("Por favor, acepta nuestra política de privacidad y cookies para continuar usando este sitio.")
+      col1, col2 = st.columns(2)
+      if col1.button("Aceptar"):
+          st.session_state.policy_accepted = True
+          st.experimental_rerun()
+      if col2.button("Rechazar"):
+          st.error("Debes aceptar la política para usar este sitio.")
+          st.stop()
+  return st.session_state.policy_accepted
 
 def main():
   """Main function to run the Streamlit app."""
   logging.info("Starting the Pasto Verde application.")
-
-  # Show policy popup
-  show_policy_popup()
   
-  # Only proceed if policy is accepted
-  if st.session_state.get('policy_accepted', False):
-      st.title("Pasto Verde - Entrega de pasto para mascotas")
+  # Show policy popup and check if accepted
+  if not show_policy_popup():
+      return  # Exit the main function if policy not accepted
+  
+  st.title("Pasto Verde - Entrega de pasto para mascotas")
+  
+  # Rest of your main function code...
+  # (Keep all your existing code here)
+
+if __name__ == "__main__":
+  main()
   
   # Check if there's a logout message to display
   if 'logout_message' in st.session_state:
