@@ -1,5 +1,3 @@
-# app.py
-
 import os
 import random
 import time
@@ -38,11 +36,11 @@ import logging
 
 # Configure logging
 logging.basicConfig(
-  level=logging.INFO,  # Set to DEBUG for more detailed output
+  level=logging.INFO,
   format='%(asctime)s - %(levelname)s - %(message)s',
   handlers=[
-      logging.FileHandler("app.log"),  # Log to a file named app.log
-      logging.StreamHandler()          # Also output to console
+      logging.FileHandler("app.log"),
+      logging.StreamHandler()
   ]
 )
 
@@ -71,34 +69,7 @@ if not database_url:
 
 Session = setup_database(database_url)
 
-def main():
-  """Main function to run the Streamlit app."""
-  logging.info("Starting the Pasto Verde application.")
-  st.title("Pasto Verde - Entrega de pasto para mascotas")
-  
-  # Authenticate the user
-  user = auth0_authentication()
-  
-  if user:
-      logging.info(f"User '{user.name}' authenticated successfully.")
-      st.write(f"Hola {user.name}, bienvenido a Pasto Verde! 🌿")  # Personalized greeting
-
-      # Initialize session state for current page
-      if 'current_page' not in st.session_state:
-          st.session_state.current_page = "🏠 Inicio"  # Default page
-          logging.debug("Current page set to default (Inicio).")
-
-      # Define the available menu items and their corresponding functions
-      menu_items = {
-          "🏠 Inicio": home_page,
-          "🛒  Ordene Ahora": place_order,
-          "📦 Mis Órdenes": display_user_orders,
-          "🗺️ Zona De Envios": display_map,
-          "ℹ️ Sobre Nosotros": about_us,
-          "📖 Manual de Usuario": user_manual
-      }
-
-    def cookie_manager():
+def cookie_manager():
   """Manage cookie acceptance."""
   if 'cookie_accepted' not in st.session_state:
       st.session_state.cookie_accepted = False
@@ -131,6 +102,37 @@ def main():
 
       if st.session_state.cookie_accepted:
           st.experimental_rerun()
+
+def main():
+  """Main function to run the Streamlit app."""
+  logging.info("Starting the Pasto Verde application.")
+  
+  # Call the cookie manager
+  cookie_manager()
+  
+  st.title("Pasto Verde - Entrega de pasto para mascotas")
+  
+  # Authenticate the user
+  user = auth0_authentication()
+  
+  if user:
+      logging.info(f"User '{user.name}' authenticated successfully.")
+      st.write(f"Hola {user.name}, bienvenido a Pasto Verde! 🌿")  # Personalized greeting
+
+      # Initialize session state for current page
+      if 'current_page' not in st.session_state:
+          st.session_state.current_page = "🏠 Inicio"  # Default page
+          logging.debug("Current page set to default (Inicio).")
+
+      # Define the available menu items and their corresponding functions
+      menu_items = {
+          "🏠 Inicio": home_page,
+          "🛒  Ordene Ahora": place_order,
+          "📦 Mis Órdenes": display_user_orders,
+          "🗺️ Zona De Envios": display_map,
+          "ℹ️ Sobre Nosotros": about_us,
+          "📖 Manual de Usuario": user_manual
+      }
 
       # Add admin dashboard option for admin users
       if user.type == UserType.admin:
