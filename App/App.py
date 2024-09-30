@@ -107,6 +107,12 @@ def show_policy_banner():
                 margin: 15px 0;
                 font-weight: bold;
             }
+            .error-message {
+                text-align: center;
+                color: #ff0000;
+                font-weight: bold;
+                margin-top: 15px;
+            }
             </style>
             """,
             unsafe_allow_html=True
@@ -130,7 +136,7 @@ def show_policy_banner():
             st.rerun()
         elif reject:
             st.session_state.policy_rejected = True
-            st.error("Debes aceptar la política para usar este sitio.")
+            st.markdown('<p class="error-message">Debes aceptar la política para usar este sitio.</p>', unsafe_allow_html=True)
 
         if not st.session_state.policy_accepted:
             st.markdown(
@@ -143,7 +149,6 @@ def show_policy_banner():
                 """,
                 unsafe_allow_html=True
             )
-
 def main():
     """Main function to run the Streamlit app."""
     logging.info("Starting the Pasto Verde application.")
