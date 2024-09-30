@@ -42,6 +42,10 @@ def app():
         st.write("Attempting to display link as text:")
         st.write(link)
 
+    # Add a navigation button
+    if st.button("Inicio"):
+        st.switch_page("App.py")  # Ensure "App.py" is the correct target page name
+
 
 if __name__ == "__main__":
     app()
