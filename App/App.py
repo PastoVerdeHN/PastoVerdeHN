@@ -1,3 +1,5 @@
+# app.py
+
 import os
 import random
 import time
@@ -36,11 +38,11 @@ import logging
 
 # Configure logging
 logging.basicConfig(
-  level=logging.INFO,
+  level=logging.INFO,  # Set to DEBUG for more detailed output
   format='%(asctime)s - %(levelname)s - %(message)s',
   handlers=[
-      logging.FileHandler("app.log"),
-      logging.StreamHandler()
+      logging.FileHandler("app.log"),  # Log to a file named app.log
+      logging.StreamHandler()          # Also output to console
   ]
 )
 
@@ -69,33 +71,9 @@ if not database_url:
 
 Session = setup_database(database_url)
 
-def cookie_manager():
-    if 'cookie_accepted' not in st.session_state:
-        st.session_state.cookie_accepted = False
-
-    if not st.session_state.cookie_accepted:
-        with st.container():
-            st.markdown(
-                """
-                <div style="position: fixed; bottom: 0; left: 0; right: 0; background-color: #f1f1f1; padding: 15px; text-align: center; z-index: 9999;">
-                    <p>PASTO VERDE utiliza cookies para proporcionar la funcionalidad necesaria del sitio web, mejorar su experiencia y analizar nuestro tráfico. 
-                    Al utilizar nuestro sitio web, usted acepta nuestra 
-                    <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank">POLÍTICA DE PRIVACIDAD</a> y nuestra 
-                    <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank">POLÍTICA DE COOKIES</a>.</p>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-            if st.button("Aceptar", key="cookie_accept_button"):
-                st.session_state.cookie_accepted = True
-                st.experimental_rerun()
 def main():
   """Main function to run the Streamlit app."""
   logging.info("Starting the Pasto Verde application.")
-  
-  # Call the cookie manager
-  cookie_manager()
-  
   st.title("Pasto Verde - Entrega de pasto para mascotas")
   
   # Authenticate the user
@@ -162,6 +140,7 @@ def main():
       st.write("Por favor inicie sesión para acceder a los servicios de Pasto Verde")
       logging.info("User not authenticated. Displaying login prompt.")
       
+
       # Display logo or image in the sidebar
       st.sidebar.markdown("---")
       image_url = "https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/main/STREAMLIT%20PAGE%20ICON.png"
