@@ -70,25 +70,79 @@ if not database_url:
 Session = setup_database(database_url)
 
 def cookie_manager():
-  if 'cookie_accepted' not in st.session_state:
-      st.session_state.cookie_accepted = False
+    if 'cookie_accepted' not in st.session_state:
+        st.session_state.cookie_accepted = False
 
-  if not st.session_state.cookie_accepted:
-      with st.container():
-          st.markdown(
-              """
-              <div style="position: fixed; bottom: 0; left: 0; right: 0; background-color: #f1f1f1; padding: 10px; text-align: center; z-index: 9999;">
-                  PASTO VERDE utiliza cookies para proporcionar la funcionalidad necesaria del sitio web, mejorar su experiencia y analizar nuestro tráfico. 
-                  Al utilizar nuestro sitio web, usted acepta nuestra 
-                  <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank">POLÍTICA DE PRIVACIDAD</a> y nuestra 
-                  <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank">POLÍTICA DE COOKIES</a>.
-              </div>
-              """,
-              unsafe_allow_html=True
-          )
-          if st.button("Aceptar Cookies"):
-              st.session_state.cookie_accepted = True
-              st.experimental_rerun()
+    if not st.session_state.cookie_accepted:
+        cookie_banner = """
+        <style>
+        #cookie-banner {
+            position: fixed;
+            bottom: -100%;
+            left: 0;
+            right: 0;
+            background-color: #f1f1f1;
+            padding: 15px;
+            text-align: center;
+            z-index: 9999;
+            transition: bottom 0.5s ease-in-out;
+        }
+        #cookie-banner.show {
+            bottom: 0;
+        }
+        #cookie-banner button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #cookie-banner button:hover {
+            background-color: #45a049;
+        }
+        </style>
+        <div id="cookie-banner">
+            <p>PASTO VERDE utiliza cookies para proporcionar la funcionalidad necesaria del sitio web, mejorar su experiencia y analizar nuestro tráfico. 
+            Al utilizar nuestro sitio web, usted acepta nuestra 
+            <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank">POLÍTICA DE PRIVACIDAD</a> y nuestra 
+            <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank">POLÍTICA DE COOKIES</a>.</p>
+            <button onclick="acceptCookies()">Aceptar</button>
+        </div>
+        <script>
+        function showCookieBanner() {
+            document.getElementById('cookie-banner').classList.add('show');
+        }
+        function acceptCookies() {
+            document.getElementById('cookie-banner').style.transition = 'bottom 0.5s ease-in-out';
+            document.getElementById('cookie-banner').style.bottom = '-100%';
+            setTimeout(function() {
+                window.parent.postMessage({type: 'cookie_accepted'}, '*');
+            }, 500);
+        }
+        setTimeout(showCookieBanner, 500);
+        </script>
+        """
+        components.html(cookie_banner, height=0)
+
+        # Check for the message from the cookie banner
+        if components.html("""
+            <script>
+            window.addEventListener('message', function(e) {
+                if (e.data.type === 'cookie_accepted') {
+                    window.parent.postMessage({type: 'streamlit:setComponentValue', value: true}, '*');
+                }
+            });
+            </script>
+        """, height=0):
+            st.session_state.cookie_accepted = True
+            st.experimental_rerun()
+
 def main():
   """Main function to run the Streamlit app."""
   logging.info("Starting the Pasto Verde application.")
