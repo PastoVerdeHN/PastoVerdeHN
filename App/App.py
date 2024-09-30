@@ -70,44 +70,40 @@ if not database_url:
 Session = setup_database(database_url)
 
 def cookie_manager():
-  """Manage cookie acceptance."""
   if 'cookie_accepted' not in st.session_state:
       st.session_state.cookie_accepted = False
 
   if not st.session_state.cookie_accepted:
-      with st.container():
+      col1, col2 = st.columns([3, 1])
+      with col1:
           st.markdown(
               """
-              <div id="cookie-banner" style="position: fixed; bottom: 0; left: 0; right: 0; background-color: #f1f1f1; padding: 10px; text-align: center; z-index: 9999;">
-                  PASTO VERDE utiliza cookies para proporcionar la funcionalidad necesaria del sitio web, mejorar su experiencia y analizar nuestro tráfico. 
-                  Al utilizar nuestro sitio web, usted acepta nuestra 
-                  <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank">POLÍTICA DE PRIVACIDAD</a> y nuestra 
-                  <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank">POLÍTICA DE COOKIES</a>.
-                  <button onclick="acceptCookies()">Aceptar</button>
-              </div>
-              """,
-              unsafe_allow_html=True
+              PASTO VERDE utiliza cookies para proporcionar la funcionalidad necesaria del sitio web, mejorar su experiencia y analizar nuestro tráfico. 
+              Al utilizar nuestro sitio web, usted acepta nuestra 
+              [POLÍTICA DE PRIVACIDAD](https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones) y nuestra 
+              [POLÍTICA DE COOKIES](https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones).
+              """
           )
+      with col2:
+          if st.button("Aceptar", key="accept_cookies"):
+              st.session_state.cookie_accepted = True
+              st.experimental_rerun()
 
-      # JavaScript to handle the button click
-      components.html(
-          """
-          <script>
-          function acceptCookies() {
-              document.getElementById('cookie-banner').style.display = 'none';
-              window.parent.postMessage({type: 'cookie_accepted'}, '*');
-          }
-          
-          window.addEventListener('message', function(e) {
-              if (e.data.type === 'cookie_accepted') {
-                  window.parent.postMessage({type: 'streamlit:setComponentValue', value: true}, '*');
-              }
-          });
-          </script>
-          """,
-          height=0,
-      )
+def main():
+  """Main function to run the Streamlit app."""
+  st.set_page_config(page_title="Pasto Verde", page_icon="🌿", layout="wide")
+  
+  cookie_manager()
+  
+  if st.session_state.cookie_accepted:
+      # Your main app code here
+      st.title("Pasto Verde - Entrega de pasto para mascotas")
+      # ... rest of your app ...
+  else:
+      st.empty()  # Keep the page empty until cookies are accepted
 
+if __name__ == "__main__":
+  main()
   if st.session_state.cookie_accepted:
       st.empty()  # Clear the cookie banner if cookies are accepted
 
