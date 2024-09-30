@@ -77,6 +77,8 @@ def show_policy_banner():
         st.markdown(
             """
             <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
             .cookie-banner {
                 position: fixed;
                 bottom: 0;
@@ -89,7 +91,7 @@ def show_policy_banner():
                 align-items: center;
                 justify-content: space-between;
                 font-size: 14px;
-                z-index: 9999;
+                z-index: 1000000;
                 box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
             }
             .cookie-text {
