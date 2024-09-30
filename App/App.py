@@ -72,6 +72,9 @@ Session = setup_database(database_url)
 def show_policy_banner():
     if 'policy_accepted' not in st.session_state:
         st.session_state.policy_accepted = False
+    
+    if 'policy_rejected' not in st.session_state:
+        st.session_state.policy_rejected = False
 
     if not st.session_state.policy_accepted:
         st.markdown(
@@ -87,19 +90,19 @@ def show_policy_banner():
                 background-color: rgba(0, 0, 0, 0.85);
                 color: #fff;
                 padding: 15px 30px;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
                 font-size: 14px;
                 z-index: 1000000;
                 box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            }
+            .cookie-text {
+                text-align: left;
             }
             .stButton > button {
                 width: 100%;
             }
             .caption {
                 text-align: center;
-                margin-bottom: 15px;
+                margin: 15px 0;
                 font-weight: bold;
             }
             </style>
@@ -124,19 +127,20 @@ def show_policy_banner():
             st.session_state.policy_accepted = True
             st.rerun()
         elif reject:
+            st.session_state.policy_rejected = True
             st.error("Debes aceptar la política para usar este sitio.")
-            st.stop()
 
-        with st.container():
+        if not st.session_state.policy_accepted:
             st.markdown(
                 """
                 <div class="cookie-banner">
-                    Al usar este sitio, aceptas nuestra <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank" style="color: #4CAF50;">política de privacidad y cookies</a>.
+                    <div class="cookie-text">
+                        Al usar este sitio, aceptas nuestra <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank" style="color: #4CAF50;">política de privacidad y cookies</a>.
+                    </div>
                 </div>
                 """,
                 unsafe_allow_html=True
             )
-
 
 def main():
     """Main function to run the Streamlit app."""
