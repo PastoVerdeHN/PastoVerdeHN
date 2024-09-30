@@ -71,10 +71,34 @@ if not database_url:
 
 Session = setup_database(database_url)
 
+def show_policy_popup():
+  if 'policy_accepted' not in st.session_state:
+      st.session_state.policy_accepted = False
+
+  if not st.session_state.policy_accepted:
+      placeholder = st.empty()
+      with placeholder.container():
+          st.markdown("### Política de Privacidad y Cookies")
+          st.markdown("Por favor, acepta nuestra política de privacidad y cookies para continuar usando este sitio.")
+          col1, col2 = st.columns(2)
+          if col1.button("Aceptar"):
+              st.session_state.policy_accepted = True
+              placeholder.empty()
+          if col2.button("Rechazar"):
+              st.error("Debes aceptar la política para usar este sitio.")
+              st.stop()
+
 def main():
   """Main function to run the Streamlit app."""
   logging.info("Starting the Pasto Verde application.")
   st.title("Pasto Verde - Entrega de pasto para mascotas")
+
+  # Show policy popup
+  show_policy_popup()
+  
+  # Only proceed if policy is accepted
+  if st.session_state.get('policy_accepted', False):
+      st.title("Pasto Verde - Entrega de pasto para mascotas")
   
   # Check if there's a logout message to display
   if 'logout_message' in st.session_state:
