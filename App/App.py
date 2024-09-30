@@ -86,13 +86,25 @@ def show_policy_banner():
                 right: 0;
                 background-color: rgba(0, 0, 0, 0.85);
                 color: #fff;
-                padding: 15px 30px;
+                padding: 0;
                 display: flex;
+                flex-direction: column;
                 align-items: center;
-                justify-content: space-between;
                 font-size: 14px;
                 z-index: 1000000;
                 box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            }
+            .cookie-image {
+                width: 100%;
+                max-height: 200px;
+                object-fit: cover;
+            }
+            .cookie-content {
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 15px 30px;
             }
             .cookie-text {
                 flex: 1;
@@ -134,12 +146,15 @@ def show_policy_banner():
             st.markdown(
                 """
                 <div class="cookie-banner">
-                    <div class="cookie-text">
-                        Al usar este sitio, aceptas nuestra <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank" style="color: #4CAF50;">política de privacidad y cookies</a>.
-                    </div>
-                    <div class="cookie-buttons">
-                        <div class="accept-button" id="accept-button"></div>
-                        <div class="reject-button" id="reject-button"></div>
+                    <img src="https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/Privacybanner.png" class="cookie-image" alt="Privacy Banner">
+                    <div class="cookie-content">
+                        <div class="cookie-text">
+                            Al usar este sitio, aceptas nuestra <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank" style="color: #4CAF50;">política de privacidad y cookies</a>.
+                        </div>
+                        <div class="cookie-buttons">
+                            <div class="accept-button" id="accept-button"></div>
+                            <div class="reject-button" id="reject-button"></div>
+                        </div>
                     </div>
                 </div>
                 """,
