@@ -88,30 +88,7 @@ def cookie_manager():
           if st.button("Aceptar", key="accept_cookies"):
               st.session_state.cookie_accepted = True
               st.experimental_rerun()
-
-def main():
-  """Main function to run the Streamlit app."""
-  st.set_page_config(page_title="Pasto Verde", page_icon="🌿", layout="wide")
-  
-  cookie_manager()
-  
-  if st.session_state.cookie_accepted:
-      # Your main app code here
-      st.title("Pasto Verde - Entrega de pasto para mascotas")
-      # ... rest of your app ...
-  else:
-      st.empty()  # Keep the page empty until cookies are accepted
-
-if __name__ == "__main__":
-  main()
-  if st.session_state.cookie_accepted:
-      st.empty()  # Clear the cookie banner if cookies are accepted
-
-  # Check for component value change
-  if st.session_state.get('cookie_accepted'):
-      st.session_state.cookie_accepted = True
-      st.experimental_rerun()
-
+            
 def main():
   """Main function to run the Streamlit app."""
   logging.info("Starting the Pasto Verde application.")
