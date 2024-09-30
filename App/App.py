@@ -73,34 +73,68 @@ Session = setup_database(database_url)
 
 import streamlit as st
 
-def show_policy_popup():
+def show_policy_banner():
   if 'policy_accepted' not in st.session_state:
       st.session_state.policy_accepted = False
 
   if not st.session_state.policy_accepted:
-      st.markdown("### Política de Privacidad y Cookies")
-      st.markdown("Por favor, acepta nuestra política de privacidad y cookies para continuar usando este sitio.")
-      col1, col2 = st.columns(2)
-      if col1.button("Aceptar"):
+      # CSS for the banner
+      st.markdown(
+          """
+          <style>
+          .policy-banner {
+              position: fixed;
+              bottom: 0;
+              left: 0;
+              right: 0;
+              background-color: #f1f1f1;
+              padding: 10px;
+              text-align: center;
+              z-index: 1000;
+          }
+          .policy-banner button {
+              margin: 0 10px;
+          }
+          </style>
+          """,
+          unsafe_allow_html=True
+      )
+
+      # Banner content
+      banner_html = """
+      <div class="policy-banner">
+          <p>Al usar este sitio, aceptas nuestra política de privacidad y cookies.</p>
+          <button onclick="accept_policy()">Aceptar</button>
+          <button onclick="reject_policy()">Rechazar</button>
+      </div>
+      <script>
+      function accept_policy() {
+          window.parent.postMessage({type: 'streamlit:setComponentValue', value: 'accept'}, '*');
+      }
+      function reject_policy() {
+          window.parent.postMessage({type: 'streamlit:setComponentValue', value: 'reject'}, '*');
+      }
+      </script>
+      """
+      
+      policy_action = st.markdown(banner_html, unsafe_allow_html=True)
+      
+      # Handle button clicks
+      if policy_action == 'accept':
           st.session_state.policy_accepted = True
           st.experimental_rerun()
-      if col2.button("Rechazar"):
+      elif policy_action == 'reject':
           st.error("Debes aceptar la política para usar este sitio.")
           st.stop()
-  return st.session_state.policy_accepted
 
 def main():
   """Main function to run the Streamlit app."""
   logging.info("Starting the Pasto Verde application.")
   
-  # Show policy popup and check if accepted
-  if not show_policy_popup():
-      return  # Exit the main function if policy not accepted
-  
   st.title("Pasto Verde - Entrega de pasto para mascotas")
   
-  # Rest of your main function code...
-  # (Keep all your existing code here)
+  # Show policy banner
+  show_policy_banner()
   
   # Check if there's a logout message to display
   if 'logout_message' in st.session_state:
@@ -274,6 +308,10 @@ def admin_dashboard():
   finally:
       session.close()
       logging.info("Database session closed in admin dashboard.")
+
+  # If policy is not accepted, don't show the main content
+  if not st.session_state.get('policy_accepted', False):
+      st.stop()
 
 if __name__ == "__main__":
   main()  # Run the main function when the script is executed
