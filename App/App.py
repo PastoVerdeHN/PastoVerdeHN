@@ -82,27 +82,46 @@ def show_policy_banner():
               bottom: 0;
               left: 0;
               right: 0;
-              background-color: #f1f1f1;
-              color: #333;
-              text-align: center;
-              padding: 10px;
+              background-color: rgba(0, 0, 0, 0.85);
+              color: #fff;
+              padding: 15px 30px;
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
               font-size: 14px;
               z-index: 9999;
+              box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
           }
-          .cookie-banner button {
-              margin: 0 10px;
-              padding: 5px 10px;
-              border: none;
-              border-radius: 3px;
-              cursor: pointer;
+          .cookie-text {
+              flex: 1;
+              padding-right: 20px;
           }
-          .accept-button {
+          .cookie-buttons {
+              display: flex;
+              gap: 10px;
+          }
+          .stButton button {
+              border-radius: 20px;
+              padding: 5px 15px;
+              font-size: 12px;
+              font-weight: bold;
+              transition: all 0.3s ease;
+          }
+          .accept-button button {
               background-color: #4CAF50;
               color: white;
+              border: none;
           }
-          .reject-button {
-              background-color: #f44336;
-              color: white;
+          .accept-button button:hover {
+              background-color: #45a049;
+          }
+          .reject-button button {
+              background-color: transparent;
+              color: #fff;
+              border: 1px solid #fff;
+          }
+          .reject-button button:hover {
+              background-color: rgba(255,255,255,0.1);
           }
           </style>
           """,
@@ -110,16 +129,23 @@ def show_policy_banner():
       )
 
       with st.container():
-          st.markdown('<div class="cookie-banner">', unsafe_allow_html=True)
-          st.markdown('Al usar este sitio, aceptas nuestra <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank">política de privacidad y cookies</a>.', unsafe_allow_html=True)
-          col1, col2 = st.columns(2)
-          if col1.button("Aceptar", key="accept_policy", help="Aceptar la política de privacidad y cookies"):
-              st.session_state.policy_accepted = True
-              st.rerun()
-          if col2.button("Rechazar", key="reject_policy", help="Rechazar la política de privacidad y cookies"):
-              st.error("Debes aceptar la política para usar este sitio.")
-              st.stop()
-          st.markdown('</div>', unsafe_allow_html=True)
+          col1, col2, col3 = st.columns([3,1,1])
+          with col1:
+              st.markdown('<div class="cookie-banner"><div class="cookie-text">Al usar este sitio, aceptas nuestra <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank" style="color: #4CAF50;">política de privacidad y cookies</a>.</div>', unsafe_allow_html=True)
+          with col2:
+              st.markdown('<div class="cookie-buttons accept-button">', unsafe_allow_html=True)
+              if st.button("Aceptar", key="accept_policy"):
+                  st.session_state.policy_accepted = True
+                  st.rerun()
+              st.markdown('</div>', unsafe_allow_html=True)
+          with col3:
+              st.markdown('<div class="cookie-buttons reject-button">', unsafe_allow_html=True)
+              if st.button("Rechazar", key="reject_policy"):
+                  st.error("Debes aceptar la política para usar este sitio.")
+                  st.stop()
+              st.markdown('</div></div>', unsafe_allow_html=True)
+
+
 
 def main():
     """Main function to run the Streamlit app."""
