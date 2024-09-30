@@ -98,7 +98,7 @@ def show_policy_banner():
           col1, col2 = st.columns(2)
           if col1.button("Aceptar", key="accept_policy"):
               st.session_state.policy_accepted = True
-              st.experimental_rerun()
+              st.rerun()
           if col2.button("Rechazar", key="reject_policy"):
               st.error("Debes aceptar la política para usar este sitio.")
               st.stop()
