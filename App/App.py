@@ -74,60 +74,21 @@ def cookie_manager():
       st.session_state.cookie_accepted = False
 
   if not st.session_state.cookie_accepted:
-      cookie_banner = """
-      <style>
-      #cookie-banner {
-          position: fixed;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          background-color: #f1f1f1;
-          padding: 10px;
-          text-align: center;
-          z-index: 9999;
-      }
-      #cookie-banner button {
-          background-color: #4CAF50;
-          color: white;
-          border: none;
-          padding: 5px 10px;
-          text-align: center;
-          text-decoration: none;
-          display: inline-block;
-          font-size: 14px;
-          margin: 4px 2px;
-          cursor: pointer;
-      }
-      </style>
-      <div id="cookie-banner">
-          PASTO VERDE utiliza cookies para proporcionar la funcionalidad necesaria del sitio web, mejorar su experiencia y analizar nuestro tráfico. 
-          Al utilizar nuestro sitio web, usted acepta nuestra 
-          <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank">POLÍTICA DE PRIVACIDAD</a> y nuestra 
-          <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank">POLÍTICA DE COOKIES</a>.
-          <button onclick="acceptCookies()">Aceptar</button>
-      </div>
-      <script>
-      function acceptCookies() {
-          document.getElementById('cookie-banner').style.display = 'none';
-          window.parent.postMessage({type: 'cookie_accepted'}, '*');
-      }
-      </script>
-      """
-      components.html(cookie_banner, height=100)
-
-      # Check for the message from the cookie banner
-      if components.html("""
-          <script>
-          window.addEventListener('message', function(e) {
-              if (e.data.type === 'cookie_accepted') {
-                  window.parent.postMessage({type: 'streamlit:setComponentValue', value: true}, '*');
-              }
-          });
-          </script>
-      """, height=0):
-          st.session_state.cookie_accepted = True
-          st.experimental_rerun()
-
+      with st.container():
+          st.markdown(
+              """
+              <div style="position: fixed; bottom: 0; left: 0; right: 0; background-color: #f1f1f1; padding: 10px; text-align: center; z-index: 9999;">
+                  PASTO VERDE utiliza cookies para proporcionar la funcionalidad necesaria del sitio web, mejorar su experiencia y analizar nuestro tráfico. 
+                  Al utilizar nuestro sitio web, usted acepta nuestra 
+                  <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank">POLÍTICA DE PRIVACIDAD</a> y nuestra 
+                  <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank">POLÍTICA DE COOKIES</a>.
+              </div>
+              """,
+              unsafe_allow_html=True
+          )
+          if st.button("Aceptar Cookies"):
+              st.session_state.cookie_accepted = True
+              st.experimental_rerun()
 def main():
   """Main function to run the Streamlit app."""
   logging.info("Starting the Pasto Verde application.")
@@ -201,13 +162,6 @@ def main():
       st.write("Por favor inicie sesión para acceder a los servicios de Pasto Verde")
       logging.info("User not authenticated. Displaying login prompt.")
       
-      # Display login option in sidebar
-      auth_choice = st.sidebar.radio("Elige acción", ["🔑 Entrar"], key="auth_choice_radio")
-      if auth_choice == "🔑 Entrar":
-          # Display the login button
-          # The auth0_authentication function handles the login process
-          pass  # Login handled in auth0_authentication
-
       # Display logo or image in the sidebar
       st.sidebar.markdown("---")
       image_url = "https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/main/STREAMLIT%20PAGE%20ICON.png"
