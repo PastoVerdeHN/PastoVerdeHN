@@ -127,13 +127,15 @@ def cookie_manager():
       """, height=0):
           st.session_state.cookie_accepted = True
           st.experimental_rerun()
-            
+
 def main():
   """Main function to run the Streamlit app."""
   logging.info("Starting the Pasto Verde application.")
   
   # Call the cookie manager
   cookie_manager()
+  
+  st.title("Pasto Verde - Entrega de pasto para mascotas")
   
   st.title("Pasto Verde - Entrega de pasto para mascotas")
   
