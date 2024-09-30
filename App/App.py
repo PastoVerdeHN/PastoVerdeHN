@@ -91,7 +91,6 @@ def show_policy_popup():
 def main():
   """Main function to run the Streamlit app."""
   logging.info("Starting the Pasto Verde application.")
-  st.title("Pasto Verde - Entrega de pasto para mascotas")
 
   # Show policy popup
   show_policy_popup()
