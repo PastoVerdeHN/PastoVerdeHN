@@ -137,8 +137,6 @@ def main():
   
   st.title("Pasto Verde - Entrega de pasto para mascotas")
   
-  st.title("Pasto Verde - Entrega de pasto para mascotas")
-  
   # Authenticate the user
   user = auth0_authentication()
   
