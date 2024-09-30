@@ -94,19 +94,13 @@ def show_policy_banner():
                 z-index: 1000000;
                 box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
             }
-            .cookie-content {
+            .stButton > button {
                 width: 100%;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
             }
-            .cookie-text {
-                flex: 1;
-                padding-right: 20px;
-            }
-            .cookie-buttons {
-                display: flex;
-                gap: 10px;
+            .caption {
+                text-align: center;
+                margin-bottom: 15px;
+                font-weight: bold;
             }
             </style>
             """,
@@ -117,58 +111,31 @@ def show_policy_banner():
         st.image("https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/Privacybanner.png", 
                  use_column_width=True)
 
+        # Add caption
+        st.markdown('<p class="caption">Por favor, lea y acepte nuestra política de privacidad y cookies.</p>', unsafe_allow_html=True)
+
+        # Center the buttons using columns
+        col1, col2, col3 = st.columns([1,2,1])
+        with col2:
+            accept = st.button("Aceptar", key="accept_policy")
+            reject = st.button("Rechazar", key="reject_policy")
+
+        if accept:
+            st.session_state.policy_accepted = True
+            st.rerun()
+        elif reject:
+            st.error("Debes aceptar la política para usar este sitio.")
+            st.stop()
+
         with st.container():
             st.markdown(
                 """
                 <div class="cookie-banner">
-                    <div class="cookie-content">
-                        <div class="cookie-text">
-                            Al usar este sitio, aceptas nuestra <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank" style="color: #4CAF50;">política de privacidad y cookies</a>.
-                        </div>
-                        <div class="cookie-buttons">
-                            <div class="accept-button" id="accept-button"></div>
-                            <div class="reject-button" id="reject-button"></div>
-                        </div>
-                    </div>
+                    Al usar este sitio, aceptas nuestra <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank" style="color: #4CAF50;">política de privacidad y cookies</a>.
                 </div>
                 """,
                 unsafe_allow_html=True
             )
-            
-            col1, col2 = st.columns([1, 1])
-            with col1:
-                if st.button("Aceptar", key="accept_policy"):
-                    st.session_state.policy_accepted = True
-                    st.rerun()
-            with col2:
-                if st.button("Rechazar", key="reject_policy"):
-                    st.error("Debes aceptar la política para usar este sitio.")
-                    st.stop()
-
-        # JavaScript to move buttons into the banner
-        st.markdown(
-            """
-            <script>
-                function moveButtons() {
-                    const acceptButton = document.querySelector('button[kind="primary"]');
-                    const rejectButton = document.querySelector('button[kind="secondary"]');
-                    const acceptContainer = document.getElementById('accept-button');
-                    const rejectContainer = document.getElementById('reject-button');
-                    
-                    if (acceptButton && acceptContainer) {
-                        acceptContainer.appendChild(acceptButton);
-                    }
-                    if (rejectButton && rejectContainer) {
-                        rejectContainer.appendChild(rejectButton);
-                    }
-                }
-                
-                // Run the function after a short delay to ensure the DOM is ready
-                setTimeout(moveButtons, 100);
-            </script>
-            """,
-            unsafe_allow_html=True
-        )
 
 
 def main():
