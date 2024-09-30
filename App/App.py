@@ -134,7 +134,7 @@ def main():
               del st.session_state[key]
           st.success("Has cerrado la sesión exitosamente.")
           logging.info("User logged out and session state cleared.")
-          st.experimental_rerun()
+          st.rerun()
   else:
       # Prompt the user to log in
       st.write("Por favor inicie sesión para acceder a los servicios de Pasto Verde")
