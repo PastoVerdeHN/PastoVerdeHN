@@ -20,14 +20,14 @@ if not database_url:
 Session = setup_database(database_url)
 
 def auth0_authentication():
-auth_choice = st.sidebar.radio("Elige acción", ["🔑 Entrar"])
-
   if 'user' not in st.session_state:
       st.session_state.user = None
   if 'auth_status' not in st.session_state:
       st.session_state.auth_status = None
 
-  if st.session_state.user is None: 
+  if st.session_state.user is None:
+      auth_choice = st.sidebar.radio("Elige acción", ["🔑 Entrar"])
+      
       if auth_choice == "🔑 Entrar":
           try:
               AUTH0_CLIENT_ID = st.secrets["auth0"]["AUTH0_CLIENT_ID"]
