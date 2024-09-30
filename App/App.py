@@ -1,5 +1,3 @@
-# app.py
-
 import os
 import random
 import time
@@ -38,11 +36,11 @@ import logging
 
 # Configure logging
 logging.basicConfig(
-  level=logging.INFO,  # Set to DEBUG for more detailed output
+  level=logging.INFO,
   format='%(asctime)s - %(levelname)s - %(message)s',
   handlers=[
-      logging.FileHandler("app.log"),  # Log to a file named app.log
-      logging.StreamHandler()          # Also output to console
+      logging.FileHandler("app.log"),
+      logging.StreamHandler()
   ]
 )
 
@@ -70,8 +68,6 @@ if not database_url:
   st.stop()
 
 Session = setup_database(database_url)
-
-import streamlit as st
 
 def show_policy_banner():
   if 'policy_accepted' not in st.session_state:
@@ -116,13 +112,15 @@ def main():
   show_policy_banner()
   
   # Only proceed if policy is accepted
-  if st.session_state.get('policy_accepted', False):
-      st.title("Pasto Verde - Entrega de pasto para mascotas")
+  if not st.session_state.get('policy_accepted', False):
+      return
+
+  st.title("Pasto Verde - Entrega de pasto para mascotas")
   
   # Check if there's a logout message to display
   if 'logout_message' in st.session_state:
       st.success(st.session_state['logout_message'])
-      del st.session_state['logout_message']  # Clear the message after displaying
+      del st.session_state['logout_message']
       logging.info("Displayed logout message to user.")
   
   # Authenticate the user
@@ -130,17 +128,17 @@ def main():
   
   if user:
       logging.info(f"User '{user.name}' authenticated successfully.")
-      st.write(f"Hola {user.name}, bienvenido a Pasto Verde! 🌿")  # Personalized greeting
+      st.write(f"Hola {user.name}, bienvenido a Pasto Verde! 🌿")
 
       # Initialize session state for current page
       if 'current_page' not in st.session_state:
-          st.session_state.current_page = "🏠 Inicio"  # Default page
+          st.session_state.current_page = "🏠 Inicio"
           logging.debug("Current page set to default (Inicio).")
 
       # Define the available menu items and their corresponding functions
       menu_items = {
           "🏠 Inicio": home_page,
-          "🛒  Ordene Ahora": place_order,
+          "🛒 Ordene Ahora": place_order,
           "📦 Mis Órdenes": display_user_orders,
           "🗺️ Zona De Envios": display_map,
           "ℹ️ Sobre Nosotros": about_us,
@@ -168,7 +166,6 @@ def main():
           menu_items[st.session_state.current_page]()
           logging.info(f"Displayed page: {st.session_state.current_page}")
       except KeyError:
-          # Fallback to default page in case of error
           st.session_state.current_page = "🏠 Inicio"
           menu_items[st.session_state.current_page]()
           logging.warning("KeyError encountered. Reset current page to Inicio.")
@@ -178,9 +175,7 @@ def main():
 
       # Logout button functionality in the sidebar
       if st.sidebar.button("🚪 Finalizar la sesión"):
-          # Set logout message
           st.session_state['logout_message'] = "Has cerrado la sesión exitosamente."
-          # Clear session state (except for the logout message)
           for key in list(st.session_state.keys()):
               if key != 'logout_message':
                   del st.session_state[key]
@@ -196,8 +191,6 @@ def main():
       # Prompt the user to log in
       st.write("Por favor inicie sesión para acceder a los servicios de Pasto Verde")
       logging.info("User not authenticated. Displaying login prompt.")
-      
-
 
       # Display logo or image in the sidebar
       st.sidebar.markdown("---")
@@ -269,17 +262,14 @@ def admin_dashboard():
 
   session = Session()
   try:
-      # Fetch total orders and revenue from the database
       total_orders = session.query(Order).count()
       total_revenue = session.query(func.sum(Order.total_price)).scalar() or 0.0
       logging.info(f"Total orders retrieved: {total_orders}")
       logging.info(f"Total revenue calculated: {total_revenue}")
 
-      # Display total orders and revenue
       st.write(f"**Total de órdenes**: {total_orders}")
       st.write(f"**Ingresos totales**: L. {total_revenue:.2f}")
 
-      # Display recent orders
       st.subheader("Órdenes recientes")
       recent_orders = session.query(Order).order_by(Order.date.desc()).limit(10).all()
       logging.info("Recent orders fetched for display.")
@@ -292,9 +282,5 @@ def admin_dashboard():
       session.close()
       logging.info("Database session closed in admin dashboard.")
 
-  else:
-      st.info("Por favor, acepta la política de privacidad y cookies para continuar.")
-      st.stop()
-
 if __name__ == "__main__":
-  main()  # Run the main function when the script is executed
+  main()
