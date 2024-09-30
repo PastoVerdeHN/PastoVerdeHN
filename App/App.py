@@ -86,7 +86,7 @@ def show_policy_banner():
                 right: 0;
                 background-color: rgba(0, 0, 0, 0.85);
                 color: #fff;
-                padding: 0;
+                padding: 15px 30px;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -94,17 +94,11 @@ def show_policy_banner():
                 z-index: 1000000;
                 box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
             }
-            .cookie-image {
-                width: 100%;
-                max-height: 200px;
-                object-fit: cover;
-            }
             .cookie-content {
                 width: 100%;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                padding: 15px 30px;
             }
             .cookie-text {
                 flex: 1;
@@ -114,39 +108,19 @@ def show_policy_banner():
                 display: flex;
                 gap: 10px;
             }
-            .stButton button {
-                border-radius: 20px;
-                padding: 5px 15px;
-                font-size: 12px;
-                font-weight: bold;
-                transition: all 0.3s ease;
-            }
-            .accept-button button {
-                background-color: #4CAF50;
-                color: white;
-                border: none;
-            }
-            .accept-button button:hover {
-                background-color: #45a049;
-            }
-            .reject-button button {
-                background-color: transparent;
-                color: #fff;
-                border: 1px solid #fff;
-            }
-            .reject-button button:hover {
-                background-color: rgba(255,255,255,0.1);
-            }
             </style>
             """,
             unsafe_allow_html=True
         )
 
+        # Display the image using Streamlit's image function
+        st.image("https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/Privacybanner.png", 
+                 use_column_width=True)
+
         with st.container():
             st.markdown(
                 """
                 <div class="cookie-banner">
-                    <img src="https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/Privacybanner.png" class="cookie-image" alt="Privacy Banner">
                     <div class="cookie-content">
                         <div class="cookie-text">
                             Al usar este sitio, aceptas nuestra <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank" style="color: #4CAF50;">política de privacidad y cookies</a>.
@@ -195,7 +169,6 @@ def show_policy_banner():
             """,
             unsafe_allow_html=True
         )
-
 
 
 def main():
