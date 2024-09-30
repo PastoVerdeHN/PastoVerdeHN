@@ -108,15 +108,13 @@ def main():
   """Main function to run the Streamlit app."""
   logging.info("Starting the Pasto Verde application.")
   
-  # Show policy banner
-  show_policy_banner()
+  # Show policy banner only if it hasn't been accepted
+  if not st.session_state.get('policy_accepted', False):
+      show_policy_banner()
   
   # Only proceed if policy is accepted
   if not st.session_state.get('policy_accepted', False):
       return
-  # Only show policy banner if it hasn't been accepted
-  if not st.session_state.get('policy_accepted', False):
-      show_policy_banner()
 
   st.title("Pasto Verde - Entrega de pasto para mascotas")
   
@@ -177,15 +175,25 @@ def main():
           st.error("Ha ocurrido un error al cargar la página. Por favor, intenta de nuevo más tarde.")
 
       # Logout button functionality in the sidebar
-if st.sidebar.button("🚪 Finalizar la sesión"):
-  st.session_state['logout_message'] = "Has cerrado la sesión exitosamente."
-  policy_accepted = st.session_state.get('policy_accepted', False)
-  for key in list(st.session_state.keys()):
-      if key not in ['logout_message', 'policy_accepted']:
-          del st.session_state[key]
-  st.session_state.policy_accepted = policy_accepted
-  logging.info("User logged out and session state cleared, preserving policy acceptance.")
-  st.rerun()
+      if st.sidebar.button("🚪 Finalizar la sesión"):
+          st.session_state['logout_message'] = "Has cerrado la sesión exitosamente."
+          policy_accepted = st.session_state.get('policy_accepted', False)
+          for key in list(st.session_state.keys()):
+              if key not in ['logout_message', 'policy_accepted']:
+                  del st.session_state[key]
+          st.session_state.policy_accepted = policy_accepted
+          logging.info("User logged out and session state cleared, preserving policy acceptance.")
+          st.rerun()
+
+      # Display logo or image in the sidebar
+      st.sidebar.markdown("---")
+      image_url = "https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/main/STREAMLIT%20PAGE%20ICON.png"
+      st.sidebar.image(image_url, use_column_width=True, caption="La Naturaleza A Los Pies De Tus Mascota")
+
+  else:
+      # Prompt the user to log in
+      st.write("Por favor inicie sesión para acceder a los servicios de Pasto Verde")
+      logging.info("User not authenticated. Displaying login prompt.")
 
       # Display logo or image in the sidebar
       st.sidebar.markdown("---")
