@@ -93,9 +93,11 @@ def show_policy_banner():
                 font-size: 14px;
                 z-index: 1000000;
                 box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+                text-align: center;
             }
             .cookie-text {
-                text-align: left;
+                display: inline-block;
+                text-align: center;
             }
             .stButton > button {
                 width: 100%;
