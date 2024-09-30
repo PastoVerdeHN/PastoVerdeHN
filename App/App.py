@@ -139,7 +139,7 @@ def show_policy_banner():
             st.rerun()
         elif reject:
             st.session_state.policy_rejected = True
-            st.markdown('<p class="error-message">Debes aceptar la política para usar este sitio.</p>', unsafe_allow_html=True)
+            st.markdown('<p class="error-message">Debes aceptar la política para usar esta aplicación.</p>', unsafe_allow_html=True)
 
         if not st.session_state.policy_accepted:
             st.markdown(
