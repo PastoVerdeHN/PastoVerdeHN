@@ -46,7 +46,6 @@ logging.basicConfig(
 
 # --- SHARED ON ALL PAGES ---
 st.logo("https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/STREAMLIT%20PAGE%20ICON.png")
-st.sidebar.markdown("Made with ❤️ by [Samid]")
 
 # Streamlit page configuration
 st.set_page_config(
