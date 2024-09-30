@@ -114,6 +114,9 @@ def main():
   # Only proceed if policy is accepted
   if not st.session_state.get('policy_accepted', False):
       return
+  # Only show policy banner if it hasn't been accepted
+  if not st.session_state.get('policy_accepted', False):
+      show_policy_banner()
 
   st.title("Pasto Verde - Entrega de pasto para mascotas")
   
