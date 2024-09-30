@@ -140,12 +140,7 @@ def main():
       st.write("Por favor inicie sesión para acceder a los servicios de Pasto Verde")
       logging.info("User not authenticated. Displaying login prompt.")
       
-      # Display login option in sidebar
-      auth_choice = st.sidebar.radio("Elige acción", ["🔑 Entrar"], key="auth_choice_radio")
-      if auth_choice == "🔑 Entrar":
-          # Display the login button
-          # The auth0_authentication function handles the login process
-          pass  # Login handled in auth0_authentication
+
 
       # Display logo or image in the sidebar
       st.sidebar.markdown("---")
