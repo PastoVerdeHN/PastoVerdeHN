@@ -83,7 +83,7 @@ def cookie_manager():
                   Al utilizar nuestro sitio web, usted acepta nuestra 
                   <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank">POLÍTICA DE PRIVACIDAD</a> y nuestra 
                   <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank">POLÍTICA DE COOKIES</a>.
-                  <button onclick="document.getElementById('cookie-banner').style.display='none'; parent.postMessage({type: 'cookie_accepted'}, '*')">Aceptar</button>
+                  <button onclick="acceptCookies()">Aceptar</button>
               </div>
               """,
               unsafe_allow_html=True
@@ -93,6 +93,11 @@ def cookie_manager():
       components.html(
           """
           <script>
+          function acceptCookies() {
+              document.getElementById('cookie-banner').style.display = 'none';
+              window.parent.postMessage({type: 'cookie_accepted'}, '*');
+          }
+          
           window.addEventListener('message', function(e) {
               if (e.data.type === 'cookie_accepted') {
                   window.parent.postMessage({type: 'streamlit:setComponentValue', value: true}, '*');
@@ -103,8 +108,13 @@ def cookie_manager():
           height=0,
       )
 
-      if st.session_state.cookie_accepted:
-          st.experimental_rerun()
+  if st.session_state.cookie_accepted:
+      st.empty()  # Clear the cookie banner if cookies are accepted
+
+  # Check for component value change
+  if st.session_state.get('cookie_accepted'):
+      st.session_state.cookie_accepted = True
+      st.experimental_rerun()
 
 def main():
   """Main function to run the Streamlit app."""
