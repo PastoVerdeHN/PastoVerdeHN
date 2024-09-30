@@ -174,13 +174,15 @@ def main():
           st.error("Ha ocurrido un error al cargar la página. Por favor, intenta de nuevo más tarde.")
 
       # Logout button functionality in the sidebar
-      if st.sidebar.button("🚪 Finalizar la sesión"):
-          st.session_state['logout_message'] = "Has cerrado la sesión exitosamente."
-          for key in list(st.session_state.keys()):
-              if key != 'logout_message':
-                  del st.session_state[key]
-          logging.info("User logged out and session state cleared.")
-          st.rerun()
+if st.sidebar.button("🚪 Finalizar la sesión"):
+  st.session_state['logout_message'] = "Has cerrado la sesión exitosamente."
+  policy_accepted = st.session_state.get('policy_accepted', False)
+  for key in list(st.session_state.keys()):
+      if key not in ['logout_message', 'policy_accepted']:
+          del st.session_state[key]
+  st.session_state.policy_accepted = policy_accepted
+  logging.info("User logged out and session state cleared, preserving policy acceptance.")
+  st.rerun()
 
       # Display logo or image in the sidebar
       st.sidebar.markdown("---")
