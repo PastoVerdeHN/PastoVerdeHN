@@ -98,6 +98,40 @@ def main():
           "📖 Manual de Usuario": user_manual
       }
 
+    def cookie_manager():
+  """Manage cookie acceptance."""
+  if 'cookie_accepted' not in st.session_state:
+      st.session_state.cookie_accepted = False
+
+  if not st.session_state.cookie_accepted:
+      with st.container():
+          st.markdown(
+              """
+              <div style="position: fixed; bottom: 0; left: 0; right: 0; background-color: #f1f1f1; padding: 10px; text-align: center; z-index: 9999;">
+                  By using our website, you accept our cookie policy and privacy policy.
+                  <button onclick="document.getElementById('cookie-banner').style.display='none'; parent.postMessage({type: 'cookie_accepted'}, '*')">Accept</button>
+              </div>
+              """,
+              unsafe_allow_html=True
+          )
+
+      # JavaScript to handle the button click
+      components.html(
+          """
+          <script>
+          window.addEventListener('message', function(e) {
+              if (e.data.type === 'cookie_accepted') {
+                  window.parent.postMessage({type: 'streamlit:setComponentValue', value: true}, '*');
+              }
+          });
+          </script>
+          """,
+          height=0,
+      )
+
+      if st.session_state.cookie_accepted:
+          st.experimental_rerun()
+
       # Add admin dashboard option for admin users
       if user.type == UserType.admin:
           menu_items["📊 Admin Dashboard"] = admin_dashboard
