@@ -78,7 +78,6 @@ def show_policy_banner():
       st.session_state.policy_accepted = False
 
   if not st.session_state.policy_accepted:
-      # CSS for the banner
       st.markdown(
           """
           <style>
@@ -92,49 +91,33 @@ def show_policy_banner():
               text-align: center;
               z-index: 1000;
           }
-          .policy-banner button {
-              margin: 0 10px;
-          }
           </style>
           """,
           unsafe_allow_html=True
       )
 
-      # Banner content
-      banner_html = """
-      <div class="policy-banner">
-          <p>Al usar este sitio, aceptas nuestra política de privacidad y cookies.</p>
-          <button onclick="accept_policy()">Aceptar</button>
-          <button onclick="reject_policy()">Rechazar</button>
-      </div>
-      <script>
-      function accept_policy() {
-          window.parent.postMessage({type: 'streamlit:setComponentValue', value: 'accept'}, '*');
-      }
-      function reject_policy() {
-          window.parent.postMessage({type: 'streamlit:setComponentValue', value: 'reject'}, '*');
-      }
-      </script>
-      """
-      
-      policy_action = st.markdown(banner_html, unsafe_allow_html=True)
-      
-      # Handle button clicks
-      if policy_action == 'accept':
-          st.session_state.policy_accepted = True
-          st.experimental_rerun()
-      elif policy_action == 'reject':
-          st.error("Debes aceptar la política para usar este sitio.")
-          st.stop()
+      with st.container():
+          st.markdown('<div class="policy-banner">', unsafe_allow_html=True)
+          st.write("Al usar este sitio, aceptas nuestra política de privacidad y cookies.")
+          col1, col2 = st.columns(2)
+          if col1.button("Aceptar", key="accept_policy"):
+              st.session_state.policy_accepted = True
+              st.experimental_rerun()
+          if col2.button("Rechazar", key="reject_policy"):
+              st.error("Debes aceptar la política para usar este sitio.")
+              st.stop()
+          st.markdown('</div>', unsafe_allow_html=True)
 
 def main():
   """Main function to run the Streamlit app."""
   logging.info("Starting the Pasto Verde application.")
   
-  st.title("Pasto Verde - Entrega de pasto para mascotas")
-  
   # Show policy banner
   show_policy_banner()
+  
+  # Only proceed if policy is accepted
+  if st.session_state.get('policy_accepted', False):
+      st.title("Pasto Verde - Entrega de pasto para mascotas")
   
   # Check if there's a logout message to display
   if 'logout_message' in st.session_state:
@@ -309,8 +292,8 @@ def admin_dashboard():
       session.close()
       logging.info("Database session closed in admin dashboard.")
 
-  # If policy is not accepted, don't show the main content
-  if not st.session_state.get('policy_accepted', False):
+  else:
+      st.info("Por favor, acepta la política de privacidad y cookies para continuar.")
       st.stop()
 
 if __name__ == "__main__":
