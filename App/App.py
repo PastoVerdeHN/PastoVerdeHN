@@ -70,80 +70,35 @@ if not database_url:
 Session = setup_database(database_url)
 
 def show_policy_banner():
-  if 'policy_accepted' not in st.session_state:
-      st.session_state.policy_accepted = False
+    if 'policy_accepted' not in st.session_state:
+        st.session_state.policy_accepted = False
 
-  if not st.session_state.policy_accepted:
-      st.markdown(
-          """
-          <style>
-          .cookie-banner {
-              position: fixed;
-              bottom: 0;
-              left: 0;
-              right: 0;
-              background-color: rgba(0, 0, 0, 0.85);
-              color: #fff;
-              padding: 15px 30px;
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              font-size: 14px;
-              z-index: 9999;
-              box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-          }
-          .cookie-text {
-              flex: 1;
-              padding-right: 20px;
-          }
-          .cookie-buttons {
-              display: flex;
-              gap: 10px;
-          }
-          .stButton button {
-              border-radius: 20px;
-              padding: 5px 15px;
-              font-size: 12px;
-              font-weight: bold;
-              transition: all 0.3s ease;
-          }
-          .accept-button button {
-              background-color: #4CAF50;
-              color: white;
-              border: none;
-          }
-          .accept-button button:hover {
-              background-color: #45a049;
-          }
-          .reject-button button {
-              background-color: transparent;
-              color: #fff;
-              border: 1px solid #fff;
-          }
-          .reject-button button:hover {
-              background-color: rgba(255,255,255,0.1);
-          }
-          </style>
-          """,
-          unsafe_allow_html=True
-      )
+    if not st.session_state.policy_accepted:
+        st.markdown(
+            """
+            <style>
+            [CSS content from the previous artifact goes here]
+            </style>
+            """,
+            unsafe_allow_html=True
+        )
 
-      with st.container():
-          col1, col2, col3 = st.columns([3,1,1])
-          with col1:
-              st.markdown('<div class="cookie-banner"><div class="cookie-text">Al usar este sitio, aceptas nuestra <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank" style="color: #4CAF50;">política de privacidad y cookies</a>.</div>', unsafe_allow_html=True)
-          with col2:
-              st.markdown('<div class="cookie-buttons accept-button">', unsafe_allow_html=True)
-              if st.button("Aceptar", key="accept_policy"):
-                  st.session_state.policy_accepted = True
-                  st.rerun()
-              st.markdown('</div>', unsafe_allow_html=True)
-          with col3:
-              st.markdown('<div class="cookie-buttons reject-button">', unsafe_allow_html=True)
-              if st.button("Rechazar", key="reject_policy"):
-                  st.error("Debes aceptar la política para usar este sitio.")
-                  st.stop()
-              st.markdown('</div></div>', unsafe_allow_html=True)
+        with st.container():
+            col1, col2, col3 = st.columns([3,1,1])
+            with col1:
+                st.markdown('<div class="cookie-banner"><div class="cookie-text">Al usar este sitio, aceptas nuestra <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank" style="color: #ffffff;">política de privacidad y cookies</a>.</div>', unsafe_allow_html=True)
+            with col2:
+                st.markdown('<div class="cookie-buttons accept-button">', unsafe_allow_html=True)
+                if st.button("Aceptar", key="accept_policy"):
+                    st.session_state.policy_accepted = True
+                    st.rerun()
+                st.markdown('</div>', unsafe_allow_html=True)
+            with col3:
+                st.markdown('<div class="cookie-buttons reject-button">', unsafe_allow_html=True)
+                if st.button("Rechazar", key="reject_policy"):
+                    st.error("Debes aceptar la política para usar este sitio.")
+                    st.stop()
+                st.markdown('</div></div>', unsafe_allow_html=True)
 
 
 
