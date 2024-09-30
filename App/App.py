@@ -45,7 +45,7 @@ logging.basicConfig(
 )
 
 # --- SHARED ON ALL PAGES ---
-st.logo("<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />")
+st.logo("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200")
 
 # Streamlit page configuration
 st.set_page_config(
