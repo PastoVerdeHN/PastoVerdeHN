@@ -77,33 +77,66 @@ def show_policy_banner():
       st.markdown(
           """
           <style>
-          .policy-banner {
+          .cookie-banner {
               position: fixed;
               bottom: 0;
               left: 0;
               right: 0;
               background-color: #f1f1f1;
-              padding: 10px;
+              color: #333;
               text-align: center;
-              z-index: 1000;
+              padding: 10px;
+              font-size: 14px;
+              z-index: 9999;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+          }
+          .cookie-banner button {
+              margin: 0 10px;
+              padding: 5px 10px;
+              border: none;
+              border-radius: 3px;
+              cursor: pointer;
+          }
+          .accept-button {
+              background-color: #4CAF50;
+              color: white;
+          }
+          .reject-button {
+              background-color: #f44336;
+              color: white;
           }
           </style>
           """,
           unsafe_allow_html=True
       )
 
-      with st.container():
-          st.markdown('<div class="policy-banner">', unsafe_allow_html=True)
-          st.write("Al usar este sitio, aceptas nuestra política de privacidad y cookies.")
-          col1, col2 = st.columns(2)
-          if col1.button("Aceptar", key="accept_policy"):
-              st.session_state.policy_accepted = True
-              st.rerun()
-          if col2.button("Rechazar", key="reject_policy"):
-              st.error("Debes aceptar la política para usar este sitio.")
-              st.stop()
-          st.markdown('</div>', unsafe_allow_html=True)
-
+      banner_html = """
+      <div class="cookie-banner">
+          <span>Al usar este sitio, aceptas nuestra <a href="#">política de privacidad y cookies</a>.</span>
+          <button class="accept-button" onclick="accept_policy()">Aceptar</button>
+          <button class="reject-button" onclick="reject_policy()">Rechazar</button>
+      </div>
+      <script>
+      function accept_policy() {
+          window.parent.postMessage({type: 'streamlit:setComponentValue', value: 'accept'}, '*');
+      }
+      function reject_policy() {
+          window.parent.postMessage({type: 'streamlit:setComponentValue', value: 'reject'}, '*');
+      }
+      </script>
+      """
+      
+      policy_action = st.markdown(banner_html, unsafe_allow_html=True)
+      
+      if policy_action == 'accept':
+          st.session_state.policy_accepted = True
+          st.rerun()
+      elif policy_action == 'reject':
+          st.error("Debes aceptar la política para usar este sitio.")
+          st.stop()
 def main():
     """Main function to run the Streamlit app."""
     logging.info("Starting the Pasto Verde application.")
