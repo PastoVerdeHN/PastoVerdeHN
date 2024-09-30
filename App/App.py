@@ -69,45 +69,6 @@ if not database_url:
 
 Session = setup_database(database_url)
 
-def show_policy_banner():
-  if 'policy_accepted' not in st.session_state:
-      st.session_state.policy_accepted = False
-
-  if not st.session_state.policy_accepted:
-      st.markdown(
-          """
-          <style>
-          .cookie-banner {
-              position: fixed;
-              bottom: 0;
-              left: 0;
-              right: 0;
-              background-color: #f1f1f1;
-              color: #333;
-              text-align: center;
-              padding: 10px;
-              font-size: 14px;
-              z-index: 9999;
-          }
-          .cookie-banner button {
-              margin: 0 10px;
-              padding: 5px 10px;
-              border: none;
-              border-radius: 3px;
-              cursor: pointer;
-          }
-          .accept-button {
-              background-color: #4CAF50;
-              color: white;
-          }
-          .reject-button {
-              background-color: #f44336;
-              color: white;
-          }
-          </style>
-          """,
-          unsafe_allow_html=True
-      )
 
       with st.container():
           st.markdown('<div class="cookie-banner">', unsafe_allow_html=True)
