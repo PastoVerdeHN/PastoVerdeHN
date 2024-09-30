@@ -78,9 +78,12 @@ def cookie_manager():
       with st.container():
           st.markdown(
               """
-              <div style="position: fixed; bottom: 0; left: 0; right: 0; background-color: #f1f1f1; padding: 10px; text-align: center; z-index: 9999;">
-                  By using our website, you accept our cookie policy and privacy policy.
-                  <button onclick="document.getElementById('cookie-banner').style.display='none'; parent.postMessage({type: 'cookie_accepted'}, '*')">Accept</button>
+              <div id="cookie-banner" style="position: fixed; bottom: 0; left: 0; right: 0; background-color: #f1f1f1; padding: 10px; text-align: center; z-index: 9999;">
+                  PASTO VERDE utiliza cookies para proporcionar la funcionalidad necesaria del sitio web, mejorar su experiencia y analizar nuestro tráfico. 
+                  Al utilizar nuestro sitio web, usted acepta nuestra 
+                  <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank">POLÍTICA DE PRIVACIDAD</a> y nuestra 
+                  <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank">POLÍTICA DE COOKIES</a>.
+                  <button onclick="document.getElementById('cookie-banner').style.display='none'; parent.postMessage({type: 'cookie_accepted'}, '*')">Aceptar</button>
               </div>
               """,
               unsafe_allow_html=True
