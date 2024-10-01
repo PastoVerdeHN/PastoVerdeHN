@@ -129,30 +129,42 @@ def show_policy_banner():
 
         # Add caption
         st.markdown('<p class="caption">Al hacer clic en Aceptar, usted confirma que ha leído y está de acuerdo con nuestras política de privacidad y cookies.</p>', unsafe_allow_html=True)
+
+        # Inject JS to make the device vibrate on click
+        vibration_js = """
+            <script>
+            function vibrateOnAccept() {
+                if (navigator.vibrate) {
+                    navigator.vibrate(200); // Vibrate for 200ms
+                }
+            }
+            </script>
+        """
+        st.components.v1.html(vibration_js, height=0)  # Inject the vibration JS
+        
+        # Add buttons with JS integration
         col1, col2, col3 = st.columns([1,2,1])
         with col2:
-            # Embed vibration JS script in the button click
-            vibration_js = """
-                <script>
-                function vibrateDevice() {
-                    if (navigator.vibrate) {
-                        navigator.vibrate(200); // Vibrate for 200ms
-                    } else {
-                        console.log("Vibration API not supported on this device.");
-                    }
-                }
-                </script>
-            """
-            
-            st.components.v1.html(vibration_js, height=0)  # Inject the JS
+            # Custom HTML button for vibration and Streamlit rerun logic
+            st.markdown(
+                """
+                <button onclick="vibrateOnAccept(); document.getElementById('accept_form').submit();">Aceptar</button>
+                <form id="accept_form" method="post">
+                    <input type="hidden" name="policy_accepted" value="true">
+                </form>
+                <button onclick="document.getElementById('reject_form').submit();">Rechazar</button>
+                <form id="reject_form" method="post">
+                    <input type="hidden" name="policy_rejected" value="true">
+                </form>
+                """,
+                unsafe_allow_html=True
+            )
 
-            accept = st.button("Aceptar", key="accept_policy", on_click="vibrateDevice()")
-            reject = st.button("Rechazar", key="reject_policy")
-
-        if accept:
+        # Check if the user accepted or rejected
+        if st.session_state.get('policy_accepted'):
             st.session_state.policy_accepted = True
             st.rerun()
-        elif reject:
+        elif st.session_state.get('policy_rejected'):
             st.session_state.policy_rejected = True
             st.markdown('<p class="error-message">Debes aceptar la política para usar esta aplicación.</p>', unsafe_allow_html=True)
 
