@@ -74,6 +74,33 @@ if not database_url:
 
 Session = setup_database(database_url)
 
+# Injecting basic JavaScript to test vibration API
+st.markdown(
+    """
+    <script>
+    function triggerVibration() {
+        if (navigator.vibrate) {
+            navigator.vibrate(200);  // Vibrates for 200 milliseconds
+            alert('Device vibrated!');
+        } else {
+            alert('Vibration API is not supported on this device.');
+        }
+    }
+    </script>
+    """,
+    unsafe_allow_html=True
+)
+
+# HTML button to trigger vibration
+st.markdown(
+    """
+    <button onclick="triggerVibration()" style="width:100%; padding:10px; background-color: #4CAF50; color: white; border: none; border-radius: 5px;">
+        Test Vibration
+    </button>
+    """,
+    unsafe_allow_html=True
+)
+
 def show_policy_banner():
     if 'policy_accepted' not in st.session_state:
         st.session_state.policy_accepted = False
