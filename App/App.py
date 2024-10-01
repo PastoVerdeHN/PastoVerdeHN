@@ -245,12 +245,14 @@ def main():
 
         # Display logo or image in the sidebar
         st.sidebar.markdown("---")
-        image_url = "https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/main/STREAMLIT%20PAGE%20ICON.png"
-        st.sidebar.image(image_url, use_column_width=True, caption="La Naturaleza A Los Pies De Tus Mascota")
+        logo_image_url = "https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/main/STREAMLIT%20PAGE%20ICON.png"
+        st.sidebar.image(logo_image_url, use_column_width=True, caption="La Naturaleza A Los Pies De Tus Mascota")
 
-        # Visitor counter
+        # Add visitor counter using Streamlit's native image display
         st.sidebar.markdown("---")  # Add a separator line
-        st.sidebar.markdown('![Visitor count](https://shields-io-visitor-counter.herokuapp.com/badge?page=https://pastoverdehn.streamlit.app/&label=Visitantes&labelColor=000000&logo=GitHub&logoColor=FFFFFF&color=1D70B8&style=for-the-badge)')
+        visitor_counter_url = "https://shields-io-visitor-counter.herokuapp.com/badge?page=https://pastoverdehn.streamlit.app/&label=Visitantes&labelColor=000000&logo=GitHub&logoColor=FFFFFF&color=1D70B8&style=for-the-badge"
+        st.sidebar.image(visitor_counter_url, caption="Visitor Count")
+
 
 def user_manual():
   """Display the user manual page."""
