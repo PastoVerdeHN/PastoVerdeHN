@@ -3,14 +3,12 @@ import random
 import time
 from datetime import datetime
 
-
 # Third-party imports
 import folium
 import pandas as pd
 import requests
 import smtplib
 import streamlit as st
-from your_database_module import increment_and_get_count
 import streamlit.components.v1 as components
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
@@ -245,6 +243,10 @@ def main():
         st.write("Por favor inicie sesión para acceder a los servicios de Pasto Verde")
         logging.info("User not authenticated. Displaying login prompt.")
 
+        # Display logo or image in the sidebar
+        st.sidebar.markdown("---")
+        image_url = "https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/main/STREAMLIT%20PAGE%20ICON.png"
+        st.sidebar.image(image_url, use_column_width=True, caption="La Naturaleza A Los Pies De Tus Mascota")
 
 def user_manual():
   """Display the user manual page."""
