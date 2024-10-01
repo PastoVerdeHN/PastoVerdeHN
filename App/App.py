@@ -244,12 +244,6 @@ def main():
         st.write("Por favor inicie sesión para acceder a los servicios de Pasto Verde")
         logging.info("User not authenticated. Displaying login prompt.")
 
-       # Add visitor counter
-    if 'visitor_count' not in st.session_state:
-       st.session_state.visitor_count = increment_and_get_count()
-  
-       st.sidebar.markdown(f"Visitor Count: {st.session_state.visitor_count}")
-
 
 def user_manual():
   """Display the user manual page."""
