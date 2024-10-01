@@ -175,37 +175,65 @@ def place_order():
     promo_code = st.text_input("Código promocional (opcional)", value="")
     st.caption("Nota: Los códigos promocionales solo son válidos para productos sin suscripción.")
 
-    # Order Review
-    if selected_plan and st.session_state.map_center:
-        with st.expander("Resumen del Pedido", expanded=True):
-            st.write(f"Plan seleccionado: **{selected_plan}**")
-            lempira_price = plans[selected_plan]['price']
-            total_price = lempira_price
+# Order Review
+if selected_plan and st.session_state.map_center:
+    with st.expander("Resumen del Pedido", expanded=True):
+        st.write(f"Plan seleccionado: **{selected_plan}**")
+        lempira_price = plans[selected_plan]['price']
+        total_price = lempira_price
 
-            # Apply promo code discount for "Sin Suscripción"
-            if selected_plan == "Sin Suscripción" and promo_code.upper() == "VERDEHN":
-                discount = total_price * 0.20
-                total_price -= discount
-                st.write(f"¡Código promocional aplicado! Descuento: L. {discount:.2f}")
+        # Apply promo code discount for "Sin Suscripción"
+        if selected_plan == "Sin Suscripción" and promo_code.upper() == "VERDEHN":
+            discount = total_price * 0.20
+            total_price -= discount
+            st.write(f"¡Código promocional aplicado! Descuento: L. {discount:.2f}")
 
-            if selected_plan == "Suscripción Anual":
-                total_price *= 11  # Multiply by 11 for annual subscription (1 month free)
-                st.write("¡Tienes un mes gratis! Solo pagas por 11 meses.")
-            elif selected_plan == "Suscripción Semestral":
-                total_price = lempira_price * 6  # Total for semi-annual is 6 months
-                st.write(f"Precio total para 6 meses: L. {total_price:.2f}")
-            else:
-                st.write(f"Precio: L. {lempira_price:.2f} por mes")
+        # Calculate total price based on subscription type
+        if selected_plan == "Suscripción Anual":
+            total_price *= 11  # Multiply by 11 for annual subscription (1 month free)
+            st.write("¡Tienes un mes gratis! Solo pagas por 11 meses.")
+        elif selected_plan == "Suscripción Semestral":
+            total_price = lempira_price * 6  # Total for semi-annual is 6 months
+            st.write(f"Precio total para 6 meses: L. {total_price:.2f}")
+        else:
+            st.write(f"Precio: L. {lempira_price:.2f} por mes")
 
-            st.write("Cambio de dólar: 1$ = L.25.00")
-            st.write(f"Dirección de entrega: {full_address}")
-            st.write(f"Nombre completo: {user_full_name}")
-            st.write(f"Correo electrónico: {user_email}")
-            st.write(f"Número de teléfono: {user_phone}")
-            st.write(f"Fecha de entrega: {delivery_date}")
-            st.write(f"Horario de entrega: {delivery_time_frame}")
-            st.write(f"Total: L. {total_price:.2f}")
-            st.write("**Nota:** En el checkout, se incluye una caja de madera con los planes de suscripción. One-time setup fee")
+        # Display order summary
+        st.write("Cambio de dólar: 1$ = L.25.00")
+        st.write(f"Dirección de entrega: {full_address}")
+        st.write(f"Nombre completo: {user_full_name}")
+        st.write(f"Correo electrónico: {user_email}")
+        st.write(f"Número de teléfono: {user_phone}")
+        st.write(f"Fecha de entrega: {delivery_date}")
+        st.write(f"Horario de entrega: {delivery_time_frame}")
+        st.write(f"Total: L. {total_price:.2f}")
+        st.write("**Nota:** En el checkout, se incluye una caja de madera con los planes de suscripción. One-time setup fee")
+
+        # PayPal integration
+        paypal_client_id = st.secrets["paypal"]["client_id"]
+        paypal_html = f'''
+        <div id="paypal-button-container"></div>
+        <script src="https://www.paypal.com/sdk/js?client-id={paypal_client_id}&currency=USD"></script>
+        <script>
+          paypal.Buttons({{
+            createOrder: function(data, actions) {{
+              return actions.order.create({{
+                purchase_units: [{{
+                  amount: {{
+                    value: '{total_price / 25:.2f}'  // Convert to USD
+                  }}
+                }}]
+              }});
+            }},
+            onApprove: function(data, actions) {{
+              return actions.order.capture().then(function(details) {{
+                // Handle successful payment here
+              }});
+            }}
+          }}).render('#paypal-button-container');
+        </script>
+        '''
+        components.html(paypal_html, height=300)
 
     if st.button("Confirmar pedido"):
         # Create new order
