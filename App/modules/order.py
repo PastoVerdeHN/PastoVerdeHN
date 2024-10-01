@@ -42,7 +42,7 @@ def place_order():
   plans = {
       "Suscripción Anual": {
           "id": "annual",
-          "price": 720.00,
+          "price": 850.00,
           "features": [
               "Entrega cada dos semanas",
               "Envío gratis",
@@ -54,7 +54,7 @@ def place_order():
       },
       "Suscripción Semestral": {
           "id": "semiannual",
-          "price": 899.00,
+          "price": 1060.00,
           "features": [
               "Entrega cada dos semanas",
               "Envío gratis",
@@ -65,7 +65,7 @@ def place_order():
       },
       "Suscripción Mensual": {
           "id": "monthly",
-          "price": 1080.00,
+          "price": 1270.00,
           "features": [
               "Entrega cada dos semanas",
               "Envío gratis",
@@ -75,7 +75,7 @@ def place_order():
       },
       "Sin Suscripción": {
           "id": "one_time",
-          "price": 850.00,
+          "price": 999.95,
           "features": [
               "Compra única de alfombra de césped",
               "Envío gratis",
@@ -92,7 +92,7 @@ def place_order():
       with cols[i]:
           st.write(f"## {plan_name}")
           if plan_name != "Sin Suscripción":
-              st.write(f"### ~~L.1700.00~~ L. {plan_data['price']:.2f} por mes", unsafe_allow_html=True)
+              st.write(f"### ~~L.1999.95~~ L. {plan_data['price']:.2f} por mes", unsafe_allow_html=True)
           else:
               st.write(f"### L. {plan_data['price']:.2f}", unsafe_allow_html=True)
           for feature in plan_data['features']:
