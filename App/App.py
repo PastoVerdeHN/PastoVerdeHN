@@ -105,7 +105,41 @@ def show_policy_banner():
     if not st.session_state.policy_accepted:
         st.markdown(
             """
-            
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            .cookie-banner {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background-color: rgba(0, 0, 0, 0.85);
+                color: #fff;
+                padding: 15px 30px;
+                font-size: 14px;
+                z-index: 1000000;
+                box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+                text-align: center;
+            }
+            .cookie-text {
+                display: inline-block;
+                text-align: center;
+            }
+            .stButton > button {
+                width: 100%;
+            }
+            .caption {
+                text-align: center;
+                margin: 15px 0;
+                font-weight: bold;
+            }
+            .error-message {
+                text-align: center;
+                color: #ff0000;
+                font-weight: bold;
+                margin-top: 15px;
+            }
+            </style>
             """,
             unsafe_allow_html=True
         )
