@@ -144,6 +144,44 @@ def show_policy_banner():
             unsafe_allow_html=True
         )
 
+        with st.container():
+            st.markdown('<div class="cookie-banner">', unsafe_allow_html=True)
+            st.markdown('<p class="cookie-text">We use cookies to enhance your experience. By continuing to visit this site you agree to our use of cookies.</p>', unsafe_allow_html=True)
+            
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                if st.button("Accept", key="accept_button"):
+                    st.session_state.policy_accepted = True
+                    st.experimental_rerun()
+            
+            with col2:
+                if st.button("Deny", key="deny_button", on_click=trigger_vibration):
+                    st.session_state.policy_rejected = True
+                    st.markdown('<p class="error-message">You need to accept the policy to continue.</p>', unsafe_allow_html=True)
+
+            st.markdown('</div>', unsafe_allow_html=True)
+
+        # Add the JavaScript function for vibration
+        components.html(
+            """
+            <script>
+            function triggerVibration() {
+                if (navigator.vibrate) {
+                    navigator.vibrate(200);  // Vibrates for 200 milliseconds
+                    console.log('Device vibrated!');
+                } else {
+                    console.log('Vibration API is not supported on this device.');
+                }
+            }
+            </script>
+            """
+        )
+
+def trigger_vibration():
+    # This function will be called when the "Deny" button is clicked
+    st.write("Vibration triggered!")  # For debugging purposes
+
         # Display the image using Streamlit's image function
         st.image("https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/Privacybanner.png", 
                  use_column_width=True)
