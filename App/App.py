@@ -94,6 +94,9 @@ components.html(
     """,
     height=100,  # Adjust the height as needed
 )
+import streamlit as st
+import streamlit.components.v1 as components
+
 def show_policy_banner():
     if 'policy_accepted' not in st.session_state:
         st.session_state.policy_accepted = False
@@ -151,7 +154,7 @@ def show_policy_banner():
         st.markdown('<p class="caption">Al hacer clic en Aceptar, usted confirma que ha leído y está de acuerdo con nuestras política de privacidad y cookies.</p>', unsafe_allow_html=True)
         col1, col2, col3 = st.columns([1,2,1])
         with col2:
-            accept = st.button("Aceptar", key="accept_policy")
+            accept = st.button("Aceptar", key="accept_policy", on_click=accept_policy)
             reject = st.button("Rechazar", key="reject_policy")
 
         if accept:
@@ -172,6 +175,25 @@ def show_policy_banner():
                 """,
                 unsafe_allow_html=True
             )
+
+def accept_policy():
+    # Injecting JavaScript to trigger vibration
+    components.html(
+        """
+        <script>
+        function triggerVibration() {
+            if (navigator.vibrate) {
+                navigator.vibrate(200);  // Vibrates for 200 milliseconds
+                console.log('Device vibrated!');  // Log to console instead of alert
+            } else {
+                console.log('Vibration API is not supported on this device.');
+            }
+        }
+        triggerVibration();
+        </script>
+        """,
+        height=0,  # Set to 0 to avoid unnecessary space
+    )
 def main():
     """Main function to run the Streamlit app."""
     logging.info("Starting the Pasto Verde application.")
