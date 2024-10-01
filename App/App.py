@@ -179,11 +179,11 @@ def show_policy_banner():
         )
 
 def trigger_vibration():
-    # This function will be called when the "Deny" button is clicked
-    st.write("Vibration triggered!")  # For debugging purposes
+        # This function will be called when the "Deny" button is clicked
+        st.write("Vibration triggered!")  # For debugging purposes
 
         # Display the image using Streamlit's image function
-    st.image("https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/Privacybanner.png", 
+        st.image("https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/Privacybanner.png", 
                  use_column_width=True)
 
         # Add caption
