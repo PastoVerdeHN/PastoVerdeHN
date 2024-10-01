@@ -123,14 +123,21 @@ def show_policy_banner():
             unsafe_allow_html=True
         )
 
-        # Inject the vibration JavaScript
+        # Inject JavaScript for button with vibration
         st.markdown(
             """
             <script>
-            function vibrateOnClick() {
+            function vibrateAndAccept() {
                 if (navigator.vibrate) {
                     navigator.vibrate(200); // Vibrate for 200ms
                 }
+                document.getElementById("accept_policy").click();
+            }
+            function vibrateAndReject() {
+                if (navigator.vibrate) {
+                    navigator.vibrate(200); // Vibrate for 200ms
+                }
+                document.getElementById("reject_policy").click();
             }
             </script>
             """,
@@ -144,21 +151,27 @@ def show_policy_banner():
         # Add caption
         st.markdown('<p class="caption">Al hacer clic en Aceptar, usted confirma que ha leído y está de acuerdo con nuestras política de privacidad y cookies.</p>', unsafe_allow_html=True)
 
-        col1, col2, col3 = st.columns([1,2,1])
+        col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
-            # Streamlit buttons that trigger vibration
-            accept = st.button("Aceptar", key="accept_policy", on_click=lambda: st.session_state.update(policy_accepted=True))
-            reject = st.button("Rechazar", key="reject_policy", on_click=lambda: st.session_state.update(policy_rejected=True))
-            
-            # Vibration trigger when the buttons are clicked
-            if accept or reject:
-                st.markdown('<script>vibrateOnClick();</script>', unsafe_allow_html=True)
+            # Add custom HTML buttons for triggering vibration and Streamlit button logic
+            st.markdown(
+                """
+                <button onclick="vibrateAndAccept()" style="width:100%; padding:10px; background-color: #4CAF50; color: white; border: none; border-radius: 5px;">Aceptar</button>
+                <button onclick="vibrateAndReject()" style="width:100%; padding:10px; background-color: #f44336; color: white; border: none; border-radius: 5px; margin-top: 10px;">Rechazar</button>
+                """, 
+                unsafe_allow_html=True
+            )
+
+            # Hidden Streamlit buttons to handle the logic
+            st.button("Aceptar", key="accept_policy")
+            st.button("Rechazar", key="reject_policy")
 
         if st.session_state.policy_rejected:
             st.markdown('<p class="error-message">Debes aceptar la política para usar esta aplicación.</p>', unsafe_allow_html=True)
 
         if st.session_state.policy_accepted:
             st.experimental_rerun()
+
 def main():
     """Main function to run the Streamlit app."""
     logging.info("Starting the Pasto Verde application.")
