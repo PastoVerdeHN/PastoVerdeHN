@@ -156,32 +156,28 @@ def show_policy_banner():
                     st.experimental_rerun()
             
             with col2:
-                if st.button("Deny", key="deny_button", on_click=trigger_vibration):
+                if st.button("Deny", key="deny_button"):
                     st.session_state.policy_rejected = True
                     st.markdown('<p class="error-message">You need to accept the policy to continue.</p>', unsafe_allow_html=True)
+                    # Trigger vibration when "Deny" is clicked
+                    components.html(
+                        """
+                        <script>
+                        function triggerVibration() {
+                            if (navigator.vibrate) {
+                                navigator.vibrate(200);  // Vibrates for 200 milliseconds
+                                console.log('Device vibrated!');  // Log to console instead of alert
+                            } else {
+                                console.log('Vibration API is not supported on this device.');
+                            }
+                        }
+                        triggerVibration();
+                        </script>
+                        """
+                    )
 
             st.markdown('</div>', unsafe_allow_html=True)
-
-        # Add the JavaScript function for vibration
-        components.html(
-            """
-            <script>
-            function triggerVibration() {
-                if (navigator.vibrate) {
-                    navigator.vibrate(200);  // Vibrates for 200 milliseconds
-                    console.log('Device vibrated!');
-                } else {
-                    console.log('Vibration API is not supported on this device.');
-                }
-            }
-            </script>
-            """
-        )
-
-def trigger_vibration():
-        # This function will be called when the "Deny" button is clicked
-        st.write("Vibration triggered!")  # For debugging purposes
-
+          
         # Display the image using Streamlit's image function
         st.image("https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/Privacybanner.png", 
                  use_column_width=True)
