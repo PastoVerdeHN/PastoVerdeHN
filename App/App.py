@@ -94,8 +94,6 @@ components.html(
     """,
     height=100,  # Adjust the height as needed
 )
-import streamlit as st
-import streamlit.components.v1 as components
 
 def show_policy_banner():
     if 'policy_accepted' not in st.session_state:
