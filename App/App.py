@@ -95,23 +95,6 @@ components.html(
     height=100,  # Adjust the height as needed
 )
 
-def accept_policy():
-  # Injecting JavaScript to trigger vibration
-  components.html(
-      """
-      <script>
-      if (navigator.vibrate) {
-          navigator.vibrate(200);  // Vibrates for 200 milliseconds
-          console.log('Device vibrated!');  // Log to console instead of alert
-      } else {
-          console.log('Vibration API is not supported on this device.');
-      }
-      </script>
-      """,
-      height=0,  # Set to 0 to avoid unnecessary space
-  )
-
-
 def show_policy_banner():
   if 'policy_accepted' not in st.session_state:
       st.session_state.policy_accepted = False
