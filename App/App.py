@@ -123,6 +123,20 @@ def show_policy_banner():
             unsafe_allow_html=True
         )
 
+        # Inject the vibration JavaScript
+        st.markdown(
+            """
+            <script>
+            function vibrateOnClick() {
+                if (navigator.vibrate) {
+                    navigator.vibrate(200); // Vibrate for 200ms
+                }
+            }
+            </script>
+            """,
+            unsafe_allow_html=True
+        )
+
         # Display the image using Streamlit's image function
         st.image("https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/Privacybanner.png", 
                  use_column_width=True)
@@ -130,55 +144,21 @@ def show_policy_banner():
         # Add caption
         st.markdown('<p class="caption">Al hacer clic en Aceptar, usted confirma que ha leído y está de acuerdo con nuestras política de privacidad y cookies.</p>', unsafe_allow_html=True)
 
-        # Inject JS to make the device vibrate on click
-        vibration_js = """
-            <script>
-            function vibrateOnAccept() {
-                if (navigator.vibrate) {
-                    navigator.vibrate(200); // Vibrate for 200ms
-                }
-            }
-            </script>
-        """
-        st.components.v1.html(vibration_js, height=0)  # Inject the vibration JS
-        
-        # Add buttons with JS integration
         col1, col2, col3 = st.columns([1,2,1])
         with col2:
-            # Custom HTML button for vibration and Streamlit rerun logic
-            st.markdown(
-                """
-                <button onclick="vibrateOnAccept(); document.getElementById('accept_form').submit();">Aceptar</button>
-                <form id="accept_form" method="post">
-                    <input type="hidden" name="policy_accepted" value="true">
-                </form>
-                <button onclick="document.getElementById('reject_form').submit();">Rechazar</button>
-                <form id="reject_form" method="post">
-                    <input type="hidden" name="policy_rejected" value="true">
-                </form>
-                """,
-                unsafe_allow_html=True
-            )
+            # Streamlit buttons that trigger vibration
+            accept = st.button("Aceptar", key="accept_policy", on_click=lambda: st.session_state.update(policy_accepted=True))
+            reject = st.button("Rechazar", key="reject_policy", on_click=lambda: st.session_state.update(policy_rejected=True))
+            
+            # Vibration trigger when the buttons are clicked
+            if accept or reject:
+                st.markdown('<script>vibrateOnClick();</script>', unsafe_allow_html=True)
 
-        # Check if the user accepted or rejected
-        if st.session_state.get('policy_accepted'):
-            st.session_state.policy_accepted = True
-            st.rerun()
-        elif st.session_state.get('policy_rejected'):
-            st.session_state.policy_rejected = True
+        if st.session_state.policy_rejected:
             st.markdown('<p class="error-message">Debes aceptar la política para usar esta aplicación.</p>', unsafe_allow_html=True)
 
-        if not st.session_state.policy_accepted:
-            st.markdown(
-                """
-                <div class="cookie-banner">
-                    <div class="cookie-text">
-                        Al usar este sitio, aceptas nuestra <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank" style="color: #4CAF50;">política de privacidad y cookies</a>.
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+        if st.session_state.policy_accepted:
+            st.experimental_rerun()
 def main():
     """Main function to run the Streamlit app."""
     logging.info("Starting the Pasto Verde application.")
