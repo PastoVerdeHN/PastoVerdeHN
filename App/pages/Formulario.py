@@ -1,5 +1,8 @@
 import streamlit as st
 
+# --- SHARED ON ALL PAGES ---
+st.logo("https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/menu_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png")
+
 def generate_iframe_html(url, container_height, hide_top_pct, hide_bottom_pct):
     hide_pixels_top = container_height * hide_top_pct / 100
     hide_pixels_bottom = container_height * hide_bottom_pct / 100
