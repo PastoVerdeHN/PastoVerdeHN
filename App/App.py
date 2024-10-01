@@ -126,7 +126,7 @@ def show_policy_banner():
                  use_column_width=True)
 
         # Add caption
-        st.markdown('<p class="caption">Por favor, lea y acepte nuestra política de privacidad y cookies.</p>', unsafe_allow_html=True)
+        st.markdown('<p class="caption">Al hacer clic en Aceptar, usted confirma que ha leído y está de acuerdo con nuestras política de privacidad y cookies.</p>', unsafe_allow_html=True)
 
         # Center the buttons using columns
         col1, col2, col3 = st.columns([1,2,1])
