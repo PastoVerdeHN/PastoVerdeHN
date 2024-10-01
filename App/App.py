@@ -127,8 +127,14 @@ def show_policy_banner():
           accept = st.button("Aceptar", key="accept_policy", on_click=accept_policy)
           reject = st.button("Rechazar", key="reject_policy", on_click=reject_policy)
 
-      # Check if we need to trigger vibration
-      if st.session_state.get('trigger_vibration', False):
+      if accept:
+          st.session_state.policy_accepted = True
+          st.rerun()
+      elif st.session_state.policy_rejected:
+          st.markdown('<p class="error-message">Debes aceptar la política para usar esta aplicación.</p>', unsafe_allow_html=True)
+          st.session_state.policy_rejected = False
+          
+          # Trigger vibration immediately after rejection
           html("""
               <script>
               function triggerVibration() {
@@ -142,15 +148,7 @@ def show_policy_banner():
               triggerVibration();
               </script>
           """, height=0)
-          st.session_state.trigger_vibration = False  # Reset the flag after triggering
 
-      if accept:
-          st.session_state.policy_accepted = True
-          st.rerun()
-      elif st.session_state.policy_rejected:
-          st.markdown('<p class="error-message">Debes aceptar la política para usar esta aplicación.</p>', unsafe_allow_html=True)
-          st.session_state.policy_rejected = False
-      
       if not st.session_state.policy_accepted:
           st.markdown(
               """
@@ -165,7 +163,6 @@ def show_policy_banner():
 
 def reject_policy():
   st.session_state.policy_rejected = True
-  st.session_state.trigger_vibration = True  # Set the flag to trigger vibration
 
 def accept_policy():
     st.session_state.policy_accepted = True
