@@ -30,6 +30,12 @@ from modules.user_orders import display_user_orders
 from modules.auth import auth0_authentication
 from modules.email import send_welcome_email
 from modules.map import display_map
+try:
+    from streamlit.components.v1 import html
+except ImportError:
+    # Fallback function if html component is not available
+    def html(content, height=None):
+        st.markdown(content, unsafe_allow_html=True)
 
 # --- SHARED ON ALL PAGES ---
 st.logo("https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/menu_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png")
