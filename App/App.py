@@ -74,12 +74,12 @@ if not database_url:
 
 Session = setup_database(database_url)
 
-# Injecting basic HTML and JavaScript code using components.html
+# Injecting basic HTML 
 
-componentshtml(
+components.html(
     """
     <button onclick="triggerVibration()" style="width:100%; padding:10px; background-color: #4CAF50; color: white; border: none; border-radius: 5px;">
-        Test Vibration
+        Vibrate Now
     </button>
 
     <script>
