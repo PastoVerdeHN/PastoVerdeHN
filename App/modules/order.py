@@ -92,7 +92,7 @@ def place_order():
       with cols[i]:
           st.write(f"## {plan_name}")
           if plan_name != "Sin Suscripción":
-              st.write(f"### ~~L.1999.95~~ L. {plan_data['price']:.2f} por mes", unsafe_allow_html=True)
+              st.write(f"### ~~L.1999.90~~ L. {plan_data['price']:.2f} por mes", unsafe_allow_html=True)
           else:
               st.write(f"### L. {plan_data['price']:.2f}", unsafe_allow_html=True)
           for feature in plan_data['features']:
