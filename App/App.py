@@ -140,27 +140,49 @@ def show_policy_banner():
                 margin-top: 15px;
             }
             </style>
+            <script>
+            function triggerVibration() {
+                if (navigator.vibrate) {
+                    navigator.vibrate(200);  // Vibrates for 200 milliseconds
+                    console.log('Device vibrated!');  // Log to console instead of alert
+                } else {
+                    console.log('Vibration API is not supported on this device.');
+                }
+            }
+            </script>
             """,
             unsafe_allow_html=True
         )
-
+        
         # Display the image using Streamlit's image function
         st.image("https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/Privacybanner.png", 
                  use_column_width=True)
-
+        
         # Add caption
         st.markdown('<p class="caption">Al hacer clic en Aceptar, usted confirma que ha leído y está de acuerdo con nuestras política de privacidad y cookies.</p>', unsafe_allow_html=True)
+        
         col1, col2, col3 = st.columns([1,2,1])
         with col2:
             accept = st.button("Aceptar", key="accept_policy", on_click=accept_policy)
-            reject = st.button("Rechazar", key="reject_policy")
+            # Use the tested button code for Rechazar
+            st.markdown(
+                """
+                <button onclick="triggerVibration()" style="width:100%; padding:10px; background-color: #FF0000; color: white; border: none; border-radius: 5px;">
+                    Rechazar
+                </button>
+                """,
+                unsafe_allow_html=True
+            )
 
         if accept:
             st.session_state.policy_accepted = True
             st.rerun()
-        elif reject:
+        
+        # Handle rejection in Streamlit
+        if st.session_state.get('reject_clicked', False):
             st.session_state.policy_rejected = True
             st.markdown('<p class="error-message">Debes aceptar la política para usar esta aplicación.</p>', unsafe_allow_html=True)
+            st.session_state.reject_clicked = False  # Reset the state
 
         if not st.session_state.policy_accepted:
             st.markdown(
@@ -170,28 +192,27 @@ def show_policy_banner():
                         Al usar este sitio, aceptas nuestra <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank" style="color: #4CAF50;">política de privacidad y cookies</a>.
                     </div>
                 </div>
+                <script>
+                document.querySelector('button').addEventListener('click', function() {
+                    window.parent.postMessage({type: 'streamlit:setComponentValue', value: true}, '*');
+                });
+                </script>
                 """,
                 unsafe_allow_html=True
             )
 
 def accept_policy():
-    # Injecting JavaScript to trigger vibration
-    components.html(
-        """
-        <script>
-        function triggerVibration() {
-            if (navigator.vibrate) {
-                navigator.vibrate(200);  // Vibrates for 200 milliseconds
-                console.log('Device vibrated!');  // Log to console instead of alert
-            } else {
-                console.log('Vibration API is not supported on this device.');
-            }
-        }
-        triggerVibration();
-        </script>
-        """,
-        height=0,  # Set to 0 to avoid unnecessary space
-    )
+    st.session_state.policy_accepted = True
+
+# In your main app code:
+# show_policy_banner()
+
+# Add this to handle the rejection
+if st.session_state.get('reject_clicked', False):
+    st.session_state.policy_rejected = True
+    st.markdown('<p class="error-message">Debes aceptar la política para usar esta aplicación.</p>', unsafe_allow_html=True)
+    st.session_state.reject_clicked = False  # Reset the state
+  
 def main():
     """Main function to run the Streamlit app."""
     logging.info("Starting the Pasto Verde application.")
