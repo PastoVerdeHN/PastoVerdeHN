@@ -142,10 +142,13 @@ def show_policy_banner():
             </style>
             <script>
             function triggerVibration() {
+                alert('Vibration function called');  // Debug alert
                 if (navigator.vibrate) {
                     navigator.vibrate(200);  // Vibrates for 200 milliseconds
-                    console.log('Device vibrated!');  // Log to console instead of alert
+                    alert('Device should have vibrated!');  // Debug alert
+                    console.log('Device vibrated!');
                 } else {
+                    alert('Vibration API is not supported on this device.');
                     console.log('Vibration API is not supported on this device.');
                 }
             }
@@ -164,7 +167,7 @@ def show_policy_banner():
         col1, col2, col3 = st.columns([1,2,1])
         with col2:
             accept = st.button("Aceptar", key="accept_policy", on_click=accept_policy)
-            # Use the tested button code for Rechazar
+            # Use the exact button code that worked in your test
             st.markdown(
                 """
                 <button onclick="triggerVibration()" style="width:100%; padding:10px; background-color: #FF0000; color: white; border: none; border-radius: 5px;">
@@ -178,12 +181,6 @@ def show_policy_banner():
             st.session_state.policy_accepted = True
             st.rerun()
         
-        # Handle rejection in Streamlit
-        if st.session_state.get('reject_clicked', False):
-            st.session_state.policy_rejected = True
-            st.markdown('<p class="error-message">Debes aceptar la política para usar esta aplicación.</p>', unsafe_allow_html=True)
-            st.session_state.reject_clicked = False  # Reset the state
-
         if not st.session_state.policy_accepted:
             st.markdown(
                 """
@@ -192,26 +189,12 @@ def show_policy_banner():
                         Al usar este sitio, aceptas nuestra <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank" style="color: #4CAF50;">política de privacidad y cookies</a>.
                     </div>
                 </div>
-                <script>
-                document.querySelector('button').addEventListener('click', function() {
-                    window.parent.postMessage({type: 'streamlit:setComponentValue', value: true}, '*');
-                });
-                </script>
                 """,
                 unsafe_allow_html=True
             )
 
 def accept_policy():
     st.session_state.policy_accepted = True
-
-# In your main app code:
-# show_policy_banner()
-
-# Add this to handle the rejection
-if st.session_state.get('reject_clicked', False):
-    st.session_state.policy_rejected = True
-    st.markdown('<p class="error-message">Debes aceptar la política para usar esta aplicación.</p>', unsafe_allow_html=True)
-    st.session_state.reject_clicked = False  # Reset the state
   
 def main():
     """Main function to run the Streamlit app."""
