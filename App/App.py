@@ -1,5 +1,3 @@
-# --- SHARED ON ALL PAGES ---
-st.logo("https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/menu_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png")
 import os
 import random
 import time
@@ -32,6 +30,9 @@ from modules.user_orders import display_user_orders
 from modules.auth import auth0_authentication
 from modules.email import send_welcome_email
 from modules.map import display_map
+
+# --- SHARED ON ALL PAGES ---
+st.logo("https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/menu_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png")
 
 # Standard library imports
 import logging
