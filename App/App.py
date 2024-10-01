@@ -9,6 +9,7 @@ import pandas as pd
 import requests
 import smtplib
 import streamlit as st
+from your_database_module import increment_and_get_count
 import streamlit.components.v1 as components
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
@@ -243,9 +244,11 @@ def main():
         st.write("Por favor inicie sesión para acceder a los servicios de Pasto Verde")
         logging.info("User not authenticated. Displaying login prompt.")
 
-        st.sidebar.markdown("""
-        <a href="https://www.webfreecounter.com/" target="_blank"><img src="https://www.webfreecounter.com/hit.php?id=gevxkpqf&nd=6&style=26" alt="web counter" border="0"></a>
-        """, unsafe_allow_html=True)
+       # Add visitor counter
+    if 'visitor_count' not in st.session_state:
+       st.session_state.visitor_count = increment_and_get_count()
+  
+       st.sidebar.markdown(f"Visitor Count: {st.session_state.visitor_count}")
 
 
 def user_manual():
