@@ -183,7 +183,7 @@ def trigger_vibration():
     st.write("Vibration triggered!")  # For debugging purposes
 
         # Display the image using Streamlit's image function
-        st.image("https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/Privacybanner.png", 
+    st.image("https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/Privacybanner.png", 
                  use_column_width=True)
 
         # Add caption
