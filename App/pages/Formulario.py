@@ -25,7 +25,7 @@ def app():
     website_url = "https://pastoverde.durablesites.com/contact?pt=NjZjZmZiNmQzMzBjMWZmZWVjOWY4OWRhOjE3MjQ5MTgwODYuOTQ1OnByZXZpZXc="
     container_height = 600
     hide_percentage_top = 20
-    hide_percentage_bottom = 15
+    hide_percentage_bottom = 7
 
     iframe_html = generate_iframe_html(
         url=website_url,
