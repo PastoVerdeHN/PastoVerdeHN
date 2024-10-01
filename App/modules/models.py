@@ -20,8 +20,6 @@ class OrderStatus(enum.Enum):
     confirmed = "confirmed"
     shipped = "shipped"
     delivered = "delivered"
-    completed = "completed"
-    cancelled = "cancelled"
 
 class User(Base):
     __tablename__ = 'users'
