@@ -253,6 +253,10 @@ def main():
         visitor_counter_url = "https://shields-io-visitor-counter.herokuapp.com/badge?page=https://pastoverdehn.streamlit.app/&label=Visitantes&labelColor=000000&logo=GitHub&logoColor=FFFFFF&color=1D70B8&style=for-the-badge"
         st.sidebar.image(visitor_counter_url, caption="Visitor Count")
 
+        timestamp = int(time.time())
+        visitor_counter_url = f"https://shields-io-visitor-counter.herokuapp.com/badge?page=https://pastoverdehn.streamlit.app/&label=Visitantes&labelColor=000000&logo=GitHub&logoColor=FFFFFF&color=1D70B8&style=for-the-badge&t={timestamp}"
+        st.sidebar.image(visitor_counter_url, caption="Visitor Count")
+
 
 def user_manual():
   """Display the user manual page."""
