@@ -42,7 +42,7 @@ def app():
   # Define container and iframe dimensions
   container_height = 600  # Height of the visible container in pixels
   hide_percentage_top = 20    # Percentage of the top to hide
-  hide_percentage_bottom = 10  # Percentage of the bottom to hide
+  hide_percentage_bottom = 7.2  # Percentage of the bottom to hide
 
   # Generate the iframe HTML
   iframe_html = generate_iframe_html(
