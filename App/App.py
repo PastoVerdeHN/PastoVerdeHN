@@ -84,6 +84,7 @@ function triggerVibration() {
         console.log('Vibration API is not supported on this device.');
     }
 }
+
 def show_policy_banner():
     if 'policy_accepted' not in st.session_state:
         st.session_state.policy_accepted = False
