@@ -140,19 +140,6 @@ def show_policy_banner():
                 margin-top: 15px;
             }
             </style>
-            <script>
-            function triggerVibration() {
-                alert('Vibration function called');  // Debug alert
-                if (navigator.vibrate) {
-                    navigator.vibrate(200);  // Vibrates for 200 milliseconds
-                    alert('Device should have vibrated!');  // Debug alert
-                    console.log('Device vibrated!');
-                } else {
-                    alert('Vibration API is not supported on this device.');
-                    console.log('Vibration API is not supported on this device.');
-                }
-            }
-            </script>
             """,
             unsafe_allow_html=True
         )
@@ -167,19 +154,30 @@ def show_policy_banner():
         col1, col2, col3 = st.columns([1,2,1])
         with col2:
             accept = st.button("Aceptar", key="accept_policy", on_click=accept_policy)
-            # Use the exact button code that worked in your test
-            st.markdown(
-                """
-                <button onclick="triggerVibration()" style="width:100%; padding:10px; background-color: #FF0000; color: white; border: none; border-radius: 5px;">
-                    Rechazar
-                </button>
-                """,
-                unsafe_allow_html=True
-            )
+            reject = st.button("Rechazar", key="reject_policy", on_click=reject_policy)
+
+        if st.session_state.get('trigger_vibration', False):
+            html("""
+                <script>
+                function triggerVibration() {
+                    if (navigator.vibrate) {
+                        navigator.vibrate(200);
+                        console.log('Device vibrated!');
+                    } else {
+                        console.log('Vibration API is not supported on this device.');
+                    }
+                }
+                triggerVibration();
+                </script>
+            """, height=0)
+            st.session_state.trigger_vibration = False
 
         if accept:
             st.session_state.policy_accepted = True
             st.rerun()
+        elif st.session_state.policy_rejected:
+            st.markdown('<p class="error-message">Debes aceptar la política para usar esta aplicación.</p>', unsafe_allow_html=True)
+            st.session_state.policy_rejected = False
         
         if not st.session_state.policy_accepted:
             st.markdown(
@@ -195,6 +193,13 @@ def show_policy_banner():
 
 def accept_policy():
     st.session_state.policy_accepted = True
+
+def reject_policy():
+    st.session_state.policy_rejected = True
+    st.session_state.trigger_vibration = True
+
+# Make sure to call this function in your main app code
+# show_policy_banner()
   
 def main():
     """Main function to run the Streamlit app."""
