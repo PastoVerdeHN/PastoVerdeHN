@@ -166,6 +166,9 @@ def show_policy_banner():
 def reject_policy():
   st.session_state.policy_rejected = True
   st.session_state.trigger_vibration = True  # Set the flag to trigger vibration
+
+def accept_policy():
+    st.session_state.policy_accepted = True
   
 def main():
     """Main function to run the Streamlit app."""
