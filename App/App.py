@@ -80,27 +80,6 @@ if not database_url:
 
 Session = setup_database(database_url)
 
-# Injecting basic HTML and JavaScript code using components.html
-components.html(
-    """
-    <button onclick="triggerVibration()" style="width:100%; padding:10px; background-color: #4CAF50; color: white; border: none; border-radius: 5px;">
-        Vibrate Now
-    </button>
-
-    <script>
-    function triggerVibration() {
-        if (navigator.vibrate) {
-            navigator.vibrate(200);  // Vibrates for 200 milliseconds
-            console.log('Device vibrated!');  // Log to console instead of alert
-        } else {
-            console.log('Vibration API is not supported on this device.');
-        }
-    }
-    </script>
-    """,
-    height=100,  # Adjust the height as needed
-)
-
 def show_policy_banner():
     if 'policy_accepted' not in st.session_state:
         st.session_state.policy_accepted = False
