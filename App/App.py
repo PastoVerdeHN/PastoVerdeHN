@@ -2,7 +2,7 @@ import os
 import random
 import time
 from datetime import datetime
-from models import setup_database, VisitorCount, increment_and_get_count
+
 
 # Third-party imports
 import folium
