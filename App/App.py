@@ -131,7 +131,22 @@ def show_policy_banner():
         st.markdown('<p class="caption">Al hacer clic en Aceptar, usted confirma que ha leído y está de acuerdo con nuestras política de privacidad y cookies.</p>', unsafe_allow_html=True)
         col1, col2, col3 = st.columns([1,2,1])
         with col2:
-            accept = st.button("Aceptar", key="accept_policy")
+            # Embed vibration JS script in the button click
+            vibration_js = """
+                <script>
+                function vibrateDevice() {
+                    if (navigator.vibrate) {
+                        navigator.vibrate(200); // Vibrate for 200ms
+                    } else {
+                        console.log("Vibration API not supported on this device.");
+                    }
+                }
+                </script>
+            """
+            
+            st.components.v1.html(vibration_js, height=0)  # Inject the JS
+
+            accept = st.button("Aceptar", key="accept_policy", on_click="vibrateDevice()")
             reject = st.button("Rechazar", key="reject_policy")
 
         if accept:
