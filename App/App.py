@@ -243,14 +243,9 @@ def main():
         st.write("Por favor inicie sesión para acceder a los servicios de Pasto Verde")
         logging.info("User not authenticated. Displaying login prompt.")
 
-        # Display logo or image in the sidebar
-        st.sidebar.markdown("---")
-        logo_image_url = "https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/main/STREAMLIT%20PAGE%20ICON.png"
-        st.sidebar.image(logo_image_url, use_column_width=True, caption="La Naturaleza A Los Pies De Tus Mascota")
-
-        timestamp = int(time.time())
-        visitor_counter_url = f"https://shields-io-visitor-counter.herokuapp.com/badge?page=https://pastoverdehn.streamlit.app/&label=Visitantes&labelColor=000000&logo=GitHub&logoColor=FFFFFF&color=1D70B8&style=for-the-badge&t={timestamp}"
-        st.sidebar.image(visitor_counter_url, caption="Visitor Count")
+        st.sidebar.markdown("""
+        <a href="https://www.webfreecounter.com/" target="_blank"><img src="https://www.webfreecounter.com/hit.php?id=gevxkpqf&nd=6&style=26" alt="web counter" border="0"></a>
+        """, unsafe_allow_html=True)
 
 
 def user_manual():
