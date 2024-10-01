@@ -168,7 +168,7 @@ def place_order():
           
           # Apply promo code discount for "Sin Suscripción"
           if selected_plan == "Sin Suscripción" and promo_code.upper() == "VERDEHN":
-              discount = total_price * 0.20
+              discount = total_price * 0.25
               total_price -= discount
               st.write(f"¡Código promocional aplicado! Descuento: L. {discount:.2f}")
 
