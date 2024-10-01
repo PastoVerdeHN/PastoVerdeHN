@@ -79,11 +79,9 @@ Session = setup_database(database_url)
 function triggerVibration() {
     if (navigator.vibrate) {
         navigator.vibrate(200);  // Vibrates for 200 milliseconds
-        // Remove this line if you don't want a notification
-        // alert('Device vibrated!');
+        console.log('Device vibrated!');  // Log to console instead of alert
     } else {
-        // You can keep this line or handle it differently
-        alert('Vibration API is not supported on this device.');
+        console.log('Vibration API is not supported on this device.');
     }
 }
 def show_policy_banner():
