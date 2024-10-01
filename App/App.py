@@ -74,23 +74,6 @@ if not database_url:
 
 Session = setup_database(database_url)
 
-# Injecting basic JavaScript to test vibration API
-st.markdown(
-    """
-    <script>
-    function triggerVibration() {
-        if (navigator.vibrate) {
-            navigator.vibrate(200);  // Vibrates for 200 milliseconds
-            alert('Device vibrated!');
-        } else {
-            alert('Vibration API is not supported on this device.');
-        }
-    }
-    </script>
-    """,
-    unsafe_allow_html=True
-)
-
 # Injecting basic HTML and JavaScript code using components.html
 componentshtml(
     """
