@@ -180,7 +180,7 @@ def show_policy_banner():
                 unsafe_allow_html=True
             )
 
-   def get_client_ip():
+def get_client_ip():
        try:
            ctx = get_script_run_ctx()
            if ctx is None:
