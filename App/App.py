@@ -103,7 +103,7 @@ def show_policy_banner():
       # Add caption
       st.markdown('<p class="caption">Al hacer clic en Aceptar, usted confirma que ha leído y está de acuerdo con nuestras política de privacidad y cookies.</p>', unsafe_allow_html=True)
       
-      col1, col2, col3 = st.columns([1,2,1])
+      col1, col2, col3 = st.columns([1, 2, 1])
       with col2:
           accept = st.button("Aceptar", key="accept_policy", on_click=accept_policy)
           reject = st.button("Rechazar", key="reject_policy", on_click=reject_policy)
@@ -128,9 +128,10 @@ def show_policy_banner():
           st.session_state.policy_accepted = True
           record_cookie_consent(True)  # Record consent as accepted
           st.rerun()
-      elif st.session_state.policy_rejected:
-          st.markdown('<p class="error-message">Debes aceptar la política para usar esta aplicación.</p>', unsafe_allow_html=True)
+      elif reject:
+          st.session_state.policy_rejected = True
           record_cookie_consent(False)  # Record consent as rejected
+          st.markdown('<p class="error-message">Debes aceptar la política para usar esta aplicación.</p>', unsafe_allow_html=True)
           st.session_state.policy_rejected = False
       
       if not st.session_state.policy_accepted:
@@ -144,52 +145,6 @@ def show_policy_banner():
               """,
               unsafe_allow_html=True
           )
-        
-          st.image("https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/Privacybanner.png", 
-                 use_column_width=True)
-        
-        # Add caption
-        st.markdown('<p class="caption">Al hacer clic en Aceptar, usted confirma que ha leído y está de acuerdo con nuestras política de privacidad y cookies.</p>', unsafe_allow_html=True)
-        
-        col1, col2, col3 = st.columns([1,2,1])
-        with col2:
-            accept = st.button("Aceptar", key="accept_policy", on_click=accept_policy)
-            reject = st.button("Rechazar", key="reject_policy", on_click=reject_policy)
-
-        if st.session_state.get('trigger_vibration', False):
-            html("""
-                <script>
-                function triggerVibration() {
-                    if (navigator.vibrate) {
-                        navigator.vibrate(200);
-                        console.log('Device vibrated!');
-                    } else {
-                        console.log('Vibration API is not supported on this device.');
-                    }
-                }
-                triggerVibration();
-                </script>
-            """, height=0)
-            st.session_state.trigger_vibration = False
-
-        if accept:
-            st.session_state.policy_accepted = True
-            st.rerun()
-        elif st.session_state.policy_rejected:
-            st.markdown('<p class="error-message">Debes aceptar la política para usar esta aplicación.</p>', unsafe_allow_html=True)
-            st.session_state.policy_rejected = False
-        
-        if not st.session_state.policy_accepted:
-            st.markdown(
-                """
-                <div class="cookie-banner">
-                    <div class="cookie-text">
-                        Al usar este sitio, aceptas nuestra <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank" style="color: #4CAF50;">política de privacidad y cookies</a>.
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
 
 def get_client_ip():
        try:
