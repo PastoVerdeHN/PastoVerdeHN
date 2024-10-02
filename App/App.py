@@ -185,11 +185,7 @@ def get_client_ip():
                st.write("Context is None")
                return None
            ip = ctx.session_info.request.remote_ip
-           st.write(f"Captured IP: {ip}")
-           return ip
-       except Exception as e:
-           st.write(f"Error getting IP: {str(e)}")
-           return None
+
 
 def record_cookie_consent(accepted):
   user = st.session_state.get('user')
