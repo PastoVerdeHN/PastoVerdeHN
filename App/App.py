@@ -28,7 +28,7 @@ from sqlalchemy.orm import sessionmaker, relationship, validates
 
 # Local application imports
 from auth0_component import login_button
-from modules.models import User, Product, Order, Subscription, PaymentTransaction, CookieConsent, setup_database, UserType, OrderStatus
+from modules.models import User, Product, Order, Subscription, PaymentTransaction, setup_database, UserType, OrderStatus
 from modules.home import home_page
 from modules.order import place_order
 from modules.user_orders import display_user_orders
