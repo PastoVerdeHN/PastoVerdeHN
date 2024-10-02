@@ -81,93 +81,73 @@ if not database_url:
 Session = setup_database(database_url)
 
 def show_policy_banner():
-  if 'policy_accepted' not in st.session_state:
-      st.session_state.policy_accepted = False
-  
-  if 'policy_rejected' not in st.session_state:
-      st.session_state.policy_rejected = False
+    if 'policy_accepted' not in st.session_state:
+        st.session_state.policy_accepted = False
+    
+    if 'policy_rejected' not in st.session_state:
+        st.session_state.policy_rejected = False
 
-  if not st.session_state.policy_accepted:
-      st.markdown(
-          """
-          
-          """,
-          unsafe_allow_html=True
-      )
-      
-      # Display the image using Streamlit's image function
-      st.image("https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/Privacybanner.png", 
-               use_column_width=True)
-      
-      # Add caption
-      st.markdown('<p class="caption">Al hacer clic en Aceptar, usted confirma que ha leído y está de acuerdo con nuestras política de privacidad y cookies.</p>', unsafe_allow_html=True)
-      
-      col1, col2, col3 = st.columns([1,2,1])
-      with col2:
-          accept = st.button("Aceptar", key="accept_policy", on_click=accept_policy)
-          reject = st.button("Rechazar", key="reject_policy", on_click=reject_policy)
+    if not st.session_state.policy_accepted:
+        st.markdown(
+            """
+            
+            """,
+            unsafe_allow_html=True
+        )
+        
+        # Display the image using Streamlit's image function
+        st.image("https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/Privacybanner.png", 
+                 use_column_width=True)
+        
+        # Add caption
+        st.markdown('<p class="caption">Al hacer clic en Aceptar, usted confirma que ha leído y está de acuerdo con nuestras política de privacidad y cookies.</p>', unsafe_allow_html=True)
+        
+        col1, col2, col3 = st.columns([1,2,1])
+        with col2:
+            accept = st.button("Aceptar", key="accept_policy", on_click=accept_policy)
+            reject = st.button("Rechazar", key="reject_policy", on_click=reject_policy)
 
-      if st.session_state.get('trigger_vibration', False):
-          html("""
-              <script>
-              function triggerVibration() {
-                  if (navigator.vibrate) {
-                      navigator.vibrate(200);
-                      console.log('Device vibrated!');
-                  } else {
-                      console.log('Vibration API is not supported on this device.');
-                  }
-              }
-              triggerVibration();
-              </script>
-          """, height=0)
-          st.session_state.trigger_vibration = False
+        if st.session_state.get('trigger_vibration', False):
+            html("""
+                <script>
+                function triggerVibration() {
+                    if (navigator.vibrate) {
+                        navigator.vibrate(200);
+                        console.log('Device vibrated!');
+                    } else {
+                        console.log('Vibration API is not supported on this device.');
+                    }
+                }
+                triggerVibration();
+                </script>
+            """, height=0)
+            st.session_state.trigger_vibration = False
 
-      if accept:
-          st.session_state.policy_accepted = True
-          record_cookie_consent(True)  # Add this line to record the consent
-          st.rerun()
-      elif st.session_state.policy_rejected:
-          st.markdown('<p class="error-message">Debes aceptar la política para usar esta aplicación.</p>', unsafe_allow_html=True)
-          record_cookie_consent(False)  # Add this line to record the rejection
-          st.session_state.policy_rejected = False
-      
-      if not st.session_state.policy_accepted:
-          st.markdown(
-              """
-              <div class="cookie-banner">
-                  <div class="cookie-text">
-                      Al usar este sitio, aceptas nuestra <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank" style="color: #4CAF50;">política de privacidad y cookies</a>.
-                  </div>
-              </div>
-              """,
-              unsafe_allow_html=True
-          )
+        if accept:
+            st.session_state.policy_accepted = True
+            st.rerun()
+        elif st.session_state.policy_rejected:
+            st.markdown('<p class="error-message">Debes aceptar la política para usar esta aplicación.</p>', unsafe_allow_html=True)
+            st.session_state.policy_rejected = False
+        
+        if not st.session_state.policy_accepted:
+            st.markdown(
+                """
+                <div class="cookie-banner">
+                    <div class="cookie-text">
+                        Al usar este sitio, aceptas nuestra <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank" style="color: #4CAF50;">política de privacidad y cookies</a>.
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
 def accept_policy():
-  st.session_state.policy_accepted = True
+    st.session_state.policy_accepted = True
 
 def reject_policy():
-  st.session_state.policy_rejected = True
-  st.session_state.trigger_vibration = True
-
-# Add this new function to record the consent in the database
-def record_cookie_consent(accepted):
-  user = st.session_state.get('user')
-  if user:
-      session = Session()
-      try:
-          consent = CookieConsent(user_id=user.id, accepted=accepted)
-          session.add(consent)
-          session.commit()
-          logging.info(f"Cookie consent recorded for user {user.id}: {'Accepted' if accepted else 'Rejected'}")
-      except Exception as e:
-          logging.error(f"Error recording cookie consent: {e}")
-          session.rollback()
-      finally:
-          session.close()
-  else:
-      logging.warning("Attempted to record cookie consent for unauthenticated user")
+    st.session_state.policy_rejected = True
+    st.session_state.trigger_vibration = True
 
 # Make sure to call this function in your main app code
 # show_policy_banner()
