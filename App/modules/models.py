@@ -96,10 +96,10 @@ class PaymentTransaction(Base):
 class CookieConsent(Base):
   __tablename__ = 'cookie_consents'
   id = Column(Integer, primary_key=True)
-  user_id = Column(String, ForeignKey('users.id'))
+  user_id = Column(String, nullable=True)
+  ip_address = Column(String, nullable=True)
   accepted = Column(Boolean, nullable=False)
   timestamp = Column(DateTime, default=datetime.utcnow)
-  user = relationship("User")
 
 def setup_database(database_url):
     engine = create_engine(database_url, echo=True)
