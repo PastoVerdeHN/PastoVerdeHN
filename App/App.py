@@ -88,12 +88,40 @@ def show_policy_banner():
       st.session_state.policy_rejected = False
 
   if not st.session_state.policy_accepted:
-      # ... (existing code for displaying the banner)
-
+      st.markdown(
+          """
+          
+          """,
+          unsafe_allow_html=True
+      )
+      
+      # Display the image using Streamlit's image function
+      st.image("https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/Privacybanner.png", 
+               use_column_width=True)
+      
+      # Add caption
+      st.markdown('<p class="caption">Al hacer clic en Aceptar, usted confirma que ha leído y está de acuerdo con nuestras política de privacidad y cookies.</p>', unsafe_allow_html=True)
+      
       col1, col2, col3 = st.columns([1,2,1])
       with col2:
           accept = st.button("Aceptar", key="accept_policy", on_click=accept_policy)
           reject = st.button("Rechazar", key="reject_policy", on_click=reject_policy)
+
+      if st.session_state.get('trigger_vibration', False):
+          html("""
+              <script>
+              function triggerVibration() {
+                  if (navigator.vibrate) {
+                      navigator.vibrate(200);
+                      console.log('Device vibrated!');
+                  } else {
+                      console.log('Vibration API is not supported on this device.');
+                  }
+              }
+              triggerVibration();
+              </script>
+          """, height=0)
+          st.session_state.trigger_vibration = False
 
       if accept:
           st.session_state.policy_accepted = True
@@ -103,8 +131,25 @@ def show_policy_banner():
           record_cookie_consent(False)
           st.markdown('<p class="error-message">Debes aceptar la política para usar esta aplicación.</p>', unsafe_allow_html=True)
           st.session_state.policy_rejected = False
+      
+      if not st.session_state.policy_accepted:
+          st.markdown(
+              """
+              <div class="cookie-banner">
+                  <div class="cookie-text">
+                      Al usar este sitio, aceptas nuestra <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank" style="color: #4CAF50;">política de privacidad y cookies</a>.
+                  </div>
+              </div>
+              """,
+              unsafe_allow_html=True
+          )
 
-      # ... (rest of the existing code)
+def accept_policy():
+  st.session_state.policy_accepted = True
+
+def reject_policy():
+  st.session_state.policy_rejected = True
+  st.session_state.trigger_vibration = True
 
 def record_cookie_consent(accepted):
   user = st.session_state.get('user')
@@ -122,13 +167,6 @@ def record_cookie_consent(accepted):
           session.close()
   else:
       logging.warning("Attempted to record cookie consent for unauthenticated user")
-
-def accept_policy():
-  st.session_state.policy_accepted = True
-
-def reject_policy():
-  st.session_state.policy_rejected = True
-  st.session_state.trigger_vibration = True
   
 def main():
     """Main function to run the Streamlit app."""
