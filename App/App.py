@@ -180,14 +180,18 @@ def show_policy_banner():
                 unsafe_allow_html=True
             )
 
-def get_client_ip():
-  try:
-      ctx = get_script_run_ctx()
-      if ctx is None:
-          return None
-      return ctx.session_info.request.remote_ip
-  except:
-      return None
+   def get_client_ip():
+       try:
+           ctx = get_script_run_ctx()
+           if ctx is None:
+               st.write("Context is None")
+               return None
+           ip = ctx.session_info.request.remote_ip
+           st.write(f"Captured IP: {ip}")
+           return ip
+       except Exception as e:
+           st.write(f"Error getting IP: {str(e)}")
+           return None
 
 def record_cookie_consent(accepted):
   user = st.session_state.get('user')
