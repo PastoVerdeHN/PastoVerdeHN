@@ -168,6 +168,9 @@ def record_cookie_consent(accepted):
           session.close()
   else:
       logging.warning("Attempted to record cookie consent for unauthenticated user")
+
+# Make sure to call this function in your main app code
+# show_policy_banner()
   
 def main():
     """Main function to run the Streamlit app."""
