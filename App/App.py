@@ -178,39 +178,6 @@ def show_policy_banner():
                 unsafe_allow_html=True
             )
 
-def get_client_ip():
-       try:
-           ctx = get_script_run_ctx()
-           if ctx is None:
-               st.write("Context is None")
-               return None
-           ip = ctx.session_info.request.remote_ip
-
-
-def record_cookie_consent(accepted):
-  user = st.session_state.get('user')
-  ip_address = get_client_ip()
-  
-  if ip_address:
-      hashed_ip = hashlib.md5(ip_address.encode()).hexdigest()
-  else:
-      hashed_ip = None
-
-  session = Session()
-  try:
-      consent = CookieConsent(
-          user_id=user.id if user else None,
-          ip_address=hashed_ip,
-          accepted=accepted
-      )
-      session.add(consent)
-      session.commit()
-      logging.info(f"Cookie consent recorded for {'user' if user else 'IP'}: {'Accepted' if accepted else 'Rejected'}")
-  except Exception as e:
-      logging.error(f"Error recording cookie consent: {e}")
-      session.rollback()
-  finally:
-      session.close()
 
 def accept_policy():
     st.session_state.policy_accepted = True
