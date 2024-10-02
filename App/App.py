@@ -145,8 +145,7 @@ def show_policy_banner():
               unsafe_allow_html=True
           )
         
-        # Display the image using Streamlit's image function
-        st.image("https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/Privacybanner.png", 
+          st.image("https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/Privacybanner.png", 
                  use_column_width=True)
         
         # Add caption
