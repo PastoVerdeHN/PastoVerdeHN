@@ -3,6 +3,7 @@ import random
 import time
 from datetime import datetime
 
+
 # Third-party imports
 import folium
 import pandas as pd
@@ -25,6 +26,7 @@ from branca.element import Template, MacroElement
 from auth0_component import login_button
 from modules.models import User, Product, Order, Subscription, PaymentTransaction, setup_database, UserType, OrderStatus
 from modules.home import home_page
+from modules.models import CookieConsent
 from modules.order import place_order
 from modules.user_orders import display_user_orders
 from modules.auth import auth0_authentication
@@ -176,12 +178,31 @@ def show_policy_banner():
                 unsafe_allow_html=True
             )
 
+def record_cookie_consent(accepted):
+  user = st.session_state.get('user')
+  if user:
+      session = Session()
+      try:
+          consent = CookieConsent(user_id=user.id, accepted=accepted)
+          session.add(consent)
+          session.commit()
+          logging.info(f"Cookie consent recorded for user {user.id}: {'Accepted' if accepted else 'Rejected'}")
+      except Exception as e:
+          logging.error(f"Error recording cookie consent: {e}")
+          session.rollback()
+      finally:
+          session.close()
+  else:
+      logging.warning("Attempted to record cookie consent for unauthenticated user")
+
 def accept_policy():
     st.session_state.policy_accepted = True
+    record_cookie_consent(True)
 
 def reject_policy():
     st.session_state.policy_rejected = True
     st.session_state.trigger_vibration = True
+    record_cookie_consent(False)
 
 # Make sure to call this function in your main app code
 # show_policy_banner()
