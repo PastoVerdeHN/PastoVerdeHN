@@ -181,12 +181,12 @@ def show_policy_banner():
 
 def accept_policy():
     st.session_state.policy_accepted = True
-    record_cookie_consent(True)
+
 
 def reject_policy():
     st.session_state.policy_rejected = True
     st.session_state.trigger_vibration = True
-    record_cookie_consent(False)
+
 
 # Make sure to call this function in your main app code
 # show_policy_banner()
