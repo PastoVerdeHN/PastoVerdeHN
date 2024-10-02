@@ -125,11 +125,11 @@ def show_policy_banner():
 
       if accept:
           st.session_state.policy_accepted = True
-          record_cookie_consent(True)
+          record_cookie_consent(True)  # Add this line to record the consent
           st.rerun()
       elif st.session_state.policy_rejected:
-          record_cookie_consent(False)
           st.markdown('<p class="error-message">Debes aceptar la política para usar esta aplicación.</p>', unsafe_allow_html=True)
+          record_cookie_consent(False)  # Add this line to record the rejection
           st.session_state.policy_rejected = False
       
       if not st.session_state.policy_accepted:
@@ -151,6 +151,7 @@ def reject_policy():
   st.session_state.policy_rejected = True
   st.session_state.trigger_vibration = True
 
+# Add this new function to record the consent in the database
 def record_cookie_consent(accepted):
   user = st.session_state.get('user')
   if user:
