@@ -80,10 +80,13 @@ def send_test_email():
           server.starttls()
           server.login(sender_email, sender_password)
           server.sendmail(sender_email, recipient_email, message.as_string())
-          print("Email sent successfully!")
+          st.success("Email sent successfully!")
 
   except Exception as e:
-      print(f"Failed to send email: {e}")
+      st.error(f"Failed to send email: {e}")
 
-# Run the test email function
-send_test_email()
+# Streamlit app
+st.title("Email Sender Test")
+
+if st.button("Send Test Email"):
+  send_test_email()
