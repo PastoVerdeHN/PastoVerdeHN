@@ -2,29 +2,24 @@ import os
 import random
 import time
 from datetime import datetime
-import hashlib
-
-# Streamlit and related imports
-import streamlit as st
-from streamlit.runtime.scriptrunner import get_script_run_ctx
-from streamlit_folium import folium_static
-from streamlit.components.v1 import html  # Directly import html
 
 # Third-party imports
 import folium
 import pandas as pd
 import requests
 import smtplib
+import streamlit as st
+import streamlit.components.v1 as components
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from geopy.geocoders import Nominatim
+from sqlalchemy import create_engine, func
+from sqlalchemy.orm import sessionmaker
+from streamlit.runtime.scriptrunner import get_script_run_ctx
+from streamlit_folium import folium_static
 from dotenv import load_dotenv
 from branca.element import Template, MacroElement
-
-# SQLAlchemy imports
-from sqlalchemy import create_engine, func, Column, Integer, String, DateTime, Float, ForeignKey, Enum, Boolean
-from sqlalchemy.orm import sessionmaker, relationship, validates
 
 # Local application imports
 from auth0_component import login_button
@@ -35,9 +30,12 @@ from modules.user_orders import display_user_orders
 from modules.auth import auth0_authentication
 from modules.email import send_welcome_email
 from modules.map import display_map
-
-# Load environment variables from .env file
-load_dotenv()
+try:
+    from streamlit.components.v1 import html
+except ImportError:
+    # Fallback function if html component is not available
+    def html(content, height=None):
+        st.markdown(content, unsafe_allow_html=True)
 
 # --- SHARED ON ALL PAGES ---
 st.logo("https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/menu_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png")
@@ -178,15 +176,12 @@ def show_policy_banner():
                 unsafe_allow_html=True
             )
 
-
 def accept_policy():
     st.session_state.policy_accepted = True
-
 
 def reject_policy():
     st.session_state.policy_rejected = True
     st.session_state.trigger_vibration = True
-
 
 # Make sure to call this function in your main app code
 # show_policy_banner()
