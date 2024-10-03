@@ -99,18 +99,16 @@ def show_policy_banner():
             st.error("Debes aceptar la política para usar esta aplicación.")
 
 def logout():
-  # Clear Streamlit session state
-  for key in list(st.session_state.keys()):
-      del st.session_state[key]
-  
-  # Redirect to Auth0 logout
-  auth0_domain = st.secrets["auth0"]["AUTH0_DOMAIN"]
-  client_id = st.secrets["auth0"]["AUTH0_CLIENT_ID"]
-  return_to = "https://pastoverdehn.streamlit.app"  # Update this to your app's URL
-  logout_url = f"https://{auth0_domain}/v2/logout?client_id={client_id}&returnTo={return_to}"
-  
-  # Redirect the user to the logout URL
-  st.markdown(f'<meta http-equiv="refresh" content="0;url={return_to}">', unsafe_allow_html=True)
+    # Clear Streamlit session state
+    for key in list(st.session_state.keys()):
+        del st.session_state[key]
+    
+    # Redirect to Auth0 logout
+    auth0_domain = st.secrets["auth0"]["AUTH0_DOMAIN"]
+    client_id = st.secrets["auth0"]["AUTH0_CLIENT_ID"]
+    return_to = "http://localhost:8501"  # Update this to your app's URL
+    logout_url = f"https://{auth0_domain}/v2/logout?client_id={client_id}&returnTo={return_to}"
+    st.markdown(f'<meta http-equiv="refresh" content="0;url={logout_url}">', unsafe_allow_html=True)
 
 
 def main():
