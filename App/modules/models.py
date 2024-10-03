@@ -93,6 +93,8 @@ class PaymentTransaction(Base):
     payment_method = Column(String)
     order = relationship("Order")
 
+
+    
 def setup_database(database_url):
     engine = create_engine(database_url, echo=True)
     
