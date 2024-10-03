@@ -5,7 +5,9 @@ from datetime import datetime
 import enum
 from dotenv import load_dotenv
 import os
-import streamlit as st
+
+# Load environment variables from .env file
+load_dotenv()
 
 Base = declarative_base()
 
@@ -91,24 +93,14 @@ class PaymentTransaction(Base):
     payment_method = Column(String)
     order = relationship("Order")
 
-# Define your base model
-Base = declarative_base()
-
 def setup_database(database_url):
-  # Create the SQLAlchemy engine
-  engine = create_engine(database_url, echo=True)
-  
-  # Create all tables if they don't exist
-  Base.metadata.create_all(engine)
-  
-  return sessionmaker(bind=engine)
+    engine = create_engine(database_url, echo=True)
+    
+    # Create all tables if they don't exist
+    Base.metadata.create_all(engine)
+    
+    return sessionmaker(bind=engine)
 
-# Load the DATABASE_URL from Streamlit secrets
-database_url = st.secrets["database"]["url"]  # Access the database URL from Streamlit secrets
-
-# Check if the database_url is None or empty
-if not database_url:
-  raise ValueError("Database URL is not set in Streamlit secrets.")
-
-# Set up the session local
+# Load the DATABASE_URL from the environment variables
+database_url = os.getenv("DATABASE_URL")
 SessionLocal = setup_database(database_url)
