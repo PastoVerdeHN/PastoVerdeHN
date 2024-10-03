@@ -3,11 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, validates
 from datetime import datetime
 import enum
-from dotenv import load_dotenv
-import os
-
-# Load environment variables from .env file
-load_dotenv()
+import streamlit as st
 
 Base = declarative_base()
 
@@ -104,7 +100,6 @@ def setup_database():
     engine = create_engine(database_url, echo=debug_mode)
     Base.metadata.create_all(engine)
     return sessionmaker(bind=engine)
-    
-# Load the DATABASE_URL from the environment variables
 
-SessionLocal = setup_database(database_url)
+# Initialize the SessionLocal
+SessionLocal = setup_database()
