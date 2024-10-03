@@ -72,8 +72,6 @@ if not database_url:
   logging.error("Database URL not found. Cannot proceed without database access.")
   st.stop()
 
-Session = setup_database(database_url)
-
 def show_policy_banner():
     if 'policy_accepted' not in st.session_state:
         st.session_state.policy_accepted = False
