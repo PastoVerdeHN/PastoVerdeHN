@@ -1,9 +1,10 @@
+import streamlit as st
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, Float, ForeignKey, Enum, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, validates
 from datetime import datetime
 import enum
-import streamlit as st
+
 
 Base = declarative_base()
 
