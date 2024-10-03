@@ -106,5 +106,5 @@ def setup_database():
     return sessionmaker(bind=engine)
     
 # Load the DATABASE_URL from the environment variables
-database_url = os.getenv("DATABASE_URL")
+
 SessionLocal = setup_database(database_url)
