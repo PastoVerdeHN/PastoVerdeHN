@@ -110,7 +110,7 @@ def logout():
   logout_url = f"https://{auth0_domain}/v2/logout?client_id={client_id}&returnTo={return_to}"
   
   # Redirect the user to the logout URL
-  st.markdown(f'<meta http-equiv="refresh" content="0;url={logout_url}">', unsafe_allow_html=True)
+  st.markdown(f'<meta http-equiv="refresh" content="0;url={return_to}">', unsafe_allow_html=True)
 
 
 def main():
