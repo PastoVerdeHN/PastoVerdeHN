@@ -231,6 +231,7 @@ def show_policy_banner():
 # Make sure to call this function in your main app code
 # show_policy_banner()
   
+
 def main():
     """Main function to run the Streamlit app."""
     logging.info("Starting the Pasto Verde application.")
