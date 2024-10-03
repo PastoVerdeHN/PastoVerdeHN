@@ -5,6 +5,21 @@ from modules.models import User, UserType
 from auth0_component import login_button
 from .models import setup_database
 from modules.email import send_welcome_email
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+def auth0_authentication():
+    logger.info("Starting authentication process")
+    if 'user' not in st.session_state:
+        st.session_state.user = None
+    if 'auth_status' not in st.session_state:
+        st.session_state.auth_status = None
+    
+    if st.session_state.user is None:
+        # ... [rest of the function remains the same] ...
+
 
 
 # Database setup
