@@ -207,31 +207,6 @@ def reject_policy():
         finally:
             session.close()
 
-def show_policy_banner():
-    if 'policy_accepted' not in st.session_state:
-        st.session_state.policy_accepted = False
-    
-    if 'policy_rejected' not in st.session_state:
-        st.session_state.policy_rejected = False
-
-    user_id = st.session_state.get('user_id')
-    if user_id:
-        session = SessionLocal()
-        try:
-            user = session.query(User).get(user_id)
-            if user and user.cookie_policy_accepted:
-                st.session_state.policy_accepted = True
-                return
-        finally:
-            session.close()
-
-    if not st.session_state.policy_accepted:
-
-
-# Make sure to call this function in your main app code
-# show_policy_banner()
-  
-
 def main():
     """Main function to run the Streamlit app."""
     logging.info("Starting the Pasto Verde application.")
