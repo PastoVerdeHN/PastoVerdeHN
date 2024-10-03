@@ -73,11 +73,3 @@ El equipo de Pasto Verde 🌱
       print(f"Welcome email sent to {user_email}")
   except Exception as e:
       print(f"Error sending email to {user_email}: {str(e)}")
-
-if not user.welcome_email_sent:
-    email_sent = send_welcome_email(user.email, user.name)
-    if email_sent:
-        user.welcome_email_sent = True
-        session.commit()
-    else:
-        st.warning("Failed to send welcome email. Please check your email configuration.")
