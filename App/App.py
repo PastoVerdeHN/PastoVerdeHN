@@ -2,6 +2,7 @@ import os
 import random
 import time
 from datetime import datetime
+import logging  # Add this import
 
 # Third-party imports
 import folium
@@ -35,19 +36,19 @@ st.logo("https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/
 
 # Configure logging
 logging.basicConfig(
-  level=logging.INFO,
-  format='%(asctime)s - %(levelname)s - %(message)s',
-  handlers=[
-      logging.FileHandler("app.log"),
-      logging.StreamHandler()
-  ]
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("app.log"),
+        logging.StreamHandler()
+    ]
 )
 
 # Streamlit page configuration
 st.set_page_config(
-  page_title="Pasto Verde - Naturaleza en Casa para tus Mascotas",
-  page_icon="🌿",
-  layout="wide"
+    page_title="Pasto Verde - Naturaleza en Casa para tus Mascotas",
+    page_icon="🌿",
+    layout="wide"
 )
 
 # Load environment variables
