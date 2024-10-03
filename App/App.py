@@ -45,15 +45,6 @@ st.logo("https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/
 
 
 
-# Configure logging
-logging.basicConfig(
-  level=logging.INFO,
-  format='%(asctime)s - %(levelname)s - %(message)s',
-  handlers=[
-      logging.FileHandler("app.log"),
-      logging.StreamHandler()
-  ]
-)
 
 
 
