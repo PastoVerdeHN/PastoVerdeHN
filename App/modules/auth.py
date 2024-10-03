@@ -10,15 +10,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-def auth0_authentication():
-    logger.info("Starting authentication process")
-    if 'user' not in st.session_state:
-        st.session_state.user = None
-    if 'auth_status' not in st.session_state:
-        st.session_state.auth_status = None
-    
-    if st.session_state.user is None:
-        # ... [rest of the function remains the same] ...
+
 
 
 
@@ -35,6 +27,14 @@ if not database_url:
 Session = setup_database(database_url)
 
 def auth0_authentication():
+       logger.info("Starting authentication process")
+   if 'user' not in st.session_state:
+        st.session_state.user = None
+   if 'auth_status' not in st.session_state:
+        st.session_state.auth_status = None
+    
+  if st.session_state.user is None:   
+    
   if 'user' not in st.session_state:
       st.session_state.user = None
   if 'auth_status' not in st.session_state:
