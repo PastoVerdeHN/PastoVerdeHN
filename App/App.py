@@ -76,6 +76,12 @@ def main():
   logging.info("Starting the Pasto Verde application.")
   st.title("Pasto Verde - Entrega de pasto para mascotas")
   
+  # Check if there's a logout message to display
+  if 'logout_message' in st.session_state:
+      st.success(st.session_state['logout_message'])
+      del st.session_state['logout_message']  # Clear the message after displaying
+      logging.info("Displayed logout message to user.")
+  
   # Authenticate the user
   user = auth0_authentication()
   
@@ -127,28 +133,26 @@ def main():
           logging.error(f"An error occurred while loading the page '{st.session_state.current_page}': {e}")
           st.error("Ha ocurrido un error al cargar la página. Por favor, intenta de nuevo más tarde.")
 
-# Logout button functionality in the sidebar
-if st.sidebar.button("🚪 Finalizar la sesión"):
-  # Set a logout message in session state
-  st.session_state['logout_message'] = "Has cerrado la sesión exitosamente."
-  
-  # Clear session state (except for the logout message)
-  for key in list(st.session_state.keys()):
-      if key != 'logout_message':
-          del st.session_state[key]
-  
-  logging.info("User logged out and session state cleared.")
-  st.rerun()
-else:
-  # Check if there's a logout message to display
-  if 'logout_message' in st.session_state:
-      st.success(st.session_state['logout_message'])
-      del st.session_state['logout_message']  # Clear the message after displaying
-      logging.info("Displayed logout message to user.")
-  
-  # Prompt the user to log in
-  st.write("Por favor inicie sesión para acceder a los servicios de Pasto Verde")
-  logging.info("User not authenticated. Displaying login prompt.")
+      # Logout button functionality in the sidebar
+      if st.sidebar.button("🚪 Finalizar la sesión"):
+          # Set logout message
+          st.session_state['logout_message'] = "Has cerrado la sesión exitosamente."
+          # Clear session state (except for the logout message)
+          for key in list(st.session_state.keys()):
+              if key != 'logout_message':
+                  del st.session_state[key]
+          logging.info("User logged out and session state cleared.")
+          st.rerun()
+
+      # Display logo or image in the sidebar
+      st.sidebar.markdown("---")
+      image_url = "https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/main/STREAMLIT%20PAGE%20ICON.png"
+      st.sidebar.image(image_url, use_column_width=True, caption="La Naturaleza A Los Pies De Tus Mascota")
+
+  else:
+      # Prompt the user to log in
+      st.write("Por favor inicie sesión para acceder a los servicios de Pasto Verde")
+      logging.info("User not authenticated. Displaying login prompt.")
       
 
 
