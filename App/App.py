@@ -22,7 +22,6 @@ from dotenv import load_dotenv
 from branca.element import Template, MacroElement
 
 # Local application imports
-import streamlit as st
 from modules.models import User, Product, Order, Subscription, PaymentTransaction, setup_database, UserType, OrderStatus
 from modules.home import home_page
 from modules.order import place_order
@@ -30,7 +29,6 @@ from modules.user_orders import display_user_orders
 from modules.auth import auth0_authentication
 from modules.email import send_welcome_email
 from modules.map import display_map
-
 
 # --- SHARED ON ALL PAGES ---
 st.logo("https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/menu_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png")
@@ -47,8 +45,6 @@ logging.basicConfig(
       logging.StreamHandler()
   ]
 )
-
-
 
 # Streamlit page configuration
 st.set_page_config(
@@ -74,178 +70,137 @@ if not database_url:
   st.stop()
 
 def show_policy_banner():
-    if 'policy_accepted' not in st.session_state:
-        st.session_state.policy_accepted = False
-    
-    if 'policy_rejected' not in st.session_state:
-        st.session_state.policy_rejected = False
+  if 'policy_accepted' not in st.session_state:
+      st.session_state.policy_accepted = False
+  
+  if 'policy_rejected' not in st.session_state:
+      st.session_state.policy_rejected = False
 
-    if not st.session_state.policy_accepted:
-        st.markdown(
-            """
-            <style>
-            #MainMenu {visibility: hidden;}
-            footer {visibility: hidden;}
-            .cookie-banner {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                background-color: rgba(0, 0, 0, 0.85);
-                color: #fff;
-                padding: 15px 30px;
-                font-size: 14px;
-                z-index: 1000000;
-                box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-                text-align: center;
-            }
-            .cookie-text {
-                display: inline-block;
-                text-align: center;
-            }
-            .stButton > button {
-                width: 100%;
-            }
-            .caption {
-                text-align: center;
-                margin: 15px 0;
-                font-weight: bold;
-            }
-            .error-message {
-                text-align: center;
-                color: #ff0000;
-                font-weight: bold;
-                margin-top: 15px;
-            }
-            </style>
-            """,
-            unsafe_allow_html=True
-        )
+  if not st.session_state.policy_accepted:
+      st.markdown(
+          """
+          <div class="cookie-banner">
+              <div class="cookie-text">
+                  Al usar este sitio, aceptas nuestra <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank" style="color: #4CAF50;">política de privacidad y cookies</a>.
+              </div>
+          </div>
+          """,
+          unsafe_allow_html=True
+      )
 
-        # Display the image using Streamlit's image function
-        st.image("https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/Privacybanner.png", 
-                 use_column_width=True)
+      # Display the image using Streamlit's image function
+      st.image("https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/Privacybanner.png", 
+               use_column_width=True)
 
-        # Add caption
-        st.markdown('<p class="caption">Al hacer clic en Aceptar, usted confirma que ha leído y está de acuerdo con nuestras política de privacidad y cookies.</p>', unsafe_allow_html=True)
-        col1, col2, col3 = st.columns([1,2,1])
-        with col2:
-            accept = st.button("Aceptar", key="accept_policy")
-            reject = st.button("Rechazar", key="reject_policy")
+      # Add caption
+      st.markdown('<p class="caption">Al hacer clic en Aceptar, usted confirma que ha leído y está de acuerdo con nuestras política de privacidad y cookies.</p>', unsafe_allow_html=True)
+      col1, col2, col3 = st.columns([1,2,1])
+      with col2:
+          accept = st.button("Aceptar", key="accept_policy")
+          reject = st.button("Rechazar", key="reject_policy")
 
-        if accept:
-            st.session_state.policy_accepted = True
-            st.rerun()
-        elif reject:
-            st.session_state.policy_rejected = True
-            st.markdown('<p class="error-message">Debes aceptar la política para usar esta aplicación.</p>', unsafe_allow_html=True)
+      if accept:
+          st.session_state.policy_accepted = True
+          st.rerun()
+      elif reject:
+          st.session_state.policy_rejected = True
+          st.markdown('<p class="error-message">Debes aceptar la política para usar esta aplicación.</p>', unsafe_allow_html=True)
 
-        if not st.session_state.policy_accepted:
-            st.markdown(
-                """
-                <div class="cookie-banner">
-                    <div class="cookie-text">
-                        Al usar este sitio, aceptas nuestra <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank" style="color: #4CAF50;">política de privacidad y cookies</a>.
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
 def main():
-    """Main function to run the Streamlit app."""
-    logging.info("Starting the Pasto Verde application.")
-    
-    # Show policy banner only if it hasn't been accepted
-    if not st.session_state.get('policy_accepted', False):
-        show_policy_banner()
-    
-    # Only proceed if policy is accepted
-    if not st.session_state.get('policy_accepted', False):
-        return
+  """Main function to run the Streamlit app."""
+  logging.info("Starting the Pasto Verde application.")
+  
+  # Show policy banner only if it hasn't been accepted
+  if not st.session_state.get('policy_accepted', False):
+      show_policy_banner()
+  
+  # Only proceed if policy is accepted
+  if not st.session_state.get('policy_accepted', False):
+      return
 
-    st.title("Pasto Verde - Entrega de pasto para mascotas")
-    
-    # Check if there's a logout message to display
-    if 'logout_message' in st.session_state:
-        st.success(st.session_state['logout_message'])
-        del st.session_state['logout_message']
-        logging.info("Displayed logout message to user.")
-    
-    # Authenticate the user
-    user = auth0_authentication()
-    
-    if user:
-        logging.info(f"User '{user.name}' authenticated successfully.")
-        st.write(f"Hola {user.name}, bienvenido a Pasto Verde! 🌿")
+  st.title("Pasto Verde - Entrega de pasto para mascotas")
+  
+  # Check if there's a logout message to display
+  if 'logout_message' in st.session_state:
+      st.success(st.session_state['logout_message'])
+      del st.session_state['logout_message']
+      logging.info("Displayed logout message to user.")
+  
+  # Authenticate the user
+  user = auth0_authentication()
+  
+  if user:
+      logging.info(f"User '{user.name}' authenticated successfully.")
+      st.write(f"Hola {user.name}, bienvenido a Pasto Verde! 🌿")
 
-        # Initialize session state for current page
-        if 'current_page' not in st.session_state:
-            st.session_state.current_page = "🏠 Inicio"
-            logging.debug("Current page set to default (Inicio).")
+      # Initialize session state for current page
+      if 'current_page' not in st.session_state:
+          st.session_state.current_page = "🏠 Inicio"
+          logging.debug("Current page set to default (Inicio).")
 
-        # Define the available menu items and their corresponding functions
-        menu_items = {
-            "🏠 Inicio": home_page,
-            "🛒 Ordene Ahora": place_order,
-            "📦 Mis Órdenes": display_user_orders,
-            "🗺️ Zona De Envios": display_map,
-            "ℹ️ Sobre Nosotros": about_us,
-            "📖 Manual de Usuario": user_manual
-        }
+      # Define the available menu items and their corresponding functions
+      menu_items = {
+          "🏠 Inicio": home_page,
+          "🛒 Ordene Ahora": place_order,
+          "📦 Mis Órdenes": display_user_orders,
+          "🗺️ Zona De Envios": display_map,
+          "ℹ️ Sobre Nosotros": about_us,
+          "📖 Manual de Usuario": user_manual
+      }
 
-        # Add admin dashboard option for admin users
-        if user.type == UserType.admin:
-            menu_items["📊 Admin Dashboard"] = admin_dashboard
-            logging.info("Admin dashboard added to menu for admin user.")
+      # Add admin dashboard option for admin users
+      if user.type == UserType.admin:
+          menu_items["📊 Admin Dashboard"] = admin_dashboard
+          logging.info("Admin dashboard added to menu for admin user.")
 
-        # Display the menu as buttons in columns
-        cols = st.columns(len(menu_items))
-        for i, (emoji_label, func) in enumerate(menu_items.items()):
-            if cols[i].button(emoji_label):
-                st.session_state.current_page = emoji_label
-                logging.info(f"User selected menu item: {emoji_label}")
+      # Display the menu as buttons in columns
+      cols = st.columns(len(menu_items))
+      for i, (emoji_label, func) in enumerate(menu_items.items()):
+          if cols[i].button(emoji_label):
+              st.session_state.current_page = emoji_label
+              logging.info(f"User selected menu item: {emoji_label}")
 
-        # Show currently selected page
-        st.write(f"Current page: {st.session_state.current_page}")
-        logging.debug(f"Current page is set to: {st.session_state.current_page}")
+      # Show currently selected page
+      st.write(f"Current page: {st.session_state.current_page}")
+      logging.debug(f"Current page is set to: {st.session_state.current_page}")
 
-        # Execute the function for the current page
-        try:
-            menu_items[st.session_state.current_page]()
-            logging.info(f"Displayed page: {st.session_state.current_page}")
-        except KeyError:
-            st.session_state.current_page = "🏠 Inicio"
-            menu_items[st.session_state.current_page]()
-            logging.warning("KeyError encountered. Reset current page to Inicio.")
-        except Exception as e:
-            logging.error(f"An error occurred while loading the page '{st.session_state.current_page}': {e}")
-            st.error("Ha ocurrido un error al cargar la página. Por favor, intenta de nuevo más tarde.")
+      # Execute the function for the current page
+      try:
+          menu_items[st.session_state.current_page]()
+          logging.info(f"Displayed page: {st.session_state.current_page}")
+      except KeyError:
+          st.session_state.current_page = "🏠 Inicio"
+          menu_items[st.session_state.current_page]()
+          logging.warning("KeyError encountered. Reset current page to Inicio.")
+      except Exception as e:
+          logging.error(f"An error occurred while loading the page '{st.session_state.current_page}': {e}")
+          st.error("Ha ocurrido un error al cargar la página. Por favor, intenta de nuevo más tarde.")
 
-        # Logout button functionality in the sidebar
-        if st.sidebar.button("🚪 Finalizar la sesión"):
-            st.session_state['logout_message'] = "Has cerrado la sesión exitosamente."
-            policy_accepted = st.session_state.get('policy_accepted', False)
-            for key in list(st.session_state.keys()):
-                if key not in ['logout_message', 'policy_accepted']:
-                    del st.session_state[key]
-            st.session_state.policy_accepted = policy_accepted
-            logging.info("User logged out and session state cleared, preserving policy acceptance.")
-            st.rerun()
+      # Logout button functionality in the sidebar
+      if st.sidebar.button("🚪 Finalizar la sesión"):
+          st.session_state['logout_message'] = "Has cerrado la sesión exitosamente."
+          policy_accepted = st.session_state.get('policy_accepted', False)
+          for key in list(st.session_state.keys()):
+              if key not in ['logout_message', 'policy_accepted']:
+                  del st.session_state[key]
+          st.session_state.policy_accepted = policy_accepted
+          logging.info("User logged out and session state cleared, preserving policy acceptance.")
+          st.rerun()
 
-        # Display logo or image in the sidebar
-        st.sidebar.markdown("---")
-        image_url = "https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/main/STREAMLIT%20PAGE%20ICON.png"
-        st.sidebar.image(image_url, use_column_width=True, caption="La Naturaleza A Los Pies De Tus Mascota")
+      # Display logo or image in the sidebar
+      st.sidebar.markdown("---")
+      image_url = "https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/main/STREAMLIT%20PAGE%20ICON.png"
+      st.sidebar.image(image_url, use_column_width=True, caption="La Naturaleza A Los Pies De Tus Mascota")
 
-    else:
-        # Prompt the user to log in
-        st.write("Por favor inicie sesión para acceder a los servicios de Pasto Verde")
-        logging.info("User not authenticated. Displaying login prompt.")
+  else:
+      # Prompt the user to log in
+      st.write("Por favor inicie sesión para acceder a los servicios de Pasto Verde")
+      logging.info("User not authenticated. Displaying login prompt.")
 
-        # Display logo or image in the sidebar
-        st.sidebar.markdown("---")
-        image_url = "https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/main/STREAMLIT%20PAGE%20ICON.png"
-        st.sidebar.image(image_url, use_column_width=True, caption="La Naturaleza A Los Pies De Tus Mascota")
+      # Display logo or image in the sidebar
+      st.sidebar.markdown("---")
+      image_url = "https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/main/STREAMLIT%20PAGE%20ICON.png"
+      st.sidebar.image(image_url, use_column_width=True, caption="La Naturaleza A Los Pies De Tus Mascota")
 
 def user_manual():
   """Display the user manual page."""
