@@ -35,6 +35,7 @@ from modules.user_orders import display_user_orders
 from modules.auth import auth0_authentication
 from modules.email import send_welcome_email
 from modules.map import display_map
+from modules.models import SessionLocal
 
 # Load environment variables from .env file
 load_dotenv()
@@ -181,11 +182,50 @@ def show_policy_banner():
 
 def accept_policy():
     st.session_state.policy_accepted = True
-
+    user_id = st.session_state.get('user_id')  # Assuming you store user_id in session state after login
+    if user_id:
+        session = SessionLocal()
+        try:
+            user = session.query(User).get(user_id)
+            if user:
+                user.cookie_policy_accepted = True
+                session.commit()
+        finally:
+            session.close()
 
 def reject_policy():
     st.session_state.policy_rejected = True
     st.session_state.trigger_vibration = True
+    user_id = st.session_state.get('user_id')
+    if user_id:
+        session = SessionLocal()
+        try:
+            user = session.query(User).get(user_id)
+            if user:
+                user.cookie_policy_accepted = False
+                session.commit()
+        finally:
+            session.close()
+
+def show_policy_banner():
+    if 'policy_accepted' not in st.session_state:
+        st.session_state.policy_accepted = False
+    
+    if 'policy_rejected' not in st.session_state:
+        st.session_state.policy_rejected = False
+
+    user_id = st.session_state.get('user_id')
+    if user_id:
+        session = SessionLocal()
+        try:
+            user = session.query(User).get(user_id)
+            if user and user.cookie_policy_accepted:
+                st.session_state.policy_accepted = True
+                return
+        finally:
+            session.close()
+
+    if not st.session_state.policy_accepted:
 
 
 # Make sure to call this function in your main app code
