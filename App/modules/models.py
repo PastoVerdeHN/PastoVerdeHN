@@ -5,9 +5,7 @@ from datetime import datetime
 import enum
 from dotenv import load_dotenv
 import os
-
-# Load environment variables from .env file
-load_dotenv()
+import streamlit as st
 
 Base = declarative_base()
 
