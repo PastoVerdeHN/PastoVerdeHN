@@ -22,7 +22,6 @@ from dotenv import load_dotenv
 from branca.element import Template, MacroElement
 
 # Local application imports
-from auth0_component import login_button
 from modules.models import User, Product, Order, Subscription, PaymentTransaction, setup_database, UserType, OrderStatus
 from modules.home import home_page
 from modules.order import place_order
