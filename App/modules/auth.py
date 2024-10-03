@@ -14,15 +14,17 @@ logger = logging.getLogger(__name__)
 
 
 
-# Database setup
-try:
-  database_url = st.secrets["database"]["url"]
-except KeyError:
-  database_url = os.getenv("DATABASE_URL")
+    try:
+        database_url = st.secrets["database"]["url"]
+        debug_mode = st.secrets.get("debug", False)  # Default to False if not specified
+    except KeyError:
+        st.error("Database URL not found in Streamlit secrets. Please check your configuration.")
+        st.stop()
 
-if not database_url:
-  st.error("Database URL not found. Please set it in Streamlit secrets or as an environment variable.")
-  st.stop()
+    engine = create_engine(database_url, echo=debug_mode)
+    Base.metadata.create_all(engine)
+    return sessionmaker(bind=engine)
+
 
 Session = setup_database(database_url)
 
