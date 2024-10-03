@@ -98,6 +98,19 @@ def show_policy_banner():
         elif reject:
             st.error("Debes aceptar la política para usar esta aplicación.")
 
+def logout():
+    # Clear Streamlit session state
+    for key in list(st.session_state.keys()):
+        del st.session_state[key]
+    
+    # Redirect to Auth0 logout
+    auth0_domain = st.secrets["auth0"]["AUTH0_DOMAIN"]
+    client_id = st.secrets["auth0"]["AUTH0_CLIENT_ID"]
+    return_to = "http://localhost:8501"  # Update this to your app's URL
+    logout_url = f"https://{auth0_domain}/v2/logout?client_id={client_id}&returnTo={return_to}"
+    st.markdown(f'<meta http-equiv="refresh" content="0;url={logout_url}">', unsafe_allow_html=True)
+
+
 def main():
     """Main function to run the Streamlit app."""
     logging.info("Starting the Pasto Verde application.")
@@ -168,16 +181,10 @@ def main():
             logging.error(f"An error occurred while loading the page '{st.session_state.current_page}': {e}")
             st.error("Ha ocurrido un error al cargar la página. Por favor, intenta de nuevo más tarde.")
 
-        # Logout button functionality in the sidebar
-        if st.sidebar.button("🚪 Finalizar la sesión"):
-            st.session_state['logout_message'] = "Has cerrado la sesión exitosamente."
-            policy_accepted = st.session_state.get('policy_accepted', False)
-            for key in list(st.session_state.keys()):
-                if key not in ['logout_message', 'policy_accepted']:
-                    del st.session_state[key]
-            st.session_state.policy_accepted = policy_accepted
-            logging.info("User logged out and session state cleared, preserving policy acceptance.")
-            st.rerun()
+    # Modify the logout button functionality
+    if st.sidebar.button("🚪 Finalizar la sesión"):
+        logout()
+        return
 
         # Display logo or image in the sidebar
         st.sidebar.markdown("---")
