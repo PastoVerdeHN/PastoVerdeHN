@@ -73,3 +73,8 @@ El equipo de Pasto Verde 🌱
       print(f"Welcome email sent to {user_email}")
   except Exception as e:
       print(f"Error sending email to {user_email}: {str(e)}")
+
+# Debugging section to check secrets
+if st.checkbox("Show email configuration"):
+  st.write("Sender Email:", st.secrets["email"]["sender_email"])
+  st.write("Sender Password: [hidden]")  # Mask the password for security
