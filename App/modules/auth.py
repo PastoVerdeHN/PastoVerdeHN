@@ -1,6 +1,6 @@
 import streamlit as st
 from sqlalchemy.orm import sessionmaker
-from datetime import datetime, timedelta
+from datetime import datetime
 import logging
 from modules.models import User, UserType, Base
 from auth0_component import login_button
@@ -27,12 +27,8 @@ def setup_database(database_url):
 def auth0_authentication():
     logger.info("Starting authentication process")
     
-    # Check if the session has expired
     current_time = time.time()
-    session_duration = 3600  # 1 hour in seconds
-    
-    if 'last_auth_time' not in st.session_state or (current_time - st.session_state.get('last_auth_time', 0)) > session_duration:
-        logger.info("Session expired or not set. Clearing user authentication state.")
+    if 'last_auth_time' not in st.session_state or (current_time - st.session_state.get('last_auth_time', 0)) > 3600:  # 1 hour
         st.session_state.user = None
         st.session_state.auth_status = None
     
@@ -87,6 +83,7 @@ def auth0_authentication():
                     if not user.welcome_email_sent:
                         logger.info(f"Attempting to send welcome email to: {user.email}")
                         email_sent = send_welcome_email(user.email, user.name)
+                        logger.info(f"Welcome email sent successfully: {email_sent}")
                         if email_sent:
                             user.welcome_email_sent = True
                             session.commit()
