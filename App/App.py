@@ -70,41 +70,35 @@ if not database_url:
   st.stop()
 
 def show_policy_banner():
-  if 'policy_accepted' not in st.session_state:
-      st.session_state.policy_accepted = False
-  
-  if 'policy_rejected' not in st.session_state:
-      st.session_state.policy_rejected = False
+    if 'policy_accepted' not in st.session_state:
+        st.session_state.policy_accepted = False
+    
+    if not st.session_state.policy_accepted:
+        st.markdown(
+            """
+            <div class="cookie-banner">
+                <div class="cookie-text">
+                    Al usar este sitio, aceptas nuestra <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank" style="color: #4CAF50;">política de privacidad y cookies</a>.
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
-  if not st.session_state.policy_accepted:
-      st.markdown(
-          """
-          <div class="cookie-banner">
-              <div class="cookie-text">
-                  Al usar este sitio, aceptas nuestra <a href="https://pastoverdehn.streamlit.app/T%C3%A9rminos_y_Condiciones" target="_blank" style="color: #4CAF50;">política de privacidad y cookies</a>.
-              </div>
-          </div>
-          """,
-          unsafe_allow_html=True
-      )
+        st.image("https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/Privacybanner.png", 
+                 use_column_width=True)
 
-      # Display the image using Streamlit's image function
-      st.image("https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/Privacybanner.png", 
-               use_column_width=True)
+        st.markdown('<p class="caption">Al hacer clic en Aceptar, usted confirma que ha leído y está de acuerdo con nuestras política de privacidad y cookies.</p>', unsafe_allow_html=True)
+        col1, col2, col3 = st.columns([1,2,1])
+        with col2:
+            accept = st.button("Aceptar", key="accept_policy")
+            reject = st.button("Rechazar", key="reject_policy")
 
-      # Add caption
-      st.markdown('<p class="caption">Al hacer clic en Aceptar, usted confirma que ha leído y está de acuerdo con nuestras política de privacidad y cookies.</p>', unsafe_allow_html=True)
-      col1, col2, col3 = st.columns([1,2,1])
-      with col2:
-          accept = st.button("Aceptar", key="accept_policy")
-          reject = st.button("Rechazar", key="reject_policy")
-
-      if accept:
-          st.session_state.policy_accepted = True
-          st.rerun()
-      elif reject:
-          st.session_state.policy_rejected = True
-          st.markdown('<p class="error-message">Debes aceptar la política para usar esta aplicación.</p>', unsafe_allow_html=True)
+        if accept:
+            st.session_state.policy_accepted = True
+            st.rerun()
+        elif reject:
+            st.error("Debes aceptar la política para usar esta aplicación.")
 
 def main():
   """Main function to run the Streamlit app."""
