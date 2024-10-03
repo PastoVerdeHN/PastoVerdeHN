@@ -64,21 +64,22 @@ st.set_page_config(
   layout="wide"
 )
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
+# Load environment variables
+load_dotenv()
 
 # Database setup
 try:
-  # Attempt to retrieve the database URL from Streamlit secrets
   database_url = st.secrets["database"]["url"]
   logging.info("Database URL retrieved from Streamlit secrets.")
 except KeyError:
-  # If the database URL is not found in secrets, log an error and stop the app
-  st.error("Database URL not found in Streamlit secrets. Please set it in the secrets configuration.")
-  logging.error("Database URL not found in Streamlit secrets. Cannot proceed without database access.")
+  database_url = os.getenv("DATABASE_URL")
+  logging.info("Database URL retrieved from environment variables.")
+
+if not database_url:
+  st.error("Database URL not found. Please set it in Streamlit secrets or as an environment variable.")
+  logging.error("Database URL not found. Cannot proceed without database access.")
   st.stop()
 
-# Setup the database session
 Session = setup_database(database_url)
 
 def show_policy_banner():
