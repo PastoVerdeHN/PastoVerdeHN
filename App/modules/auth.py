@@ -1,18 +1,17 @@
-import streamlit as st
+Copyimport streamlit as st
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import create_engine
 from datetime import datetime
 from modules.models import User, UserType, Base
 from auth0_component import login_button
+from sqlalchemy import create_engine
 from modules.email import send_welcome_email
 import logging
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-def setup_database():
+def setup_database(database_url):
     try:
-        database_url = st.secrets["database"]["url"]
         debug_mode = st.secrets.get("debug", False)  # Default to False if not specified
     except KeyError:
         st.error("Database URL not found in Streamlit secrets. Please check your configuration.")
@@ -21,10 +20,9 @@ def setup_database():
     Base.metadata.create_all(engine)
     return sessionmaker(bind=engine)
 
-Session = setup_database()
-
 def auth0_authentication():
     logger.info("Starting authentication process")
+    
     if 'user' not in st.session_state:
         st.session_state.user = None
     if 'auth_status' not in st.session_state:
@@ -38,9 +36,12 @@ def auth0_authentication():
                 AUTH0_CLIENT_ID = st.secrets["auth0"]["AUTH0_CLIENT_ID"]
                 AUTH0_DOMAIN = st.secrets["auth0"]["AUTH0_DOMAIN"]
                 ADMIN_EMAIL = st.secrets["admin"]["email"]  # Get admin email from secrets
+                database_url = st.secrets["database"]["url"]
             except KeyError:
-                st.error("Auth0 configuration not found. Please set AUTH0_CLIENT_ID and AUTH0_DOMAIN in Streamlit secrets.")
+                st.error("Configuration not found. Please check your Streamlit secrets.")
                 return None
+            
+            Session = setup_database(database_url)
             
             user_info = login_button(
                 AUTH0_CLIENT_ID, 
@@ -69,10 +70,14 @@ def auth0_authentication():
                     # Check if the user is an admin
                     if user.email == ADMIN_EMAIL:
                         user.type = UserType.admin  # Set user type to admin if necessary
+                
                 if not user.welcome_email_sent:
-                    send_welcome_email(user.email, user.name)  # Ensure this function is defined
-                    user.welcome_email_sent = True
-                    session.commit()
+                    email_sent = send_welcome_email(user.email, user.name)
+                    if email_sent:
+                        user.welcome_email_sent = True
+                        session.commit()
+                    else:
+                        st.warning("Failed to send welcome email. Please check your email configuration.")
                 
                 user.last_login = datetime.utcnow()
                 session.commit()
