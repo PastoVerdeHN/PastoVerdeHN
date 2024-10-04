@@ -26,7 +26,8 @@ def initial_login():
   username = st.text_input("Username")
   password = st.text_input("Password", type="password")
   if st.button("Login"):
-      if username == st.secrets["admin_username"] and verify_password(password, st.secrets["admin_password_hash"]):
+      if (username == st.secrets["hardcoded_username"] and 
+          password == st.secrets["hardcoded_password"]):
           token = generate_token()
           expiration = datetime.now() + timedelta(minutes=15)
           st.session_state.admin_token = token
