@@ -26,3 +26,4 @@ modal
 abacusai
 googletrans==3.1.0a0
 jinja2
+st_link_analysis
