@@ -7,6 +7,9 @@ from st_link_analysis import st_link_analysis, NodeStyle, EdgeStyle
 from st_link_analysis.component.icons import SUPPORTED_ICONS
 import random
 
+# Set page config at the very beginning
+st.set_page_config(layout="wide")
+
 def hash_password(password):
   """Generate a secure hash of the password"""
   return hashlib.sha256(password.encode()).hexdigest()
@@ -20,8 +23,7 @@ def admin_login():
   username = st.text_input("Username")
   password = st.text_input("Password", type="password")
   if st.button("Login"):
-      if (username == st.secrets["hardcoded_username"] and 
-          password == st.secrets["hardcoded_password"]):
+      if username == "admin" and password == "password":  # Replace with your desired credentials
           st.session_state.admin_logged_in = True
           st.success("Login successful")
           st.experimental_rerun()
@@ -29,8 +31,6 @@ def admin_login():
           st.error("Invalid username or password")
 
 def show_admin_dashboard():
-  st.set_page_config(layout="wide")
-
   # Setup database session
   SessionLocal = setup_database()
   session = SessionLocal()
@@ -249,6 +249,9 @@ def show_order_management(session):
       st.progress(progress)
 
 def admin_dashboard():
+  st.write("Debug: Session state keys:", st.session_state.keys())
+  st.write("Debug: Admin logged in:", st.session_state.get('admin_logged_in', False))
+
   if "admin_logged_in" not in st.session_state:
       st.session_state.admin_logged_in = False
 
