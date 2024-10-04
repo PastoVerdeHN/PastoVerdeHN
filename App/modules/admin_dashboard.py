@@ -1,4 +1,6 @@
 import streamlit as st
+st.set_page_config(layout="wide")
+
 import hashlib
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
@@ -6,9 +8,6 @@ from modules.models import User, Product, Order, Subscription, PaymentTransactio
 from st_link_analysis import st_link_analysis, NodeStyle, EdgeStyle
 from st_link_analysis.component.icons import SUPPORTED_ICONS
 import random
-
-# Set page config at the very beginning
-st.set_page_config(layout="wide")
 
 def hash_password(password):
   """Generate a secure hash of the password"""
