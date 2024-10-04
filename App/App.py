@@ -139,7 +139,7 @@ def main():
           "🗺️ Zona De Envios": display_map,
           "ℹ️ Sobre Nosotros": about_us,
           "📖 Manual de Usuario": user_manual,
-          "📊 Admin Dashboard": admin_dashboard
+          "📊 Admin Dashboard": show_admin_dashboard
       }
 
       # Display the menu as buttons in columns
