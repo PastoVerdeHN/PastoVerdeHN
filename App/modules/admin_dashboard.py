@@ -1,6 +1,7 @@
+import streamlit as st
+
 st.set_page_config(layout="wide")
 
-import streamlit as st
 import hashlib
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
