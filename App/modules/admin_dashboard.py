@@ -1,5 +1,8 @@
+
+python
+Execute
+Copy Code
 import streamlit as st
-st.set_page_config(layout="wide")
 import hashlib
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
@@ -8,26 +11,8 @@ from st_link_analysis import st_link_analysis, NodeStyle, EdgeStyle
 from st_link_analysis.component.icons import SUPPORTED_ICONS
 import random
 
-def hash_password(password):
-  """Generate a secure hash of the password"""
-  return hashlib.sha256(password.encode()).hexdigest()
-
-def verify_password(input_password, stored_hash):
-  """Verify the input password against the stored hash"""
-  return hash_password(input_password) == stored_hash
-
-def admin_login():
-  st.subheader("Admin Login")
-  username = st.text_input("Username")
-  password = st.text_input("Password", type="password")
-  if st.button("Login"):
-      if (username == st.secrets["admin_username"] and 
-          password == st.secrets["admin_password"]):
-          st.session_state.admin_logged_in = True
-          st.success("Login successful")
-          st.experimental_rerun()
-      else:
-          st.error("Invalid username or password")
+# Set page config at the very beginning
+st.set_page_config(layout="wide")
 
 def show_admin_dashboard():
   # Setup database session
@@ -247,17 +232,5 @@ def show_order_management(session):
       progress = status_flow[order.status] / 4  # Normalize to 0-1 range
       st.progress(progress)
 
-def admin_dashboard():
-  st.write("Debug: Session state keys:", st.session_state.keys())
-  st.write("Debug: Admin logged in:", st.session_state.get('admin_logged_in', False))
-
-  if "admin_logged_in" not in st.session_state:
-      st.session_state.admin_logged_in = False
-
-  if not st.session_state.admin_logged_in:
-      admin_login()
-  else:
-      show_admin_dashboard()
-
 if __name__ == "__main__":
-  admin_dashboard()
+  show_admin_dashboard()
