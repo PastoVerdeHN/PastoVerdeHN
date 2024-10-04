@@ -30,7 +30,7 @@ from modules.user_orders import display_user_orders
 from modules.auth import auth0_authentication
 from modules.email import send_welcome_email
 from modules.map import display_map
-from modules.admin_dashboard import admin_dashboard
+from modules.admin_dashboard import show_admin_dashboard
 
 # --- SHARED ON ALL PAGES ---
 st.logo("https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/menu_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png")
