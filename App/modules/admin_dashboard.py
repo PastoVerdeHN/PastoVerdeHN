@@ -22,7 +22,8 @@ def admin_login():
   username = st.text_input("Username")
   password = st.text_input("Password", type="password")
   if st.button("Login"):
-      if username == "admin" and password == "password":  # Replace with your desired credentials
+      if (username == st.secrets["admin_username"] and 
+          password == st.secrets["admin_password"]):
           st.session_state.admin_logged_in = True
           st.success("Login successful")
           st.experimental_rerun()
