@@ -1,16 +1,11 @@
 import streamlit as st
 import hashlib
-import secrets
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
 from modules.models import User, Product, Order, Subscription, PaymentTransaction, OrderStatus, setup_database
 from st_link_analysis import st_link_analysis, NodeStyle, EdgeStyle
 from st_link_analysis.component.icons import SUPPORTED_ICONS
 import random
-
-def generate_token():
-  """Generate a secure random token"""
-  return secrets.token_hex(16)
 
 def hash_password(password):
   """Generate a secure hash of the password"""
@@ -20,38 +15,18 @@ def verify_password(input_password, stored_hash):
   """Verify the input password against the stored hash"""
   return hash_password(input_password) == stored_hash
 
-def initial_login():
-  """Handle the initial login with hardcoded credentials"""
-  st.subheader("Initial Admin Login")
+def admin_login():
+  st.subheader("Admin Login")
   username = st.text_input("Username")
   password = st.text_input("Password", type="password")
   if st.button("Login"):
       if (username == st.secrets["hardcoded_username"] and 
           password == st.secrets["hardcoded_password"]):
-          token = generate_token()
-          expiration = datetime.now() + timedelta(minutes=15)
-          st.session_state.admin_token = token
-          st.session_state.token_expiration = expiration
-          st.success("Initial login successful. Use this token for the second step:")
-          st.code(token)
-          return True
+          st.session_state.admin_logged_in = True
+          st.success("Login successful")
+          st.experimental_rerun()
       else:
           st.error("Invalid username or password")
-  return False
-
-def token_login():
-  """Handle the second step of login using the generated token"""
-  st.subheader("Admin Token Login")
-  token = st.text_input("Enter Admin Token")
-  if st.button("Verify Token"):
-      if token == st.session_state.get("admin_token") and datetime.now() < st.session_state.get("token_expiration", datetime.min):
-          st.session_state.admin_logged_in = True
-          del st.session_state.admin_token
-          del st.session_state.token_expiration
-          return True
-      else:
-          st.error("Invalid or expired token")
-  return False
 
 def show_admin_dashboard():
   st.set_page_config(layout="wide")
@@ -278,14 +253,8 @@ def admin_dashboard():
       st.session_state.admin_logged_in = False
 
   if not st.session_state.admin_logged_in:
-      if "admin_token" not in st.session_state:
-          if initial_login():
-              st.experimental_rerun()
-      else:
-          if token_login():
-              st.experimental_rerun()
-  
-  if st.session_state.admin_logged_in:
+      admin_login()
+  else:
       show_admin_dashboard()
 
 if __name__ == "__main__":
