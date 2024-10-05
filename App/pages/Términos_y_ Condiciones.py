@@ -9,7 +9,7 @@ def main():
 
   # Load and display the sidebar image
   image_url = "https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/main/STREAMLIT%20PAGE%20ICON.png"
-  st.sidebar.image(image_url, use_column_width=True, caption="La Naturaleza A Los Pies De Tus Mascota")
+  st.sidebar.image(image_url, use_column_width=True, caption="© La Naturaleza A Los Pies De Tus Mascota")
 
   # Call the terms and privacy function to display content
   terms_and_privacy()
