@@ -111,9 +111,9 @@ def display_map():
   # Display the map
   folium_static(m)
 
-  # Add message about Pasto Verde Boxes
-  st.markdown("### 📦 Pasto Verde Boxes")
-  st.markdown("Todos nuestros **Pasto Verde Boxes** vienen listos para usar tan pronto como los recibes. "
+  # Add message about ©Pasto Verde Boxes
+  st.markdown("### 📦 ©Pasto Verde Boxes")
+  st.markdown("Todos nuestros **©Pasto Verde Boxes** vienen listos para usar tan pronto como los recibes. "
               "Todos los pedidos vienen en cajas de cartón reciclable que puedes simplemente reciclar "
               "cuando llegue el nuevo reemplazo. ♻️🐾📦")
 
