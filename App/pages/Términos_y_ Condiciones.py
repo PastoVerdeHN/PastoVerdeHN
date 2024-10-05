@@ -41,7 +41,9 @@ def terms_and_privacy():
   Para garantizar la salud y bienestar de la mascota, se recomienda reemplazar el césped natural según el plan de suscripción elegido. El cliente es responsable de mantener el césped en condiciones adecuadas hasta su reemplazo.
 
   **Propiedad Intelectual**  
-  Todo el contenido, incluidas las imágenes generadas por inteligencia artificial, los gráficos, el diseño y la disposición de este sitio web, son propiedad exclusiva de ©Pasto Verde HN. Cualquier uso no autorizado de estos materiales está estrictamente prohibido.
+Todo el contenido de este sitio web y del código de la aplicación en GitHub, incluyendo, pero no limitado a, imágenes, videos, gráficos, diseño, disposición, texto y cualquier material generado por LLMs, es propiedad exclusiva de ©Pasto Verde HN. Todos los derechos están reservados. Cualquier uso, reproducción o distribución no autorizada de estos materiales, así como cualquier intento de copiar o reproducir el código de la aplicación, está estrictamente prohibido y puede dar lugar a acciones legales.
+
+
 
   **Cumplimiento Legal**  
   ©Pasto Verde se adhiere a todas las leyes y regulaciones aplicables en Honduras, incluyendo aquellas relacionadas con la protección del consumidor, privacidad y publicidad.
