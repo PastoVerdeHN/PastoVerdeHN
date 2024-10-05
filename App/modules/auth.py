@@ -78,17 +78,6 @@ def auth0_authentication():
                   if user.email == ADMIN_EMAIL:
                       user.type = UserType.admin  # Set user type to admin if necessary
               
-              if not user.welcome_email_sent:
-                  logger.info("Sending welcome email to: %s", user.email)
-                  email_sent = send_welcome_email(user.email, user.name)
-                  if email_sent:
-                      user.welcome_email_sent = True
-                      session.commit()
-                      logger.info("Welcome email sent successfully.")
-                  else:
-                      st.warning("Failed to send welcome email. Please check your email configuration.")
-                      logger.error("Failed to send welcome email to: %s", user.email)
-              
               user.last_login = datetime.utcnow()
               session.commit()
               logger.info("User last login updated.")
