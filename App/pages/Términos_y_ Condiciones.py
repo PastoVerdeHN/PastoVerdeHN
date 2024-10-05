@@ -81,7 +81,7 @@ Todo el contenido de este sitio web y del código de la aplicación, incluyendo,
 
   En ©Pasto Verde, valoramos tu confianza en nosotros. Si tienes alguna pregunta o inquietud sobre nuestra política de privacidad, no dudes en contactarnos. Estamos aquí para ayudarte y asegurarnos de que tu experiencia con nosotros sea de la más alta calidad.
 
-  Last updated: September 04, 2024
+  Last updated: October 05, 2024
   """)
 
 if __name__ == "__main__":
