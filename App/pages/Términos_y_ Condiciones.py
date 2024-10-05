@@ -41,7 +41,7 @@ def terms_and_privacy():
   Para garantizar la salud y bienestar de la mascota, se recomienda reemplazar el césped natural según el plan de suscripción elegido. El cliente es responsable de mantener el césped en condiciones adecuadas hasta su reemplazo.
 
   **Propiedad Intelectual**  
-Todo el contenido de este sitio web y del código de la aplicación en GitHub, incluyendo, pero no limitado a, imágenes, videos, gráficos, diseño, disposición, texto y cualquier material generado por LLMs, es propiedad exclusiva de ©Pasto Verde HN. Todos los derechos están reservados. Cualquier uso, reproducción o distribución no autorizada de estos materiales, así como cualquier intento de copiar o reproducir el código de la aplicación, está estrictamente prohibido y puede dar lugar a acciones legales.
+Todo el contenido de este sitio web y del código de la aplicación, incluyendo, pero no limitado a, imágenes, videos, gráficos, diseño, disposición, texto y cualquier material generado por LLMs, es propiedad exclusiva de ©Pasto Verde HN. Todos los derechos están reservados. Cualquier uso, reproducción o distribución no autorizada de estos materiales, así como cualquier intento de copiar o reproducir el código de la aplicación, está estrictamente prohibido y puede dar lugar a acciones legales.
 
 
 
