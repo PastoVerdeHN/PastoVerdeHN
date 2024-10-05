@@ -114,7 +114,7 @@ def display_map():
   # Add message about ©Pasto Verde Boxes
   st.markdown("### 📦 ©Pasto Verde Boxes")
   st.markdown("Todos nuestros **©Pasto Verde Boxes** vienen listos para usar tan pronto como los recibes. "
-              "Todos los pedidos vienen en cajas de cartón reciclable que puedes simplemente reciclar "
+              "Todos los pedidos vienen en cajas reciclables que puedes simplemente reciclar "
               "cuando llegue el nuevo reemplazo. ♻️🐾📦")
 
   # Add the "BUY NOW" button
