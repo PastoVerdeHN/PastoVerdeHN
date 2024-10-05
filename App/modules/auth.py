@@ -4,6 +4,7 @@ from datetime import datetime
 from modules.models import User, UserType, Base
 from auth0_component import login_button
 from sqlalchemy import create_engine
+from modules.email import send_welcome_email
 import logging
 
 logging.basicConfig(level=logging.INFO)
