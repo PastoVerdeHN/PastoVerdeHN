@@ -30,7 +30,6 @@ class User(Base):
   created_at = Column(DateTime, default=datetime.utcnow)
   last_login = Column(DateTime)
   is_active = Column(Boolean, default=True)
-  welcome_email_sent = Column(Boolean, default=False)
   orders = relationship("Order", back_populates="user")
 
   @validates('email')
