@@ -45,7 +45,7 @@ logging.basicConfig(
 
 # Streamlit page configuration
 st.set_page_config(
-  page_title="Pasto Verde - Naturaleza en Casa para tus Mascotas",
+  page_title="©Pasto Verde - Naturaleza en Casa para tus Mascotas",
   page_icon="🌿",
   layout="wide"
 )
@@ -99,7 +99,7 @@ def show_policy_banner():
 
 def main():
   """Main function to run the Streamlit app."""
-  logging.info("Starting the Pasto Verde application.")
+  logging.info("Starting the ©Pasto Verde application.")
   
   # Show policy banner only if it hasn't been accepted
   if not st.session_state.get('policy_accepted', False):
@@ -109,7 +109,7 @@ def main():
   if not st.session_state.get('policy_accepted', False):
       return
 
-  st.title("Pasto Verde - Entrega de pasto para mascotas")
+  st.title("©Pasto Verde - Entrega de pasto para mascotas")
   
   # Check if there's a logout message to display
   if 'logout_message' in st.session_state:
@@ -122,7 +122,7 @@ def main():
   
   if user:
       logging.info(f"User '{user.name}' authenticated successfully.")
-      st.write(f"Hola {user.name}, bienvenido a Pasto Verde! 🌿")
+      st.write(f"Hola {user.name}, bienvenido a ©Pasto Verde! 🌿")
 
       # Initialize session state for current page
       if 'current_page' not in st.session_state:
@@ -180,7 +180,7 @@ def main():
 
   else:
       # Prompt the user to log in
-      st.write("Por favor inicie sesión para acceder a los servicios de Pasto Verde")
+      st.write("Por favor inicie sesión para acceder a los servicios de ©Pasto Verde")
       logging.info("User not authenticated. Displaying login prompt.")
 
       # Display logo or image in the sidebar
@@ -193,10 +193,10 @@ def user_manual():
   logging.info("Displaying the user manual page.")
   st.subheader("📖 Manual de Usuario")
   st.write("""
-  Bienvenido al Manual de Usuario de Pasto Verde. Aquí encontrarás información útil para navegar y utilizar la aplicación de manera efectiva.
+  Bienvenido al Manual de Usuario de ©Pasto Verde. Aquí encontrarás información útil para navegar y utilizar la aplicación de manera efectiva.
   
-  ## ¿Qué es Pasto Verde?
-  Pasto Verde es un servicio de entrega de pasto fresco para tus mascotas. Ofrecemos diferentes planes de suscripción y opciones de compra única.
+  ## ¿Qué es ©Pasto Verde?
+  ©Pasto Verde es un servicio de entrega de pasto fresco para tus mascotas. Ofrecemos diferentes planes de suscripción y opciones de compra única.
 
   ## ¿Cómo registrarse?
   1. Haz clic en el botón "Entrar" en la barra lateral.
@@ -230,9 +230,9 @@ def about_us():
   logging.info("Displaying the 'About Us' page.")
   st.subheader("ℹ️ Sobre nosotros")
   st.write("""
-  En Pasto Verde, creemos que cada mascota merece un toque de naturaleza en su vida diaria. Nuestra misión es llevar pasto fresco y exuberante directamente a tu puerta, brindando a tus amigos peludos una experiencia natural y placentera.
+  En  ©Pasto Verde, creemos que cada mascota merece un toque de naturaleza en su vida diaria. Nuestra misión es llevar pasto fresco y exuberante directamente a tu puerta, brindando a tus amigos peludos una experiencia natural y placentera.
   
-  🌿 **¿Por qué elegir Pasto Verde?**
+  🌿 **¿Por qué elegir  ©Pasto Verde?**
   - Pasto fresco, libre de pesticidas
   - Opciones de entrega convenientes
   - Empaque ecológico
