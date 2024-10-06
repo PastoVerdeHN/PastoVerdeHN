@@ -5,11 +5,9 @@ import hashlib
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
-# Original password
+# Original password and its hash
 admin_access_password = "simpleadminpass"
-
-# Retrieve the correct password hash from secrets
-correct_password_hash = st.secrets["admin2"]["password_hash"]
+correct_password_hash = "5d8923f10a5c0939a945d6fe7bedaea6cdc10e94eb3dc40ad1428a246288c3bf"  # Updated hash
 
 # Initialize session state
 if 'authenticated' not in st.session_state:
