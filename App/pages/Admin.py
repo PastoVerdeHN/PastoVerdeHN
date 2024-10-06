@@ -3,8 +3,9 @@ from modules.zadmin import (
     overview_page, users_page, products_page, orders_page,
     subscriptions_page, analytics_page
 )
-
 st.set_page_config(page_title="Admin Dashboard", page_icon="🛍️", layout="wide")
+
+
 
 # Sidebar for navigation
 st.sidebar.title("Navigation")
