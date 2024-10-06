@@ -3,6 +3,18 @@ import pandas as pd
 import plotly.express as px
 from sqlalchemy import func
 from datetime import datetime, timedelta
+from contextlib import contextmanager
+from .models import SessionLocal
+
+st.set_page_config(page_title="E-commerce Dashboard", page_icon="🛍️", layout="wide")
+
+@contextmanager
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 # Import your database models and setup
 from .models import User, Product, Order, Subscription, PaymentTransaction, UserType, SessionLocal
@@ -17,6 +29,7 @@ page = st.sidebar.radio("Go to", ["Overview", "Users", "Products", "Orders", "Su
 session = SessionLocal()
 
 def overview_page():
+    with get_db() as session:
     st.title("E-commerce Dashboard Overview")
     
     col1, col2, col3, col4 = st.columns(4)
@@ -38,10 +51,15 @@ def overview_page():
         st.metric("Total Revenue", f"${total_revenue:.2f}")
     
     # Recent Orders
-    st.subheader("Recent Orders")
     recent_orders = session.query(Order).order_by(Order.created_at.desc()).limit(5).all()
     if recent_orders:
-        order_data = [{"ID": order.id, "User": order.user.name, "Product": order.product.name, "Status": order.status.value, "Total": f"${order.total_price:.2f}"} for order in recent_orders]
+        order_data = [{
+            "ID": order.id,
+            "User": order.user.name if order.user else "N/A",
+            "Product": order.product.name if order.product else "N/A",
+            "Status": order.status.value if order.status else "N/A",
+            "Total": f"${order.total_price:.2f}" if order.total_price else "N/A"
+        } for order in recent_orders]
         st.table(pd.DataFrame(order_data))
     else:
         st.info("No recent orders found.")
@@ -108,6 +126,7 @@ def products_page():
     st.dataframe(pd.DataFrame(product_data))
 
 def orders_page():
+    with get_db() as session:
     st.title("Order Management")
     
     # Order creation form
@@ -137,7 +156,14 @@ def orders_page():
     # Order list
     st.subheader("Order List")
     orders = session.query(Order).all()
-    order_data = [{"ID": order.id, "User": order.user.name, "Product": order.product.name, "Quantity": order.quantity, "Total": f"${order.total_price:.2f}", "Status": order.status.value} for order in orders]
+    order_data = [{
+        "ID": order.id,
+        "User": order.user.name if order.user else "N/A",
+        "Product": order.product.name if order.product else "N/A",
+        "Quantity": order.quantity,
+        "Total": f"${order.total_price:.2f}" if order.total_price else "N/A",
+        "Status": order.status.value if order.status else "N/A"
+    } for order in orders]
     st.dataframe(pd.DataFrame(order_data))
 
 def subscriptions_page():
