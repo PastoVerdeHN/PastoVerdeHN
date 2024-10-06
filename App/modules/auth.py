@@ -68,7 +68,6 @@ def auth0_authentication():
                       type=UserType.admin if user_info['email'] == ADMIN_EMAIL else UserType.customer,
                       address='',
                       created_at=datetime.utcnow(),
-                      welcome_email_sent=False
                   )
                   session.add(user)
                   session.commit()
