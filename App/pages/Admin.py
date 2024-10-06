@@ -3,8 +3,8 @@ import pandas as pd
 from sqlalchemy import func
 from datetime import datetime
 from contextlib import contextmanager
-from App.modules.models import SessionLocal, User, Product, Order, Subscription, PaymentTransaction, UserType
-from App.modules.zadmin import some_function_or_class  # Adjust this as necessary
+from .modules.models import SessionLocal, User, Product, Order, Subscription, PaymentTransaction, UserType
+from .modules.zadmin import some_function_or_class  # Adjust this as necessary
 
 # Set up page config
 st.set_page_config(page_title="Admin Dashboard", page_icon="📊", layout="wide")
