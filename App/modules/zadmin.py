@@ -30,39 +30,40 @@ session = SessionLocal()
 
 def overview_page():
     with get_db() as session:
-    st.title("E-commerce Dashboard Overview")
-    
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        total_users = session.query(func.count(User.id)).scalar()
-        st.metric("Total Users", total_users)
-    
-    with col2:
-        total_products = session.query(func.count(Product.id)).scalar()
-        st.metric("Total Products", total_products)
-    
-    with col3:
-        total_orders = session.query(func.count(Order.id)).scalar()
-        st.metric("Total Orders", total_orders)
-    
-    with col4:
-        total_revenue = session.query(func.sum(Order.total_price)).scalar()
-        st.metric("Total Revenue", f"${total_revenue:.2f}")
-    
-    # Recent Orders
-    recent_orders = session.query(Order).order_by(Order.created_at.desc()).limit(5).all()
-    if recent_orders:
-        order_data = [{
-            "ID": order.id,
-            "User": order.user.name if order.user else "N/A",
-            "Product": order.product.name if order.product else "N/A",
-            "Status": order.status.value if order.status else "N/A",
-            "Total": f"${order.total_price:.2f}" if order.total_price else "N/A"
-        } for order in recent_orders]
-        st.table(pd.DataFrame(order_data))
-    else:
-        st.info("No recent orders found.")
+        st.title("E-commerce Dashboard Overview")
+        
+        col1, col2, col3, col4 = st.columns(4)
+        
+        with col1:
+            total_users = session.query(func.count(User.id)).scalar()
+            st.metric("Total Users", total_users)
+        
+        with col2:
+            total_products = session.query(func.count(Product.id)).scalar()
+            st.metric("Total Products", total_products)
+        
+        with col3:
+            total_orders = session.query(func.count(Order.id)).scalar()
+            st.metric("Total Orders", total_orders)
+        
+        with col4:
+            total_revenue = session.query(func.sum(Order.total_price)).scalar()
+            st.metric("Total Revenue", f"${total_revenue:.2f}")
+        
+        # Recent Orders
+        recent_orders = session.query(Order).order_by(Order.created_at.desc()).limit(5).all()
+        if recent_orders:
+            order_data = [{
+                "ID": order.id,
+                "User": order.user.name if order.user else "N/A",
+                "Product": order.product.name if order.product else "N/A",
+                "Status": order.status.value if order.status else "N/A",
+                "Total": f"${order.total_price:.2f}" if order.total_price else "N/A"
+            } for order in recent_orders]
+            st.table(pd.DataFrame(order_data))
+        else:
+            st.info("No recent orders found.")
+
 
 def users_page():
     st.title("User Management")
