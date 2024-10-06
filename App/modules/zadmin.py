@@ -5,8 +5,7 @@ from sqlalchemy import func
 from datetime import datetime, timedelta
 
 # Import your database models and setup
-import User, Product, Order, Subscription, PaymentTransaction, UserType, OrderStatus, SessionLocal
-
+from modules.models import User, Product, Order, Subscription, PaymentTransaction, UserType
 # Set page config
 st.set_page_config(page_title="E-commerce Dashboard", page_icon="🛍️", layout="wide")
 
