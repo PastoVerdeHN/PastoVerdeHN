@@ -29,9 +29,7 @@ page = st.sidebar.radio("Go to", ["Overview", "Users", "Products", "Orders", "Su
 session = SessionLocal()
 
 def overview_page():
-    
     with get_db() as session:
-        
     st.title("E-commerce Dashboard Overview")
     
     col1, col2, col3, col4 = st.columns(4)
