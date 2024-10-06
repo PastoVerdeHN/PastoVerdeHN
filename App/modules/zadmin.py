@@ -127,44 +127,44 @@ def products_page():
 
 def orders_page():
     with get_db() as session:
-    st.title("Order Management")
-    
-    # Order creation form
-    with st.expander("Create New Order"):
-        with st.form("new_order_form"):
-            user = st.selectbox("User", [user.name for user in session.query(User).all()])
-            product = st.selectbox("Product", [product.name for product in session.query(Product).all()])
-            quantity = st.number_input("Quantity", min_value=1, step=1)
-            delivery_address = st.text_input("Delivery Address")
-            
-            if st.form_submit_button("Create Order"):
-                user_obj = session.query(User).filter_by(name=user).first()
-                product_obj = session.query(Product).filter_by(name=product).first()
+        st.title("Order Management")
+        
+        # Order creation form
+        with st.expander("Create New Order"):
+            with st.form("new_order_form"):
+                user = st.selectbox("User", [user.name for user in session.query(User).all()])
+                product = st.selectbox("Product", [product.name for product in session.query(Product).all()])
+                quantity = st.number_input("Quantity", min_value=1, step=1)
+                delivery_address = st.text_input("Delivery Address")
                 
-                new_order = Order(
-                    id=f"order_{datetime.now().timestamp()}",
-                    user_id=user_obj.id,
-                    product_id=product_obj.id,
-                    quantity=quantity,
-                    delivery_address=delivery_address,
-                    total_price=product_obj.price * quantity
-                )
-                session.add(new_order)
-                session.commit()
-                st.success("Order created successfully!")
-    
-    # Order list
-    st.subheader("Order List")
-    orders = session.query(Order).all()
-    order_data = [{
-        "ID": order.id,
-        "User": order.user.name if order.user else "N/A",
-        "Product": order.product.name if order.product else "N/A",
-        "Quantity": order.quantity,
-        "Total": f"${order.total_price:.2f}" if order.total_price else "N/A",
-        "Status": order.status.value if order.status else "N/A"
-    } for order in orders]
-    st.dataframe(pd.DataFrame(order_data))
+                if st.form_submit_button("Create Order"):
+                    user_obj = session.query(User).filter_by(name=user).first()
+                    product_obj = session.query(Product).filter_by(name=product).first()
+                    
+                    new_order = Order(
+                        id=f"order_{datetime.now().timestamp()}",
+                        user_id=user_obj.id,
+                        product_id=product_obj.id,
+                        quantity=quantity,
+                        delivery_address=delivery_address,
+                        total_price=product_obj.price * quantity
+                    )
+                    session.add(new_order)
+                    session.commit()
+                    st.success("Order created successfully!")
+        
+        # Order list
+        st.subheader("Order List")
+        orders = session.query(Order).all()
+        order_data = [{
+            "ID": order.id,
+            "User": order.user.name if order.user else "N/A",
+            "Product": order.product.name if order.product else "N/A",
+            "Quantity": order.quantity,
+            "Total": f"${order.total_price:.2f}" if order.total_price else "N/A",
+            "Status": order.status.value if order.status else "N/A"
+        } for order in orders]
+        st.dataframe(pd.DataFrame(order_data))
 
 def subscriptions_page():
     st.title("Subscription Management")
