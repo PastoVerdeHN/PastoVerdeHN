@@ -12,7 +12,7 @@ def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
 # Get the correct password hash from secrets
-correct_password_hash = st.secrets["admin"]["password_hash"]
+correct_password_hash = st.secrets["admin2"]["password_hash"]
 
 # Initialize session state
 if 'authenticated' not in st.session_state:
