@@ -4,7 +4,7 @@ import plotly.express as px
 from sqlalchemy import func
 from datetime import datetime, timedelta
 from contextlib import contextmanager
-from .models import SessionLocal
+from .models import SessionLocal, User, Product, Order, Subscription, PaymentTransaction, UserType
 
 st.set_page_config(page_title="E-commerce Dashboard", page_icon="🛍️", layout="wide")
 
@@ -16,15 +16,9 @@ def get_db():
     finally:
         db.close()
 
-# Import your database models and setup
-from .models import User, Product, Order, Subscription, PaymentTransaction, UserType, SessionLocal
-
 # Sidebar for navigation
 st.sidebar.title("Navigation")
 page = st.sidebar.radio("Go to", ["Overview", "Users", "Products", "Orders", "Subscriptions", "Analytics"])
-
-# Database session
-session = SessionLocal()
 
 def overview_page():
     with get_db() as session:
@@ -41,15 +35,14 @@ def overview_page():
             st.metric("Total Products", total_products)
         
         with col3:
-    total_orders = session.query(func.count(Order.id)).scalar()
-    st.metric("Total Orders", total_orders)
+            total_orders = session.query(func.count(Order.id)).scalar()
+            st.metric("Total Orders", total_orders)
 
-    with col4:
-        total_revenue = session.query(func.sum(Order.total_price)).scalar()
-        if total_revenue is None:
-            total_revenue = 0.0  # Ensure total_revenue has a value
-        st.metric("Total Revenue", f"${total_revenue:.2f}")
-        
+        with col4:
+            total_revenue = session.query(func.sum(Order.total_price)).scalar()
+            total_revenue = total_revenue if total_revenue is not None else 0.0  # Ensure total_revenue has a value
+            st.metric("Total Revenue", f"${total_revenue:.2f}")
+
         # Recent Orders
         recent_orders = session.query(Order).order_by(Order.created_at.desc()).limit(5).all()
         if recent_orders:
@@ -65,65 +58,67 @@ def overview_page():
             st.info("No recent orders found.")
 
 def users_page():
-    st.title("User Management")
-    
-    # User creation form
-    with st.expander("Create New User"):
-        with st.form("new_user_form"):
-            name = st.text_input("Name")
-            email = st.text_input("Email")
-            user_type = st.selectbox("User Type", [type.value for type in UserType])
-            address = st.text_input("Address")
-            phone_number = st.text_input("Phone Number")
-            
-            if st.form_submit_button("Create User"):
-                new_user = User(
-                    id=f"user_{datetime.now().timestamp()}",
-                    name=name,
-                    email=email,
-                    type=UserType(user_type),
-                    address=address,
-                    phone_number=phone_number
-                )
-                session.add(new_user)
-                session.commit()
-                st.success("User created successfully!")
-    
-    # User list
-    st.subheader("User List")
-    users = session.query(User).all()
-    user_data = [{"ID": user.id, "Name": user.name, "Email": user.email, "Type": user.type.value, "Active": user.is_active} for user in users]
-    st.dataframe(pd.DataFrame(user_data))
+    with get_db() as session:
+        st.title("User Management")
+        
+        # User creation form
+        with st.expander("Create New User"):
+            with st.form("new_user_form"):
+                name = st.text_input("Name")
+                email = st.text_input("Email")
+                user_type = st.selectbox("User Type", [type.value for type in UserType])
+                address = st.text_input("Address")
+                phone_number = st.text_input("Phone Number")
+                
+                if st.form_submit_button("Create User"):
+                    new_user = User(
+                        id=f"user_{datetime.now().timestamp()}",
+                        name=name,
+                        email=email,
+                        type=UserType(user_type),
+                        address=address,
+                        phone_number=phone_number
+                    )
+                    session.add(new_user)
+                    session.commit()
+                    st.success("User created successfully!")
+        
+        # User list
+        st.subheader("User List")
+        users = session.query(User).all()
+        user_data = [{"ID": user.id, "Name": user.name, "Email": user.email, "Type": user.type.value, "Active": user.is_active} for user in users]
+        st.dataframe(pd.DataFrame(user_data))
 
 def products_page():
-    st.title("Product Management")
-    
-    # Product creation form
-    with st.expander("Add New Product"):
-        with st.form("new_product_form"):
-            name = st.text_input("Product Name")
-            description = st.text_area("Description")
-            price = st.number_input("Price", min_value=0.0, step=0.01)
-            stock = st.number_input("Stock", min_value=0, step=1)
-            category = st.text_input("Category")
-            
-            if st.form_submit_button("Add Product"):
-                new_product = Product(
-                    name=name,
-                    description=description,
-                    price=price,
-                    stock=stock,
-                    category=category
-                )
-                session.add(new_product)
-                session.commit()
-                st.success("Product added successfully!")
-    
-    # Product list
-    st.subheader("Product List")
-    products = session.query(Product).all()
-    product_data = [{"ID": product.id, "Name": product.name, "Price": f"${product.price:.2f}", "Stock": product.stock, "Category": product.category} for product in products]
-    st.dataframe(pd.DataFrame(product_data))
+    with get_db() as session:
+        st.title("Product Management")
+        
+        # Product creation form
+        with st.expander("Add New Product"):
+            with st.form("new_product_form"):
+                name = st.text_input("Product Name")
+                description = st.text_area("Description")
+                price = st.number_input("Price", min_value=0.0, step=0.01)
+                stock = st.number_input("Stock", min_value=0, step=1)
+                category = st.text_input("Category")
+                
+                if st.form_submit_button("Add Product"):
+                    new_product = Product(
+                        name=name,
+                        description=description,
+                        price=price,
+                        stock=stock,
+                        category=category
+                    )
+                    session.add(new_product)
+                    session.commit()
+                    st.success("Product added successfully!")
+        
+        # Product list
+        st.subheader("Product List")
+        products = session.query(Product).all()
+        product_data = [{"ID": product.id, "Name": product.name, "Price": f"${product.price:.2f}", "Stock": product.stock, "Category": product.category} for product in products]
+        st.dataframe(pd.DataFrame(product_data))
 
 def orders_page():
     with get_db() as session:
@@ -167,87 +162,64 @@ def orders_page():
         st.dataframe(pd.DataFrame(order_data))
 
 def subscriptions_page():
-    st.title("Subscription Management")
-    
-    # Subscription creation form
-    with st.expander("Create New Subscription"):
-        with st.form("new_subscription_form"):
-            user = st.selectbox("User", [user.name for user in session.query(User).all()])
-            plan_name = st.text_input("Plan Name")
-            start_date = st.date_input("Start Date")
-            end_date = st.date_input("End Date")
-            
-            if st.form_submit_button("Create Subscription"):
-                user_obj = session.query(User).filter_by(name=user).first()
+    with get_db() as session:
+        st.title("Subscription Management")
+        
+        # Subscription creation form
+        with st.expander("Create New Subscription"):
+            with st.form("new_subscription_form"):
+                user = st.selectbox("User", [user.name for user in session.query(User).all()])
+                plan_name = st.text_input("Plan Name")
+                start_date = st.date_input("Start Date")
+                end_date = st.date_input("End Date")
                 
-                new_subscription = Subscription(
-                    user_id=user_obj.id,
-                    plan_name=plan_name,
-                    start_date=start_date,
-                    end_date=end_date
-                )
-                session.add(new_subscription)
-                session.commit()
-                st.success("Subscription created successfully!")
+                if st.form_submit_button("Create Subscription"):
+                    user_obj = session.query(User).filter_by(name=user).first()
+                    
+                    new_subscription = Subscription(
+                        user_id=user_obj.id,
+                        plan_name=plan_name,
+                        start_date=start_date,
+                        end_date=end_date
+                    )
+                    session.add(new_subscription)
+                    session.commit()
+                    st.success("Subscription created successfully!")
     
-    # Subscription list
-    st.subheader("Subscription List")
-    subscriptions = session.query(Subscription).all()
-    subscription_data = [{"ID": sub.id, "User": sub.user.name, "Plan": sub.plan_name, "Start Date": sub.start_date, "End Date": sub.end_date, "Active": sub.is_active} for sub in subscriptions]
-    st.dataframe(pd.DataFrame(subscription_data))
+        # Subscription list
+        st.subheader("Subscription List")
+        subscriptions = session.query(Subscription).all()
+        subscription_data = [{"ID": sub.id, "User": sub.user.name, "Plan": sub.plan_name, "Start Date": sub.start_date, "End Date": sub.end_date, "Active": sub.is_active} for sub in subscriptions]
+        st.dataframe(pd.DataFrame(subscription_data))
 
 def analytics_page():
-    st.title("Analytics")
-    
-    # Date range selection
-    col1, col2 = st.columns(2)
-    with col1:
-        start_date = st.date_input("Start Date", datetime.now() - timedelta(days=30))
-    with col2:
-        end_date = st.date_input("End Date", datetime.now())
-    
-    # Convert dates to datetime
-    start_datetime = datetime.combine(start_date, datetime.min.time())
-    end_datetime = datetime.combine(end_date, datetime.max.time())
-    
-    # Sales over time
-    sales_data = session.query(
-        func.date(Order.created_at).label('date'),
-        func.sum(Order.total_price).label('total_sales')
-    ).filter(Order.created_at.between(start_datetime, end_datetime)
-    ).group_by(func.date(Order.created_at)).all()
-    
-    sales_df = pd.DataFrame(sales_data, columns=['date', 'total_sales'])
-    st.subheader("Sales Over Time")
-    fig = px.line(sales_df, x='date', y='total_sales', title='Daily Sales')
-    st.plotly_chart(fig)
-    
-    # Top selling products
-    top_products = session.query(
-        Product.name,
-        func.sum(Order.quantity).label('total_quantity'),
-        func.sum(Order.total_price).label('total_revenue')
-    ).join(Order).filter(Order.created_at.between(start_datetime, end_datetime)
-    ).group_by(Product.id).order_by(func.sum(Order.quantity).desc()).limit(10).all()
-    
-    top_products_df = pd.DataFrame(top_products, columns=['product', 'quantity', 'revenue'])
-    st.subheader("Top Selling Products")
-    fig = px.bar(top_products_df, x='product', y='quantity', title='Top 10 Selling Products')
-    st.plotly_chart(fig)
-    
-    # User acquisition
-    new_users = session.query(
-        func.date(User.created_at).label('date'),
-        func.count(User.id).label('new_users')
-    ).filter(User.created_at.between(start_datetime, end_datetime)
-    ).group_by(func.date(User.created_at)).all()
-    
-    new_users_df = pd.DataFrame(new_users, columns=['date', 'new_users'])
-    st.subheader("User Acquisition")
-    fig = px.bar(new_users_df, x='date', y='new_users', title='New Users per Day')
-    st.plotly_chart(fig)
+    with get_db() as session:
+        st.title("Analytics")
+        
+        # Date range selection
+        col1, col2 = st.columns(2)
+        with col1:
+            start_date = st.date_input("Start Date", datetime.now() - timedelta(days=30))
+        with col2:
+            end_date = st.date_input("End Date", datetime.now())
+        
+        # Convert dates to datetime
+        start_datetime = datetime.combine(start_date, datetime.min.time())
+        end_datetime = datetime.combine(end_date, datetime.max.time())
+        
+        # Sales over time
+        sales_data = session.query(
+            func.date(Order.created_at).label('date'),
+            func.sum(Order.total_price).label('total_sales')
+        ).filter(Order.created_at.between(start_datetime, end_datetime)
+        ).group_by(func.date(Order.created_at)).all()
+        
+        sales_df = pd.DataFrame(sales_data, columns=['date', 'total_sales'])
+        st.subheader("Sales Over Time")
+        fig = px.line(sales_df, x='date', y='total_sales', title='Sales Over Time', labels={'total_sales': 'Total Sales', 'date': 'Date'})
+        st.plotly_chart(fig)
 
-# Main app logic
+# Page routing
 if page == "Overview":
     overview_page()
 elif page == "Users":
@@ -260,6 +232,6 @@ elif page == "Subscriptions":
     subscriptions_page()
 elif page == "Analytics":
     analytics_page()
-
+    
 # Close the database session
 session.close()
