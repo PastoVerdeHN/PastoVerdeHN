@@ -55,10 +55,3 @@ else:
     # Logout button
     if st.sidebar.button("Logout"):
         st.session_state.authenticated = False
-
-
-print(f"Stored hash: {correct_password_hash}")
-entered_hash = hash_password(password)
-print(f"Entered hash: {entered_hash}")
-if password == st.secrets["admin2"]["temp_plain_password"]:
-    st.session_state.authenticated = True
