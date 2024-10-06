@@ -24,6 +24,7 @@ def overview_page():
     with get_db() as session:
         st.title("E-commerce Dashboard Overview")
         
+        # Create columns for displaying metrics
         col1, col2, col3, col4 = st.columns(4)
         
         with col1:
@@ -43,7 +44,7 @@ def overview_page():
             total_revenue = total_revenue if total_revenue is not None else 0.0  # Ensure total_revenue has a value
             st.metric("Total Revenue", f"${total_revenue:.2f}")
 
-        # Recent Orders
+        # Fetch Recent Orders
         recent_orders = session.query(Order).order_by(Order.created_at.desc()).limit(5).all()
         if recent_orders:
             order_data = [{
