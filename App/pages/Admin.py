@@ -4,9 +4,6 @@ from modules.zadmin import (
     subscriptions_page, analytics_page
 )
 
-# Set up page configuration
-st.set_page_config(page_title="Admin Dashboard", page_icon="🛍️", layout="wide")
-
 # Sidebar for navigation
 st.sidebar.title("Navigation")
 page = st.sidebar.radio("Go to", ["Overview", "Users", "Products", "Orders", "Subscriptions", "Analytics"])
