@@ -5,9 +5,9 @@ import hashlib
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
-# Original password and its hash
-admin_access_password = "simpleadminpass"
-correct_password_hash = "5d8923f10a5c0939a945d6fe7bedaea6cdc10e94eb3dc40ad1428a246288c3bf"  # Updated hash
+# Retrieve the correct password and its hash from secrets
+admin_access_password = st.secrets["admin2"]["password"]  # Retrieve the plain password
+correct_password_hash = st.secrets["admin2"]["password_hash"]  # Retrieve the password hash
 
 # Initialize session state
 if 'authenticated' not in st.session_state:
@@ -19,7 +19,7 @@ if not st.session_state.authenticated:
     password = st.text_input("Enter password", type="password")
     
     if st.button("Login"):
-        # Hash the entered password
+        # Hash the entered password and compare it with the stored hash
         if hash_password(password) == correct_password_hash:
             st.session_state.authenticated = True  # Set authentication to true
         else:
