@@ -233,6 +233,3 @@ elif page == "Subscriptions":
     subscriptions_page()
 elif page == "Analytics":
     analytics_page()
-    
-# Close the database session
-session.close()
