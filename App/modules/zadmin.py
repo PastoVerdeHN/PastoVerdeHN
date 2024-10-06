@@ -41,12 +41,14 @@ def overview_page():
             st.metric("Total Products", total_products)
         
         with col3:
-            total_orders = session.query(func.count(Order.id)).scalar()
-            st.metric("Total Orders", total_orders)
-        
-        with col4:
-            total_revenue = session.query(func.sum(Order.total_price)).scalar()
-            st.metric("Total Revenue", f"${total_revenue:.2f}")
+    total_orders = session.query(func.count(Order.id)).scalar()
+    st.metric("Total Orders", total_orders)
+
+    with col4:
+        total_revenue = session.query(func.sum(Order.total_price)).scalar()
+        if total_revenue is None:
+            total_revenue = 0.0  # Ensure total_revenue has a value
+        st.metric("Total Revenue", f"${total_revenue:.2f}")
         
         # Recent Orders
         recent_orders = session.query(Order).order_by(Order.created_at.desc()).limit(5).all()
