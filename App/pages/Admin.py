@@ -1,5 +1,5 @@
 import streamlit as st
-from modules.zadmin import (
+from .modules.zadmin import (
     overview_page, users_page, products_page, orders_page,
     subscriptions_page, analytics_page
 )
