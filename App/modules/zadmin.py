@@ -42,7 +42,7 @@ def overview_page():
         with col4:
             total_revenue = session.query(func.sum(Order.total_price)).scalar()
             total_revenue = total_revenue if total_revenue is not None else 0.0  # Ensure total_revenue has a value
-            st.metric("Total Revenue", f"${total_revenue:.2f}")
+            st.metric("Total Revenue", f"L{total_revenue:.2f}")
 
         # Fetch Recent Orders
         recent_orders = session.query(Order).order_by(Order.created_at.desc()).limit(5).all()
@@ -52,7 +52,7 @@ def overview_page():
                 "User": order.user.name if order.user else "N/A",
                 "Product": order.product.name if order.product else "N/A",
                 "Status": order.status.value if order.status else "N/A",
-                "Total": f"${order.total_price:.2f}" if order.total_price else "N/A"
+                "Total": f"L{order.total_price:.2f}" if order.total_price else "N/A"
             } for order in recent_orders]
             st.table(pd.DataFrame(order_data))
         else:
@@ -118,7 +118,7 @@ def products_page():
         # Product list
         st.subheader("Product List")
         products = session.query(Product).all()
-        product_data = [{"ID": product.id, "Name": product.name, "Price": f"${product.price:.2f}", "Stock": product.stock, "Category": product.category} for product in products]
+        product_data = [{"ID": product.id, "Name": product.name, "Price": f"L{product.price:.2f}", "Stock": product.stock, "Category": product.category} for product in products]
         st.dataframe(pd.DataFrame(product_data))
 
 def orders_page():
@@ -157,7 +157,7 @@ def orders_page():
             "User": order.user.name if order.user else "N/A",
             "Product": order.product.name if order.product else "N/A",
             "Quantity": order.quantity,
-            "Total": f"${order.total_price:.2f}" if order.total_price else "N/A",
+            "Total": f"L{order.total_price:.2f}" if order.total_price else "N/A",
             "Status": order.status.value if order.status else "N/A"
         } for order in orders]
         st.dataframe(pd.DataFrame(order_data))
