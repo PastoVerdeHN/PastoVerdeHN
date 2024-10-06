@@ -9,6 +9,7 @@ st.set_page_config(page_title="Admin Dashboard", page_icon="🛍️", layout="wi
 # Prompt for password before displaying the dashboard
 password = st.text_input("Enter password to access Admin Dashboard", type="password")
 
+# Check if the password matches the one stored in Streamlit secrets
 if password == st.secrets["admin"]["dashboard_password"]:
     # Sidebar for navigation
     st.sidebar.title("Navigation")
