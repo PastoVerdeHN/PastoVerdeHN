@@ -23,4 +23,4 @@ elif page == "Orders":
 elif page == "Subscriptions":
     subscriptions_page()
 elif page == "Analytics":
-    analytics_page() i want to put a passowrd for that page and it should be in my streamlit sceret toml file 
+    analytics_page()
