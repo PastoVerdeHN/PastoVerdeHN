@@ -4,9 +4,8 @@ import plotly.express as px
 from sqlalchemy import func
 from datetime import datetime, timedelta
 from contextlib import contextmanager
-from .modules.models import SessionLocal, User, Product, Order, Subscription, PaymentTransaction, UserType
+from .models import SessionLocal
 
-# Set up page config
 st.set_page_config(page_title="E-commerce Dashboard", page_icon="🛍️", layout="wide")
 
 @contextmanager
@@ -17,41 +16,53 @@ def get_db():
     finally:
         db.close()
 
+# Import your database models and setup
+from .models import User, Product, Order, Subscription, PaymentTransaction, UserType, SessionLocal
+# Set page config
+st.set_page_config(page_title="E-commerce Dashboard", page_icon="🛍️", layout="wide")
+
+# Sidebar for navigation
+st.sidebar.title("Navigation")
+page = st.sidebar.radio("Go to", ["Overview", "Users", "Products", "Orders", "Subscriptions", "Analytics"])
+
+# Database session
+session = SessionLocal()
+
 def overview_page():
     with get_db() as session:
-        st.title("E-commerce Dashboard Overview")
+    st.title("E-commerce Dashboard Overview")
     
-        col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3, col4 = st.columns(4)
     
-        with col1:
-            total_users = session.query(func.count(User.id)).scalar()
-            st.metric("Total Users", total_users)
+    with col1:
+        total_users = session.query(func.count(User.id)).scalar()
+        st.metric("Total Users", total_users)
     
-        with col2:
-            total_products = session.query(func.count(Product.id)).scalar()
-            st.metric("Total Products", total_products)
+    with col2:
+        total_products = session.query(func.count(Product.id)).scalar()
+        st.metric("Total Products", total_products)
     
-        with col3:
-            total_orders = session.query(func.count(Order.id)).scalar()
-            st.metric("Total Orders", total_orders)
+    with col3:
+        total_orders = session.query(func.count(Order.id)).scalar()
+        st.metric("Total Orders", total_orders)
     
-        with col4:
-            total_revenue = session.query(func.sum(Order.total_price)).scalar()
-            st.metric("Total Revenue", f"${total_revenue:.2f}")
+    with col4:
+        total_revenue = session.query(func.sum(Order.total_price)).scalar()
+        st.metric("Total Revenue", f"${total_revenue:.2f}")
     
-        # Recent Orders
-        recent_orders = session.query(Order).order_by(Order.created_at.desc()).limit(5).all()
-        if recent_orders:
-            order_data = [{
-                "ID": order.id,
-                "User": order.user.name if order.user else "N/A",
-                "Product": order.product.name if order.product else "N/A",
-                "Status": order.status.value if order.status else "N/A",
-                "Total": f"${order.total_price:.2f}" if order.total_price else "N/A"
-            } for order in recent_orders]
-            st.table(pd.DataFrame(order_data))
-        else:
-            st.info("No recent orders found.")
+    # Recent Orders
+    recent_orders = session.query(Order).order_by(Order.created_at.desc()).limit(5).all()
+    if recent_orders:
+        order_data = [{
+            "ID": order.id,
+            "User": order.user.name if order.user else "N/A",
+            "Product": order.product.name if order.product else "N/A",
+            "Status": order.status.value if order.status else "N/A",
+            "Total": f"${order.total_price:.2f}" if order.total_price else "N/A"
+        } for order in recent_orders]
+        st.table(pd.DataFrame(order_data))
+    else:
+        st.info("No recent orders found.")
 
 def users_page():
     st.title("User Management")
@@ -116,44 +127,44 @@ def products_page():
 
 def orders_page():
     with get_db() as session:
-        st.title("Order Management")
+    st.title("Order Management")
     
-        # Order creation form
-        with st.expander("Create New Order"):
-            with st.form("new_order_form"):
-                user = st.selectbox("User", [user.name for user in session.query(User).all()])
-                product = st.selectbox("Product", [product.name for product in session.query(Product).all()])
-                quantity = st.number_input("Quantity", min_value=1, step=1)
-                delivery_address = st.text_input("Delivery Address")
+    # Order creation form
+    with st.expander("Create New Order"):
+        with st.form("new_order_form"):
+            user = st.selectbox("User", [user.name for user in session.query(User).all()])
+            product = st.selectbox("Product", [product.name for product in session.query(Product).all()])
+            quantity = st.number_input("Quantity", min_value=1, step=1)
+            delivery_address = st.text_input("Delivery Address")
             
-                if st.form_submit_button("Create Order"):
-                    user_obj = session.query(User).filter_by(name=user).first()
-                    product_obj = session.query(Product).filter_by(name=product).first()
-                    
-                    new_order = Order(
-                        id=f"order_{datetime.now().timestamp()}",
-                        user_id=user_obj.id,
-                        product_id=product_obj.id,
-                        quantity=quantity,
-                        delivery_address=delivery_address,
-                        total_price=product_obj.price * quantity
-                    )
-                    session.add(new_order)
-                    session.commit()
-                    st.success("Order created successfully!")
+            if st.form_submit_button("Create Order"):
+                user_obj = session.query(User).filter_by(name=user).first()
+                product_obj = session.query(Product).filter_by(name=product).first()
+                
+                new_order = Order(
+                    id=f"order_{datetime.now().timestamp()}",
+                    user_id=user_obj.id,
+                    product_id=product_obj.id,
+                    quantity=quantity,
+                    delivery_address=delivery_address,
+                    total_price=product_obj.price * quantity
+                )
+                session.add(new_order)
+                session.commit()
+                st.success("Order created successfully!")
     
-        # Order list
-        st.subheader("Order List")
-        orders = session.query(Order).all()
-        order_data = [{
-            "ID": order.id,
-            "User": order.user.name if order.user else "N/A",
-            "Product": order.product.name if order.product else "N/A",
-            "Quantity": order.quantity,
-            "Total": f"${order.total_price:.2f}" if order.total_price else "N/A",
-            "Status": order.status.value if order.status else "N/A"
-        } for order in orders]
-        st.dataframe(pd.DataFrame(order_data))
+    # Order list
+    st.subheader("Order List")
+    orders = session.query(Order).all()
+    order_data = [{
+        "ID": order.id,
+        "User": order.user.name if order.user else "N/A",
+        "Product": order.product.name if order.product else "N/A",
+        "Quantity": order.quantity,
+        "Total": f"${order.total_price:.2f}" if order.total_price else "N/A",
+        "Status": order.status.value if order.status else "N/A"
+    } for order in orders]
+    st.dataframe(pd.DataFrame(order_data))
 
 def subscriptions_page():
     st.title("Subscription Management")
@@ -236,17 +247,19 @@ def analytics_page():
     fig = px.bar(new_users_df, x='date', y='new_users', title='New Users per Day')
     st.plotly_chart(fig)
 
-# Create navigation
-PAGES = {
-    "Overview": overview_page,
-    "Users": users_page,
-    "Products": products_page,
-    "Orders": orders_page,
-    "Subscriptions": subscriptions_page,
-    "Analytics": analytics_page
-}
+# Main app logic
+if page == "Overview":
+    overview_page()
+elif page == "Users":
+    users_page()
+elif page == "Products":
+    products_page()
+elif page == "Orders":
+    orders_page()
+elif page == "Subscriptions":
+    subscriptions_page()
+elif page == "Analytics":
+    analytics_page()
 
-st.sidebar.title("Admin Dashboard")
-selection = st.sidebar.radio("Go to", list(PAGES.keys()))
-page = PAGES[selection]
-page()
+# Close the database session
+session.close()
