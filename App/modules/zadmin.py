@@ -1,8 +1,21 @@
 import streamlit as st
+
+st.set_page_config(page_title="E-commerce Dashboard", page_icon="🛍️", layout="wide")
+
 import pandas as pd
 import plotly.express as px
 from sqlalchemy import func
 from datetime import datetime, timedelta
+from contextlib import contextmanager
+from .models import SessionLocal
+
+@contextmanager
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 # Import your database models and setup
 from .models import User, Product, Order, Subscription, PaymentTransaction, UserType, SessionLocal
