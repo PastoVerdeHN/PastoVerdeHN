@@ -22,7 +22,6 @@ if not st.session_state.authenticated:
         # Hash the entered password
         if hash_password(password) == correct_password_hash:
             st.session_state.authenticated = True
-            st.experimental_rerun()  # Rerun the app to show the dashboard after login
         else:
             st.error("Incorrect password")
 else:
