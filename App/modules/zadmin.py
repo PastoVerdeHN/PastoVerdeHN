@@ -18,8 +18,6 @@ def get_db():
 
 # Import your database models and setup
 from .models import User, Product, Order, Subscription, PaymentTransaction, UserType, SessionLocal
-# Set page config
-st.set_page_config(page_title="E-commerce Dashboard", page_icon="🛍️", layout="wide")
 
 # Sidebar for navigation
 st.sidebar.title("Navigation")
