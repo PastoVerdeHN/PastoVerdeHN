@@ -21,7 +21,7 @@ if not st.session_state.authenticated:
     if st.button("Login"):
         # Hash the entered password
         if hash_password(password) == correct_password_hash:
-            st.session_state.authenticated = True
+            st.session_state.authenticated = True  # Set authentication to true
         else:
             st.error("Incorrect password")
 else:
@@ -33,7 +33,7 @@ else:
 
     # Sidebar for navigation
     st.sidebar.title("Navigation")
-    page = st.sidebar.radio("Go to", ["Overview", "Users", "Products", "Orders", "Subscriptions", "Analytics"])
+    page = st.sidebar.radio("Go to", ["Overview", "Users", "Products", "Orders", "Subscriptions", "Analytics"], key="sidebar_radio")
 
     # Main app logic for the selected page
     if page == "Overview":
