@@ -14,7 +14,7 @@ def get_db():
   finally:
       db.close()
 
-# Sidebar para la navegación
+# Sidebar for navigation
 st.sidebar.title("Administración")
 page = st.sidebar.selectbox("Ir a", ["Resumen", "Usuarios", "Productos", "Órdenes", "Suscripciones", "Analítica"])
 
@@ -22,7 +22,7 @@ def overview_page():
   with get_db() as session:
       st.title("Resumen del Dashboard de Comercio Electrónico")
 
-      # Crear columnas para mostrar métricas
+      # Create columns for displaying metrics
       col1, col2, col3, col4 = st.columns(4)
 
       with col1:
@@ -42,7 +42,7 @@ def overview_page():
           total_revenue = total_revenue if total_revenue is not None else 0.0
           st.metric("Ingresos Totales", f"L{total_revenue:.2f}")
 
-      # Órdenes por estado
+      # Orders by status
       st.subheader("Órdenes por Estado")
       status_counts = session.query(
           Order.status,
@@ -51,9 +51,9 @@ def overview_page():
       status_df = pd.DataFrame(status_counts, columns=['Estado', 'Cantidad'])
       status_df['Estado'] = status_df['Estado'].apply(lambda x: x.value.capitalize())
       fig = px.bar(status_df, x='Estado', y='Cantidad', title='Órdenes por Estado')
-      st.plotly_chart(fig, key="overview_orders_by_status")  # Clave única
+      st.plotly_chart(fig, key="overview_orders_by_status")  # Unique key
 
-      # Órdenes recientes
+      # Recent Orders
       st.subheader("Órdenes Recientes")
       recent_orders = session.query(Order).order_by(Order.created_at.desc()).limit(5).all()
       if recent_orders:
@@ -77,15 +77,18 @@ def users_page():
       user_type_filter = st.selectbox("Filtrar por tipo de usuario", ["Todos"] + [type.value for type in UserType])
       is_active_filter = st.selectbox("Estado de actividad", ["Todos", "Activos", "Inactivos"])
 
-      # Construir consulta con filtros
+      # Build query with filters
       query = session.query(User)
       if search_term:
-          query = query.filter(or_(User.name.contains(search_term), User.email.contains(search_term)))
+          query = query.filter(or_(User.name.ilike(f"%{search_term}%"), User.email.ilike(f"%{search_term}%")))
+          st.write(f"Filtrando por Nombre o Email: {search_term}")
       if user_type_filter != "Todos":
           query = query.filter(User.type == UserType(user_type_filter))
+          st.write(f"Filtrando por Tipo de Usuario: {user_type_filter}")
       if is_active_filter != "Todos":
           is_active = is_active_filter == "Activos"
           query = query.filter(User.is_active == is_active)
+          st.write(f"Filtrando por Estado de Actividad: {'Activo' if is_active else 'Inactivo'}")
 
       users = query.all()
       user_data = [{
@@ -185,16 +188,19 @@ def orders_page():
           order_id = st.text_input("Ingrese el ID de la Órden")
           if order_id:
               query = query.filter(Order.id == order_id)
+              st.write(f"Filtrando por ID de Órden: {order_id}")
 
       if "Nombre de Usuario" in selected_filters:
           user_search = st.text_input("Buscar por Nombre de Usuario")
           if user_search:
-              query = query.filter(User.name.contains(user_search))
+              query = query.filter(User.name.ilike(f"%{user_search}%"))
+              st.write(f"Filtrando por Nombre de Usuario: {user_search}")
 
       if "Estado" in selected_filters:
           status_filter = st.multiselect("Filtrar por Estado", [status.value for status in OrderStatus], default=None)
           if status_filter:
               query = query.filter(Order.status.in_([OrderStatus(status) for status in status_filter]))
+              st.write(f"Filtrando por Estado: {', '.join(status_filter)}")
 
       if "Rango de Fechas" in selected_filters:
           date_range = st.date_input("Rango de Fechas", [])
@@ -202,13 +208,21 @@ def orders_page():
               start_date = datetime.combine(date_range[0], datetime.min.time())
               end_date = datetime.combine(date_range[1], datetime.max.time())
               query = query.filter(Order.created_at.between(start_date, end_date))
+              st.write(f"Filtrando por Fecha de Creación: Desde {start_date} hasta {end_date}")
 
       if "Colonia" in selected_filters:
           colonia_search = st.text_input("Buscar por Colonia")
           if colonia_search:
-              query = query.filter(Order.delivery_address.contains(colonia_search))
+              query = query.filter(Order.delivery_address.ilike(f"%{colonia_search}%"))
+              st.write(f"Filtrando por Colonia: {colonia_search}")
 
-      orders = query.order_by(Order.created_at.desc()).all()
+      # Ejecutar la consulta
+      try:
+          orders = query.order_by(Order.created_at.desc()).all()
+          st.write(f"Total de órdenes encontradas: {len(orders)}")
+      except Exception as e:
+          st.error(f"Error ejecutando la consulta: {str(e)}")
+          orders = []
 
       st.subheader("Lista de Órdenes")
       if orders:
@@ -237,13 +251,12 @@ def orders_page():
               st.write(f"**Dirección de Entrega:** {selected_order.delivery_address}")
               
               # Extraer 'Colonia' de la dirección de entrega
-              # Suponiendo que 'Colonia' es la primera parte de la dirección antes de la coma
-              colonia = selected_order.delivery_address.split(",")[0] if "," in selected_order.delivery_address else selected_order.delivery_address
+              colonia = selected_order.delivery_address.split(",")[0].strip() if "," in selected_order.delivery_address else selected_order.delivery_address
               st.write(f"**Colonia:** {colonia}")
               
-              st.write(f"**Horario de Entrega:** {selected_order.delivery_time}")
+              st.write(f"**Horario de Entrega:** {selected_order.delivery_time or 'N/A'}")
               st.write(f"**Fecha de Entrega:** {selected_order.date.strftime('%Y-%m-%d')}")
-              st.write(f"**Notas Adicionales:** {selected_order.additional_notes or ''}")
+              st.write(f"**Notas Adicionales:** {selected_order.additional_notes or 'N/A'}")
               st.write(f"**Estado:** {selected_order.status.value.capitalize()}")
               st.write(f"**Fecha de Creación:** {selected_order.created_at.strftime('%Y-%m-%d %H:%M')}")
 
@@ -264,8 +277,6 @@ def orders_page():
                       selected_order.additional_notes = new_additional_notes
                       session.commit()
                       st.success("Órden actualizada exitosamente.")
-          else:
-              st.info("Seleccione una ódren para ver y editar.")
       else:
           st.info("No se encontraron órdenes con los criterios seleccionados.")
 
