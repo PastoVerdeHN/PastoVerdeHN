@@ -64,6 +64,9 @@ class Order(Base):
   transaction_id = Column(String, nullable=True)
   user = relationship("User", back_populates="orders")
   product = relationship("Product")
+  plan_name = Column(String)
+  delivery_time = Column(String)
+  additional_notes = Column(String)
 
   def calculate_total_price(self):
       return self.quantity * self.product.price
