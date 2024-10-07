@@ -165,45 +165,144 @@ def products_page():
                         session.commit()
                         st.success("Producto actualizado exitosamente.")
 
+def orders_page():
+    with get_db() as session:
+        st.title("Gestión de Órdenes")
 
+        st.subheader("Buscar Órdenes")
+        filter_options = ["ID de Órden", "Nombre de Usuario", "Estado", "Rango de Fechas", "Colonia"]
+        selected_filters = st.multiselect("Seleccionar Filtros", filter_options)
+
+        query = session.query(Order).join(User).join(Product)
+
+        if "ID de Órden" in selected_filters:
+            order_id = st.text_input("Ingrese el ID de la Órden")
+            if order_id:
+                query = query.filter(Order.id == order_id)
+
+        if "Nombre de Usuario" in selected_filters:
+            user_search = st.text_input("Buscar por Nombre de Usuario")
+            if user_search:
+                query = query.filter(User.name.ilike(f"%{user_search}%"))
+
+        if "Estado" in selected_filters:
+            status_filter = st.multiselect("Filtrar por Estado", [status.value for status in OrderStatus])
+            if status_filter:
+                query = query.filter(Order.status.in_([OrderStatus(status) for status in status_filter]))
+
+        if "Rango de Fechas" in selected_filters:
+            date_range = st.date_input("Rango de Fechas", [])
+            if len(date_range) == 2:
+                start_date = datetime.combine(date_range[0], datetime.min.time())
+                end_date = datetime.combine(date_range[1], datetime.max.time())
+                query = query.filter(Order.created_at.between(start_date, end_date))
+
+        if "Colonia" in selected_filters:
+            colonia_search = st.text_input("Buscar por Colonia")
+            if colonia_search:
+                query = query.filter(Order.delivery_address.ilike(f"%{colonia_search}%"))
+
+        try:
+            orders = query.order_by(Order.created_at.desc()).all()
+            st.write(f"Total de órdenes encontradas: {len(orders)}")
+        except Exception as e:
+            st.error(f"Error ejecutando la consulta: {str(e)}")
+            orders = []
+
+        st.subheader("Lista de Órdenes")
+        if orders:
+            order_data = [{
+                "ID": order.id,
+                "Usuario": order.user.name if order.user else "N/A",
+                "Producto/Plan": order.plan_name if order.plan_name else "N/A",
+                "Cantidad": order.quantity,
+                "Total": f"L{order.total_price:.2f}" if order.total_price else "N/A",
+                "Estado": order.status.value.capitalize() if order.status else "N/A",
+                "Fecha": order.created_at.strftime('%Y-%m-%d %H:%M') if order.created_at else "N/A"
+            } for order in orders]
+            st.dataframe(pd.DataFrame(order_data))
+
+            st.subheader("Detalles de la Órden y Edición")
+            selected_order_id = st.selectbox("Seleccionar Órden para Ver y Editar", [order.id for order in orders])
+            selected_order = session.query(Order).filter_by(id=selected_order_id).first()
+
+            if selected_order:
+                st.write(f"### Detalles de la Órden ID: {selected_order.id}")
+                st.write(f"**Usuario:** {selected_order.user.name if selected_order.user else 'N/A'}")
+                st.write(f"**Email:** {selected_order.user.email if selected_order.user else 'N/A'}")
+                st.write(f"**Producto/Plan:** {selected_order.plan_name if selected_order.plan_name else 'N/A'}")
+                st.write(f"**Cantidad:** {selected_order.quantity}")
+                st.write(f"**Total:** L{selected_order.total_price:.2f}")
+                st.write(f"**Dirección de Entrega:** {selected_order.delivery_address}")
+
+                colonia = selected_order.delivery_address.split(",")[0].strip() if "," in selected_order.delivery_address else selected_order.delivery_address
+                st.write(f"**Colonia:** {colonia}")
+
+                st.write(f"**Horario de Entrega:** {selected_order.delivery_time or 'N/A'}")
+                st.write(f"**Fecha de Entrega:** {selected_order.date.strftime('%Y-%m-%d')}")  # Ensure date is formatted correctly
+                st.write(f"**Notas Adicionales:** {selected_order.additional_notes or 'N/A'}")
+                st.write(f"**Estado:** {selected_order.status.value.capitalize()}")
+                st.write(f"**Fecha de Creación:** {selected_order.created_at.strftime('%Y-%m-%d %H:%M')}")
+
+                with st.form("edit_order_form"):
+                    new_status = st.selectbox(
+                        "Estado de la Órden",
+                        [status.value for status in OrderStatus],
+                        index=[status.value for status in OrderStatus].index(selected_order.status.value)
+                    )
+                    new_delivery_date = st.date_input("Fecha de Entrega", value=selected_order.date.date())
+                    new_delivery_time = st.text_input("Horario de Entrega", value=selected_order.delivery_time or "")
+                    new_additional_notes = st.text_area("Notas Adicionales", value=selected_order.additional_notes or "")
+
+                    if st.form_submit_button("Actualizar Órden"):
+                        selected_order.status = OrderStatus(new_status)
+                        selected_order.date = datetime.combine(new_delivery_date, datetime.min.time())
+                        selected_order.delivery_time = new_delivery_time
+                        selected_order.additional_notes = new_additional_notes
+                        session.commit()
+                        st.success("Órden actualizada exitosamente.")
+        else:
+            st.info("No se encontraron órdenes con los criterios seleccionados.")
 
 def subscriptions_page():
-  with get_db() as session:
-      st.title("Gestión de Suscripciones")
+    with get_db() as session:
+        st.title("Gestión de Suscripciones")
 
-      st.subheader("Lista de Suscripciones")
-      subscriptions = session.query(Subscription).join(User).all()
-      subscription_data = [{
-          "ID": sub.id,
-          "Usuario": sub.user.name if sub.user else "N/A",
-          "Plan": sub.plan_name,
-          "Fecha de Inicio": sub.start_date.strftime('%Y-%m-%d'),
-          "Fecha de Fin": sub.end_date.strftime('%Y-%m-%d') if sub.end_date else "N/A",
-          "Activo": "Sí" if sub.is_active else "No"
-      } for sub in subscriptions]
-      st.dataframe(pd.DataFrame(subscription_data))
+        st.subheader("Lista de Suscripciones")
+        subscriptions = session.query(Subscription).join(User).all()
+        subscription_data = [{
+            "ID": sub.id,
+            "Usuario": sub.user.name if sub.user else "N/A",
+            "Plan": sub.plan_name,
+            "Fecha de Inicio": sub.start_date.strftime('%Y-%m-%d'),
+            "Fecha de Fin": sub.end_date.strftime('%Y-%m-%d') if sub.end_date else "N/A",
+            "Activo": "Sí" if sub.is_active else "No"
+        } for sub in subscriptions]
+        st.dataframe(pd.DataFrame(subscription_data))
 
-      st.subheader("Editar Suscripción")
-      if subscriptions:
-          selected_sub_id = st.selectbox("Seleccionar Suscripción para Editar", [sub.id for sub in subscriptions])
-          selected_sub = session.query(Subscription).filter_by(id=selected_sub_id).first()
+        st.subheader("Editar Suscripción")
+        if subscriptions:
+            selected_sub_id = st.selectbox("Seleccionar Suscripción para Editar", [sub.id for sub in subscriptions])
+            selected_sub = session.query(Subscription).filter_by(id=selected_sub_id).first()
 
-          if selected_sub:
-              with st.form("edit_subscription_form"):
-                  new_plan_name = st.text_input("Nombre del Plan", value=selected_sub.plan_name)
-                  new_start_date = st.date_input("Fecha de Inicio", value=selected_sub.start_date.date())
-                  new_end_date = st.date_input("Fecha de Fin", value=selected_sub.end_date.date() if selected_sub.end_date else datetime.now().date())
-                  new_is_active = st.checkbox("Activo", value=selected_sub.is_active)
+            if selected_sub:
+                with st.form("edit_subscription_form"):
+                    new_plan_name = st.text_input("Nombre del Plan", value=selected_sub.plan_name)
+                    new_start_date = st.date_input("Fecha de Inicio", value=selected_sub.start_date.date())
+                    new_end_date = st.date_input("Fecha de Fin", value=selected_sub.end_date.date() if selected_sub.end_date else datetime.now().date())
+                    new_is_active = st.checkbox("Activo", value=selected_sub.is_active)
 
-                  if st.form_submit_button("Actualizar Suscripción"):
-                      selected_sub.plan_name = new_plan_name
-                      selected_sub.start_date = datetime.combine(new_start_date, datetime.min.time())
-                      selected_sub.end_date = datetime.combine(new_end_date, datetime.min.time())
-                      selected_sub.is_active = new_is_active
-                      session.commit()
-                      st.success("Suscripción actualizada exitosamente.")
-      else:  # This else is correctly associated with the if subscriptions:
-          st.info("No hay suscripciones para editar.")
+                    if st.form_submit_button("Actualizar Suscripción"):
+                        selected_sub.plan_name = new_plan_name
+                        selected_sub.start_date = datetime.combine(new_start_date, datetime.min.time())
+                        selected_sub.end_date = datetime.combine(new_end_date, datetime.min.time())
+                        selected_sub.is_active = new_is_active
+                        session.commit()
+                        st.success("Suscripción actualizada exitosamente.")
+        else:
+            st.info("No hay suscripciones para editar.")
+    else:
+        st.info("No existen suscripciones.")
 
 def analytics_page():
     with get_db() as session:
