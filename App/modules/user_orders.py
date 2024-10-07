@@ -47,25 +47,23 @@ def display_user_orders():
       else:
           for order in orders:
               with st.expander(f"ID de Pedido: {order.id} - Estado: {order.status.value}"):
-                  col1, col2 = st.columns([2, 1])
-                  with col1:
-                      st.write(f"**Plan seleccionado:** {order.plan_name}")
-                      st.write(f"**Fecha de entrega:** {order.date.strftime('%Y-%m-%d')}")
-                      st.write(f"**Horario de entrega:** {order.delivery_time}")
-                      st.write(f"**Dirección de entrega:** {order.delivery_address}")
-                      st.write(f"**Precio total:** L. {order.total_price:.2f}")
-                      st.write(f"**Cambio de dólar:** 1$ = L.25.00")
-                      
-                      if order.additional_notes:
-                          st.write(f"**Referencias adicionales:** {order.additional_notes}")
-                      
-                      if order.product_id:
-                          product = session.query(Product).filter_by(id=order.product_id).first()
-                          if product:
-                              st.write(f"**Producto:** {product.name}")
+                  st.write(f"**Plan seleccionado:** {order.plan_name}")
+                  st.write(f"**Fecha de entrega:** {order.date.strftime('%Y-%m-%d')}")
+                  st.write(f"**Horario de entrega:** {order.delivery_time}")
+                  st.write(f"**Dirección de entrega:** {order.delivery_address}")
+                  st.write(f"**Precio total:** L. {order.total_price:.2f}")
+                  st.write(f"**Cambio de dólar:** 1$ = L.25.00")
                   
-                  with col2:
-                      display_order_progress(order.status)
+                  if order.additional_notes:
+                      st.write(f"**Referencias adicionales:** {order.additional_notes}")
+                      
+                  if order.product_id:
+                      product = session.query(Product).filter_by(id=order.product_id).first()
+                      if product:
+                          st.write(f"**Producto:** {product.name}")
+                  
+                  # Move the progress display to the bottom
+                  display_order_progress(order.status)
                   
                   st.write("**Nota:** En el checkout, se incluye una caja de madera con los planes de suscripción. One-time setup fee")
   except Exception as e:
