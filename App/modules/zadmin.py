@@ -5,7 +5,6 @@ from sqlalchemy import func
 from datetime import datetime, timedelta
 from contextlib import contextmanager
 from .models import SessionLocal, User, Product, Order, Subscription, PaymentTransaction, UserType
-
 st.set_page_config(page_title="E-commerce Dashboard", page_icon="🛍️", layout="wide")
 
 @contextmanager
