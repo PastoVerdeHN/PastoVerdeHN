@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from modules.models import User, Product, Order, Subscription, PaymentTransaction, OrderStatus, setup_database
 
 def display_order_progress(status):
-  stages = ['Pending', 'Preparing', 'On the way', 'Delivered']
+  stages = ['Pendiente', 'Preparando', 'En camino', 'Entregado']
   status_mapping = {
       'pending': 0,
       'confirmed': 1,
@@ -15,10 +15,10 @@ def display_order_progress(status):
   current_stage = status_mapping.get(status.value, 0)
   
   if current_stage == -1:
-      st.error("Order Cancelled")
+      st.error("Pedido Cancelado")
       return
 
-  st.write("Order Progress:")
+  st.write("Progreso del Pedido:")
   
   progress_html = ""
   for i, stage in enumerate(stages):
@@ -31,7 +31,7 @@ def display_order_progress(status):
   
   st.markdown(progress_html, unsafe_allow_html=True)
   st.progress(current_stage / (len(stages) - 1))
-  st.markdown(f"<h4>Current Status: {status.value.capitalize()}</h4>", unsafe_allow_html=True)
+  st.markdown(f"<h4>Estado Actual: {status.value.capitalize()}</h4>", unsafe_allow_html=True)
 
 def display_user_orders():
   st.subheader("📦 Mis Órdenes")
@@ -46,7 +46,7 @@ def display_user_orders():
           st.info("No tienes órdenes activas en este momento.")
       else:
           for order in orders:
-              with st.expander(f"Order ID: {order.id} - Status: {order.status.value}"):
+              with st.expander(f"ID de Pedido: {order.id} - Estado: {order.status.value}"):
                   col1, col2 = st.columns([2, 1])
                   with col1:
                       st.write(f"**Plan seleccionado:** {order.plan_name}")
@@ -69,7 +69,7 @@ def display_user_orders():
                   
                   st.write("**Nota:** En el checkout, se incluye una caja de madera con los planes de suscripción. One-time setup fee")
   except Exception as e:
-      st.error(f"An error occurred while fetching orders: {str(e)}")
+      st.error(f"Ocurrió un error al obtener las órdenes: {str(e)}")
   finally:
       session.close()
 
