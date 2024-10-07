@@ -28,10 +28,15 @@ if not st.session_state.authenticated:
             st.error("Incorrect password")
 else:
     # Your existing admin dashboard code goes here
-    from modules.zadmin import (
-        overview_page, users_page, products_page, orders_page,
-        subscriptions_page, analytics_page
-    )
+   from modules.zadmin import (
+       overview_page,
+       users_page,
+       products_page,
+       orders_page,
+       subscriptions_page,
+       analytics_page
+   )
+
 
     # Sidebar for navigation
     st.sidebar.title("Navigation")
