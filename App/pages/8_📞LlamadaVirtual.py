@@ -1,4 +1,21 @@
 import streamlit as st
+
+def show_under_construction_banner():
+    st.warning(
+        "🚧 This page is under construction. Some features may not work as expected. 🚧",
+        icon="🏗️"
+    )
+
+# Use this at the top of your Streamlit app
+show_under_construction_banner()
+
+# Your existing app code goes here
+st.title("My Streamlit App")
+# ... rest of your app ...
+
+
+
+import streamlit as st
 from sqlalchemy.orm import sessionmaker
 from models import SessionLocal, Order  # Import your models
 import requests
