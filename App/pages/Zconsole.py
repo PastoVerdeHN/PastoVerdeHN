@@ -1,7 +1,7 @@
 import streamlit as st
 import hashlib
 
-st.warning("Si no eres un administrador, gerente o miembro del equipo de ventas de Pasto Verde, por favor abandona esta página. Gracias.")
+st.warning("Si no eres un administrador, gerente o miembro del equipo de ventas de © Pasto Verde, por favor abandona esta página. Gracias.")
 
 # Function to hash the password
 def hash_password(password):
