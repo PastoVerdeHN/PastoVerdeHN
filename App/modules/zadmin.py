@@ -14,7 +14,7 @@ def get_db():
   finally:
       db.close()
 
-# Sidebar for navigation
+# Sidebar para la navegación
 st.sidebar.title("Administración")
 page = st.sidebar.selectbox("Ir a", ["Resumen", "Usuarios", "Productos", "Órdenes", "Suscripciones", "Analítica"])
 
@@ -22,7 +22,7 @@ def overview_page():
   with get_db() as session:
       st.title("Resumen del Dashboard de Comercio Electrónico")
 
-      # Create columns for displaying metrics
+      # Crear columnas para mostrar métricas
       col1, col2, col3, col4 = st.columns(4)
 
       with col1:
@@ -42,18 +42,18 @@ def overview_page():
           total_revenue = total_revenue if total_revenue is not None else 0.0
           st.metric("Ingresos Totales", f"L{total_revenue:.2f}")
 
-      # Orders by status
+      # Órdenes por estado
       st.subheader("Órdenes por Estado")
       status_counts = session.query(
           Order.status,
-          func.count(Order.id).label('count')
+          func.count(Order.id).label('Cantidad')
       ).group_by(Order.status).all()
       status_df = pd.DataFrame(status_counts, columns=['Estado', 'Cantidad'])
       status_df['Estado'] = status_df['Estado'].apply(lambda x: x.value.capitalize())
       fig = px.bar(status_df, x='Estado', y='Cantidad', title='Órdenes por Estado')
-      st.plotly_chart(fig)
+      st.plotly_chart(fig, key="overview_orders_by_status")  # Clave única
 
-      # Recent Orders
+      # Órdenes recientes
       st.subheader("Órdenes Recientes")
       recent_orders = session.query(Order).order_by(Order.created_at.desc()).limit(5).all()
       if recent_orders:
@@ -77,7 +77,7 @@ def users_page():
       user_type_filter = st.selectbox("Filtrar por tipo de usuario", ["Todos"] + [type.value for type in UserType])
       is_active_filter = st.selectbox("Estado de actividad", ["Todos", "Activos", "Inactivos"])
 
-      # Build query with filters
+      # Construir consulta con filtros
       query = session.query(User)
       if search_term:
           query = query.filter(or_(User.name.contains(search_term), User.email.contains(search_term)))
@@ -129,7 +129,7 @@ def products_page():
       st.title("Gestión de Productos")
 
       st.subheader("Productos Disponibles")
-      # Since products are subscriptions and one-time purchase
+      # Los productos son suscripciones y compras únicas
       products = session.query(Product).all()
       if not products:
           st.info("No hay productos disponibles.")
@@ -139,7 +139,8 @@ def products_page():
               "Nombre": product.name,
               "Descripción": product.description,
               "Precio": f"L{product.price:.2f}",
-              "Categoría": product.category
+              "Categoría": product.category,
+              "Tipo": "Suscripción" if "suscripción" in product.category.lower() else "Compra Única"
           } for product in products]
           st.table(pd.DataFrame(product_data))
 
@@ -167,31 +168,41 @@ def orders_page():
       st.title("Gestión de Órdenes")
 
       st.subheader("Buscar Órdenes")
-      # Filters
+      # Filtros
       filter_options = ["ID de Órden", "Nombre de Usuario", "Estado", "Rango de Fechas", "Colonia"]
       selected_filters = st.multiselect("Seleccionar Filtros", filter_options)
 
-      # Build filters
+      # Variables para filtros
+      order_id = None
+      user_search = None
+      status_filter = None
+      colonia_search = None
+
+      # Construir consulta con filtros
       query = session.query(Order).join(User).join(Product)
 
       if "ID de Órden" in selected_filters:
           order_id = st.text_input("Ingrese el ID de la Órden")
           if order_id:
               query = query.filter(Order.id == order_id)
+
       if "Nombre de Usuario" in selected_filters:
           user_search = st.text_input("Buscar por Nombre de Usuario")
           if user_search:
               query = query.filter(User.name.contains(user_search))
+
       if "Estado" in selected_filters:
           status_filter = st.multiselect("Filtrar por Estado", [status.value for status in OrderStatus], default=None)
           if status_filter:
               query = query.filter(Order.status.in_([OrderStatus(status) for status in status_filter]))
+
       if "Rango de Fechas" in selected_filters:
           date_range = st.date_input("Rango de Fechas", [])
-          if date_range and len(date_range) == 2:
+          if len(date_range) == 2:
               start_date = datetime.combine(date_range[0], datetime.min.time())
               end_date = datetime.combine(date_range[1], datetime.max.time())
               query = query.filter(Order.created_at.between(start_date, end_date))
+
       if "Colonia" in selected_filters:
           colonia_search = st.text_input("Buscar por Colonia")
           if colonia_search:
@@ -204,7 +215,7 @@ def orders_page():
           order_data = [{
               "ID": order.id,
               "Usuario": order.user.name if order.user else "N/A",
-              "Producto": order.plan_name if order.plan_name else "N/A",
+              "Producto/Plan": order.plan_name if order.plan_name else "N/A",
               "Cantidad": order.quantity,
               "Total": f"L{order.total_price:.2f}" if order.total_price else "N/A",
               "Estado": order.status.value.capitalize() if order.status else "N/A",
@@ -224,7 +235,12 @@ def orders_page():
               st.write(f"**Cantidad:** {selected_order.quantity}")
               st.write(f"**Total:** L{selected_order.total_price:.2f}")
               st.write(f"**Dirección de Entrega:** {selected_order.delivery_address}")
-              st.write(f"**Colonia:** {selected_order.delivery_address}")  # Assuming colonia is part of delivery_address
+              
+              # Extraer 'Colonia' de la dirección de entrega
+              # Suponiendo que 'Colonia' es la primera parte de la dirección antes de la coma
+              colonia = selected_order.delivery_address.split(",")[0] if "," in selected_order.delivery_address else selected_order.delivery_address
+              st.write(f"**Colonia:** {colonia}")
+              
               st.write(f"**Horario de Entrega:** {selected_order.delivery_time}")
               st.write(f"**Fecha de Entrega:** {selected_order.date.strftime('%Y-%m-%d')}")
               st.write(f"**Notas Adicionales:** {selected_order.additional_notes or ''}")
@@ -297,7 +313,7 @@ def analytics_page():
   with get_db() as session:
       st.title("Analíticas")
 
-      # Date range selection
+      # Selección de rango de fechas
       st.subheader("Seleccione el Rango de Fechas para el Análisis")
       col1, col2 = st.columns(2)
       with col1:
@@ -305,62 +321,107 @@ def analytics_page():
       with col2:
           end_date = st.date_input("Fecha de Fin", datetime.now())
 
-      # Convert dates to datetime
-      start_datetime = datetime.combine(start_date, datetime.min.time())
-      end_datetime = datetime.combine(end_date, datetime.max.time())
+      # Verificar que ambas fechas estén seleccionadas
+      if start_date and end_date:
+          # Convertir fechas a datetime
+          start_datetime = datetime.combine(start_date, datetime.min.time())
+          end_datetime = datetime.combine(end_date, datetime.max.time())
 
-      # Sales over time
-      sales_data = session.query(
-          func.date(Order.created_at).label('date'),
-          func.sum(Order.total_price).label('total_sales')
-      ).filter(Order.created_at.between(start_datetime, end_datetime)
-      ).group_by(func.date(Order.created_at)).all()
+          # Ingresos a lo largo del tiempo
+          sales_data = session.query(
+              func.date(Order.created_at).label('Fecha'),
+              func.sum(Order.total_price).label('Ingresos Totales')
+          ).filter(Order.created_at.between(start_datetime, end_datetime)
+          ).group_by(func.date(Order.created_at)).all()
 
-      sales_df = pd.DataFrame(sales_data, columns=['Fecha', 'Ingresos Totales'])
-      st.subheader("Ingresos a lo Largo del Tiempo")
-      fig = px.line(sales_df, x='Fecha', y='Ingresos Totales', title='Ingresos Totales a lo Largo del Tiempo', labels={'Ingresos Totales': 'Ingresos Totales', 'Fecha': 'Fecha'})
-      st.plotly_chart(fig)
+          sales_df = pd.DataFrame(sales_data, columns=['Fecha', 'Ingresos Totales'])
+          st.subheader("Ingresos a lo Largo del Tiempo")
+          fig = px.line(
+              sales_df,
+              x='Fecha',
+              y='Ingresos Totales',
+              title='Ingresos Totales a lo Largo del Tiempo',
+              labels={'Ingresos Totales': 'Ingresos Totales', 'Fecha': 'Fecha'}
+          )
+          st.plotly_chart(fig, key="analytics_sales_over_time")  # Clave única
 
-      # Orders by Colonia
-      st.subheader("Órdenes por Colonia")
-      # Assuming 'Colonia' is a substring in delivery_address
-      colonia_data = session.query(
-          Order.delivery_address.label('Colonia'),
-          func.count(Order.id).label('Cantidad')
-      ).filter(Order.created_at.between(start_datetime, end_datetime)
-      ).group_by(Order.delivery_address).all()
+          # Órdenes por Colonia
+          st.subheader("Órdenes por Colonia")
+          # Suponiendo que 'Colonia' es la primera parte de delivery_address antes de la coma
+          colonia_data = session.query(
+              func.substr(Order.delivery_address, 1, func.instr(Order.delivery_address, ',') - 1).label('Colonia'),
+              func.count(Order.id).label('Cantidad')
+          ).filter(Order.created_at.between(start_datetime, end_datetime)
+          ).group_by(func.substr(Order.delivery_address, 1, func.instr(Order.delivery_address, ',') - 1)).all()
 
-      colonia_df = pd.DataFrame(colonia_data, columns=['Colonia', 'Cantidad'])
-      fig = px.bar(colonia_df, x='Colonia', y='Cantidad', title='Órdenes por Colonia')
-      st.plotly_chart(fig)
+          colonia_df = pd.DataFrame(colonia_data, columns=['Colonia', 'Cantidad'])
+          # Eliminar posibles `None` o valores vacíos
+          colonia_df = colonia_df[colonia_df['Colonia'].notna() & (colonia_df['Colonia'] != "")]
+          fig = px.bar(
+              colonia_df,
+              x='Colonia',
+              y='Cantidad',
+              title='Órdenes por Colonia'
+          )
+          st.plotly_chart(fig, key="analytics_orders_by_colonia")  # Clave única
 
-      # Orders by Status
-      st.subheader("Órdenes por Estado")
-      orders_by_status = session.query(
-          Order.status,
-          func.count(Order.id).label('count')
-      ).filter(Order.created_at.between(start_datetime, end_datetime)
-      ).group_by(Order.status).all()
+          # Órdenes por Estado
+          st.subheader("Órdenes por Estado")
+          orders_by_status = session.query(
+              Order.status,
+              func.count(Order.id).label('Cantidad')
+          ).filter(Order.created_at.between(start_datetime, end_datetime)
+          ).group_by(Order.status).all()
 
-      status_df = pd.DataFrame(orders_by_status, columns=['Estado', 'Cantidad'])
-      status_df['Estado'] = status_df['Estado'].apply(lambda x: x.value.capitalize())
-      fig = px.pie(status_df, names='Estado', values='Cantidad', title='Distribución de Órdenes por Estado')
-      st.plotly_chart(fig)
+          status_df = pd.DataFrame(orders_by_status, columns=['Estado', 'Cantidad'])
+          status_df['Estado'] = status_df['Estado'].apply(lambda x: x.value.capitalize())
+          fig = px.pie(
+              status_df,
+              names='Estado',
+              values='Cantidad',
+              title='Distribución de Órdenes por Estado'
+          )
+          st.plotly_chart(fig, key="analytics_orders_by_status")  # Clave única
 
-      # Top Products (Plans)
-      st.subheader("Productos/Planes Más Vendidos")
-      top_products_data = session.query(
-          Order.plan_name.label('Producto'),
-          func.count(Order.id).label('Cantidad Vendida')
-      ).filter(Order.created_at.between(start_datetime, end_datetime)
-      ).group_by(Order.plan_name).order_by(func.count(Order.id).desc()).all()
+          # Productos/Planes Más Vendidos
+          st.subheader("Productos/Planes Más Vendidos")
+          top_products_data = session.query(
+              Order.plan_name.label('Producto'),
+              func.count(Order.id).label('Cantidad Vendida')
+          ).filter(Order.created_at.between(start_datetime, end_datetime)
+          ).group_by(Order.plan_name).order_by(func.count(Order.id).desc()).all()
 
-      top_products_df = pd.DataFrame(top_products_data, columns=['Producto', 'Cantidad Vendida'])
-      fig = px.bar(top_products_df, x='Producto', y='Cantidad Vendida', title='Top Productos/Planes')
-      st.plotly_chart(fig)
+          top_products_df = pd.DataFrame(top_products_data, columns=['Producto', 'Cantidad Vendida'])
+          fig = px.bar(
+              top_products_df,
+              x='Producto',
+              y='Cantidad Vendida',
+              title='Top Productos/Planes'
+          )
+          st.plotly_chart(fig, key="analytics_top_products")  # Clave única
 
+          # Demografía por Colonia
+          st.subheader("Demografía de Clientes por Colonia")
+          demographics_data = session.query(
+              func.substr(User.address, 1, func.instr(User.address, ',') - 1).label('Colonia'),
+              func.count(User.id).label('Cantidad de Clientes')
+          ).join(Order, Order.user_id == User.id
+          ).filter(Order.created_at.between(start_datetime, end_datetime)
+          ).group_by(func.substr(User.address, 1, func.instr(User.address, ',') - 1)).all()
 
-# Page routing
+          demographics_df = pd.DataFrame(demographics_data, columns=['Colonia', 'Cantidad de Clientes'])
+          demographics_df = demographics_df[demographics_df['Colonia'].notna() & (demographics_df['Colonia'] != "")]
+          fig = px.bar(
+              demographics_df,
+              x='Colonia',
+              y='Cantidad de Clientes',
+              title='Cantidad de Clientes por Colonia'
+          )
+          st.plotly_chart(fig, key="analytics_demographics_by_colonia")  # Clave única
+      else:
+          st.warning("Por favor, seleccione un rango de fechas válido.")
+
+# Routing de páginas
 if page == "Resumen":
   overview_page()
 elif page == "Usuarios":
