@@ -40,7 +40,7 @@ def overview_page():
         with col4:
             total_revenue = session.query(func.sum(Order.total_price)).scalar()
             total_revenue = total_revenue if total_revenue is not None else 0.0
-            st.metric("Ingresos Totales", f"L{total_revenue:.2f}")
+            st.metric("Ingresos Totales", f"L.{total_revenue:.2f}")
 
         # Orders by status
         st.subheader("Órdenes por Estado")
