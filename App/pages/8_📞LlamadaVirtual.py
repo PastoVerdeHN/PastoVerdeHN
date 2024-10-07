@@ -1,11 +1,22 @@
 import streamlit as st
 
-def show_under_construction_banner():
-    st.warning(
-        "🚧 This page is under construction. Some features may not work as expected. 🚧",
-        icon="🏗️"
+def show_custom_construction_banner():
+    st.markdown(
+        """
+        <div style="
+            padding: 10px;
+            background-color: #fff3cd;
+            border-left: 6px solid #ffeeba;
+            margin-bottom: 10px;
+        ">
+            <p style="color: #856404; margin: 0;">
+                <strong>🚧 Under Construction 🚧</strong><br>
+                This page is still being built. Some features may not be available.
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True
     )
-
 # Use this at the top of your Streamlit app
 show_under_construction_banner()
 
