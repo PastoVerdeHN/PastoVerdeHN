@@ -167,75 +167,65 @@ def products_page():
                       st.success("Producto actualizado exitosamente.")
 
 def orders_page():
-  with get_db() as session:
-      st.title("Gestión de Órdenes")
+    with get_db() as session:
+        st.title("Gestión de Órdenes")
 
-      st.subheader("Buscar Órdenes")
-      # Filtros
-      filter_options = ["ID de Órden", "Nombre de Usuario", "Estado", "Rango de Fechas", "Colonia"]
-      selected_filters = st.multiselect("Seleccionar Filtros", filter_options)
+        st.subheader("Buscar Órdenes")
+        # Filtros
+        filter_options = ["ID de Órden", "Nombre de Usuario", "Estado", "Rango de Fechas", "Colonia"]
+        selected_filters = st.multiselect("Seleccionar Filtros", filter_options)
 
-      # Variables para filtros
-      order_id = None
-      user_search = None
-      status_filter = None
-      colonia_search = None
+        # Construir consulta base
+        query = session.query(Order).join(User).join(Product)
 
-      # Construir consulta con filtros
-      query = session.query(Order).join(User).join(Product)
+        # Aplicar filtros si están seleccionados
+        if "ID de Órden" in selected_filters:
+            order_id = st.text_input("Ingrese el ID de la Órden")
+            if order_id:
+                query = query.filter(Order.id == order_id)
 
-      if "ID de Órden" in selected_filters:
-          order_id = st.text_input("Ingrese el ID de la Órden")
-          if order_id:
-              query = query.filter(Order.id == order_id)
-              st.write(f"Filtrando por ID de Órden: {order_id}")
+        if "Nombre de Usuario" in selected_filters:
+            user_search = st.text_input("Buscar por Nombre de Usuario")
+            if user_search:
+                query = query.filter(User.name.ilike(f"%{user_search}%"))
 
-      if "Nombre de Usuario" in selected_filters:
-          user_search = st.text_input("Buscar por Nombre de Usuario")
-          if user_search:
-              query = query.filter(User.name.ilike(f"%{user_search}%"))
-              st.write(f"Filtrando por Nombre de Usuario: {user_search}")
+        if "Estado" in selected_filters:
+            status_filter = st.multiselect("Filtrar por Estado", [status.value for status in OrderStatus])
+            if status_filter:
+                query = query.filter(Order.status.in_([OrderStatus(status) for status in status_filter]))
 
-      if "Estado" in selected_filters:
-          status_filter = st.multiselect("Filtrar por Estado", [status.value for status in OrderStatus], default=None)
-          if status_filter:
-              query = query.filter(Order.status.in_([OrderStatus(status) for status in status_filter]))
-              st.write(f"Filtrando por Estado: {', '.join(status_filter)}")
+        if "Rango de Fechas" in selected_filters:
+            date_range = st.date_input("Rango de Fechas", [])
+            if len(date_range) == 2:
+                start_date = datetime.combine(date_range[0], datetime.min.time())
+                end_date = datetime.combine(date_range[1], datetime.max.time())
+                query = query.filter(Order.created_at.between(start_date, end_date))
 
-      if "Rango de Fechas" in selected_filters:
-          date_range = st.date_input("Rango de Fechas", [])
-          if len(date_range) == 2:
-              start_date = datetime.combine(date_range[0], datetime.min.time())
-              end_date = datetime.combine(date_range[1], datetime.max.time())
-              query = query.filter(Order.created_at.between(start_date, end_date))
-              st.write(f"Filtrando por Fecha de Creación: Desde {start_date} hasta {end_date}")
+        if "Colonia" in selected_filters:
+            colonia_search = st.text_input("Buscar por Colonia")
+            if colonia_search:
+                query = query.filter(Order.delivery_address.ilike(f"%{colonia_search}%"))
 
-      if "Colonia" in selected_filters:
-          colonia_search = st.text_input("Buscar por Colonia")
-          if colonia_search:
-              query = query.filter(Order.delivery_address.ilike(f"%{colonia_search}%"))
-              st.write(f"Filtrando por Colonia: {colonia_search}")
+        # Ejecutar la consulta
+        try:
+            orders = query.order_by(Order.created_at.desc()).all()
+            st.write(f"Total de órdenes encontradas: {len(orders)}")
+        except Exception as e:
+            st.error(f"Error ejecutando la consulta: {str(e)}")
+            orders = []
 
-      # Ejecutar la consulta
-      try:
-          orders = query.order_by(Order.created_at.desc()).all()
-          st.write(f"Total de órdenes encontradas: {len(orders)}")
-      except Exception as e:
-          st.error(f"Error ejecutando la consulta: {str(e)}")
-          orders = []
-
-      st.subheader("Lista de Órdenes")
-      if orders:
-          order_data = [{
-              "ID": order.id,
-              "Usuario": order.user.name if order.user else "N/A",
-              "Producto/Plan": order.plan_name if order.plan_name else "N/A",
-              "Cantidad": order.quantity,
-              "Total": f"L{order.total_price:.2f}" if order.total_price else "N/A",
-              "Estado": order.status.value.capitalize() if order.status else "N/A",
-              "Fecha": order.created_at.strftime('%Y-%m-%d %H:%M') if order.created_at else "N/A"
-          } for order in orders]
-          st.dataframe(pd.DataFrame(order_data))
+        st.subheader("Lista de Órdenes")
+        if orders:
+            order_data = [{
+                "ID": order.id,
+                "Usuario": order.user.name if order.user else "N/A",
+                "Producto/Plan": order.plan_name if order.plan_name else "N/A",
+                "Cantidad": order.quantity,
+                "Total": f"L{order.total_price:.2f}" if order.total_price else "N/A",
+                "Estado": order.status.value.capitalize() if order.status else "N/A",
+                "Fecha": order.created_at.strftime('%Y-%m-%d %H:%M') if order.created_at else "N/A"
+            } for order in orders]
+            st.dataframe(pd.DataFrame(order_data))
 
           st.subheader("Detalles de la Órden y Edición")
           selected_order_id = st.selectbox("Seleccionar Órden para Ver y Editar", [order.id for order in orders])
