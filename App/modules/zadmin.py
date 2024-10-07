@@ -1,16 +1,13 @@
 import streamlit as st
-
-# Set page configuration
-st.set_page_config(page_title="E-commerce Dashboard", page_icon="🛍️", layout="wide")
-
-# Import other necessary modules
 import pandas as pd
 import plotly.express as px
 from sqlalchemy import func
 from datetime import datetime, timedelta
 from contextlib import contextmanager
-from .models import SessionLocal, User, Product, Order, Subscription
+from .models import SessionLocal, User, Product, Order, Subscription, UserType
 
+# Set page configuration
+st.set_page_config(page_title="E-commerce Dashboard", page_icon="🛍️", layout="wide")
 
 @contextmanager
 def get_db():
