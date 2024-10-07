@@ -265,44 +265,42 @@ def orders_page():
             st.info("No se encontraron órdenes con los criterios seleccionados.")
 
 def subscriptions_page():
-    with get_db() as session:
-        st.title("Gestión de Suscripciones")
+  with get_db() as session:
+      st.title("Gestión de Suscripciones")
 
-        st.subheader("Lista de Suscripciones")
-        subscriptions = session.query(Subscription).join(User).all()
-        subscription_data = [{
-            "ID": sub.id,
-            "Usuario": sub.user.name if sub.user else "N/A",
-            "Plan": sub.plan_name,
-            "Fecha de Inicio": sub.start_date.strftime('%Y-%m-%d'),
-            "Fecha de Fin": sub.end_date.strftime('%Y-%m-%d') if sub.end_date else "N/A",
-            "Activo": "Sí" if sub.is_active else "No"
-        } for sub in subscriptions]
-        st.dataframe(pd.DataFrame(subscription_data))
+      st.subheader("Lista de Suscripciones")
+      subscriptions = session.query(Subscription).join(User).all()
+      subscription_data = [{
+          "ID": sub.id,
+          "Usuario": sub.user.name if sub.user else "N/A",
+          "Plan": sub.plan_name,
+          "Fecha de Inicio": sub.start_date.strftime('%Y-%m-%d'),
+          "Fecha de Fin": sub.end_date.strftime('%Y-%m-%d') if sub.end_date else "N/A",
+          "Activo": "Sí" if sub.is_active else "No"
+      } for sub in subscriptions]
+      st.dataframe(pd.DataFrame(subscription_data))
 
-        st.subheader("Editar Suscripción")
-        if subscriptions:
-            selected_sub_id = st.selectbox("Seleccionar Suscripción para Editar", [sub.id for sub in subscriptions])
-            selected_sub = session.query(Subscription).filter_by(id=selected_sub_id).first()
+      st.subheader("Editar Suscripción")
+      if subscriptions:
+          selected_sub_id = st.selectbox("Seleccionar Suscripción para Editar", [sub.id for sub in subscriptions])
+          selected_sub = session.query(Subscription).filter_by(id=selected_sub_id).first()
 
-            if selected_sub:
-                with st.form("edit_subscription_form"):
-                    new_plan_name = st.text_input("Nombre del Plan", value=selected_sub.plan_name)
-                    new_start_date = st.date_input("Fecha de Inicio", value=selected_sub.start_date.date())
-                    new_end_date = st.date_input("Fecha de Fin", value=selected_sub.end_date.date() if selected_sub.end_date else datetime.now().date())
-                    new_is_active = st.checkbox("Activo", value=selected_sub.is_active)
+          if selected_sub:
+              with st.form("edit_subscription_form"):
+                  new_plan_name = st.text_input("Nombre del Plan", value=selected_sub.plan_name)
+                  new_start_date = st.date_input("Fecha de Inicio", value=selected_sub.start_date.date())
+                  new_end_date = st.date_input("Fecha de Fin", value=selected_sub.end_date.date() if selected_sub.end_date else datetime.now().date())
+                  new_is_active = st.checkbox("Activo", value=selected_sub.is_active)
 
-                    if st.form_submit_button("Actualizar Suscripción"):
-                        selected_sub.plan_name = new_plan_name
-                        selected_sub.start_date = datetime.combine(new_start_date, datetime.min.time())
-                        selected_sub.end_date = datetime.combine(new_end_date, datetime.min.time())
-                        selected_sub.is_active = new_is_active
-                        session.commit()
-                        st.success("Suscripción actualizada exitosamente.")
-        else:
-            st.info("No hay suscripciones para editar.")
-    else:
-        st.info("No existen suscripciones.")
+                  if st.form_submit_button("Actualizar Suscripción"):
+                      selected_sub.plan_name = new_plan_name
+                      selected_sub.start_date = datetime.combine(new_start_date, datetime.min.time())
+                      selected_sub.end_date = datetime.combine(new_end_date, datetime.min.time())
+                      selected_sub.is_active = new_is_active
+                      session.commit()
+                      st.success("Suscripción actualizada exitosamente.")
+      else:  # This else is correctly associated with the if subscriptions:
+          st.info("No hay suscripciones para editar.")
 
 def analytics_page():
     with get_db() as session:
