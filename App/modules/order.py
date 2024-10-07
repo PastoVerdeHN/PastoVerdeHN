@@ -219,8 +219,8 @@ if st.button("Confirmar pedido"):
       
     st.success(f"*Pedido Procesando⌛* Por favor confirmar el pago para coordinar la entrega de su orden. Numero de pedido: {new_order.id}")
 
-          # Trigger the balloon animation
-          st.balloons()
+# Trigger the balloon animation
+    st.balloons()
 
           # PayPal integration
           paypal_client_id = st.secrets["paypal"]["client_id"]  # Access the PayPal Client ID from Streamlit secrets
