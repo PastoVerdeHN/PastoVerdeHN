@@ -65,7 +65,7 @@ def display_user_orders():
                   # Move the progress display to the bottom
                   display_order_progress(order.status)
                   
-                  st.write("**Nota:** En el checkout, se incluye una caja de madera con los planes de suscripción. One-time setup fee")
+                  st.write("**Nota:** Todos nuestros ©Pasto Verde Boxes vienen listos para usar tan pronto como los recibes. Todos los pedidos vienen en cajas reciclables que puedes simplemente reciclar cuando llegue el nuevo reemplazo. ♻️🐾📦")
   except Exception as e:
       st.error(f"Ocurrió un error al obtener las órdenes: {str(e)}")
   finally:
