@@ -6,9 +6,6 @@ from datetime import datetime, timedelta
 from contextlib import contextmanager
 from .models import SessionLocal, User, Product, Order, Subscription, UserType
 
-# Set page configuration
-st.set_page_config(page_title="E-commerce Dashboard", page_icon="🛍️", layout="wide")
-
 @contextmanager
 def get_db():
     db = SessionLocal()
