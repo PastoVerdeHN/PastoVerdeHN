@@ -1,16 +1,19 @@
-def show_detailed_construction_info():
-    st.warning("🚧 Under Construction 🚧")
-    st.info("""
-    We're currently working on:
-    - Feature A
-    - Feature B
-    - Performance improvements
-    
-    Expected completion: End of next month
-    """)
+import streamlit as st
 
-# Use this instead of the simple banner
-show_detailed_construction_info()
+def show_under_construction_banner():
+    st.warning(
+        "🚧 This page is under construction. Some features may not work as expected. 🚧",
+        icon="🏗️"
+    )
+
+# Use this at the top of your Streamlit app
+show_under_construction_banner()
+
+# Your existing app code goes here
+st.title("My Streamlit App")
+# ... rest of your app ...
+
+
 
 import streamlit as st
 from sqlalchemy.orm import sessionmaker
