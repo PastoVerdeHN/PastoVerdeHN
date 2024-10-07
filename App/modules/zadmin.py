@@ -165,27 +165,7 @@ def products_page():
                         session.commit()
                         st.success("Producto actualizado exitosamente.")
 
-def orders_page():
-  with get_db() as session:
-      st.title("Gestión de Órdenes")
 
-      # Simplified query to test if any orders exist
-      orders = session.query(Order).all()  # Fetch all orders without filters
-      st.write(f"Total de órdenes encontradas: {len(orders)}")
-
-      if orders:
-          order_data = [{
-              "ID": order.id,
-              "Usuario": order.user.name if order.user else "N/A",
-              "Producto/Plan": order.plan_name if order.plan_name else "N/A",
-              "Cantidad": order.quantity,
-              "Total": f"L{order.total_price:.2f}" if order.total_price else "N/A",
-              "Estado": order.status.value.capitalize() if order.status else "N/A",
-              "Fecha": order.created_at.strftime('%Y-%m-%d %H:%M') if order.created_at else "N/A"
-          } for order in orders]
-          st.dataframe(pd.DataFrame(order_data))
-      else:
-          st.info("No se encontraron órdenes.")
 
 def subscriptions_page():
   with get_db() as session:
