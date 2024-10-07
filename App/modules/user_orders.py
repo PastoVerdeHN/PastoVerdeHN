@@ -40,7 +40,7 @@ def display_user_orders():
   session = Session()
   
   try:
-      orders = session.query(Order).filter_by(user_id=st.session_state.user.id).all()
+      orders = session.query(Order).order_by(Order.created_at.desc()).all()
       
       if not orders:
           st.info("No tienes órdenes activas en este momento.")
