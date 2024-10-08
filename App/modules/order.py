@@ -74,7 +74,7 @@ def place_order():
         },
         "Sin Suscripción": {
             "id": "one_time",
-            "price": 999.95,
+            "price": 29.95,
             "features": [
                 "Compra única de alfombra de césped",
                 "Envío gratis",
