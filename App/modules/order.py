@@ -216,29 +216,10 @@ def place_order():
         
         session.commit()
           
-        st.success(f"*Pedido Procesando⏳* Por favor confirmar el pago para coordinar la entrega de su orden. Numero de pedido: {new_order.id}")
+        st.success(f"*Pedido Procesando⌛* Por favor confirmar el pago para coordinar la entrega de su orden. Numero de pedido: {new_order.id}")
 
         # Trigger the balloon animation
         st.balloons()
-
-                # Payment options
-        payment_option = st.radio("Seleccione método de pago:", ["PayPal", "DEPOSITO BANCARIO"])
-
-        if payment_option == "PayPal":
-            # PayPal integration (keep existing code)
-            paypal_client_id = st.secrets["paypal"]["client_id"]
-            # ... [Keep all the existing PayPal integration code] ...
-
-        elif payment_option == "DEPOSITO BANCARIO":
-            st.write("Información para Depósito Bancario:")
-            st.write("Banco: [Nombre del Banco]")
-            st.write("Titular: [Nombre del Titular]")
-            st.write("Número de cuenta: [Número de Cuenta]")
-            st.write("CLABE: [CLABE Interbancaria]")
-            st.write("Monto a depositar: L. {:.2f}".format(total_price))
-            st.write("Por favor, realice el depósito y envíe el comprobante a [correo electrónico] o [número de WhatsApp].")
-
-    session.close()
 
         # PayPal integration
         paypal_client_id = st.secrets["paypal"]["client_id"]  # Access the PayPal Client ID from Streamlit secrets
