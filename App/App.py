@@ -212,12 +212,13 @@ def main():
       st.sidebar.image(image_url, use_column_width=True, caption="© La Naturaleza A Los Pies De Tus Mascota")
 
   else:
-      # Display the new image
-      st.image("https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/PASTO%20VERDE%20BANNER%20HUSKY.jpg", use_column_width=True)
-      
       # Prompt the user to log in
       st.write("Por favor inicie sesión para acceder a los servicios de ©Pasto Verde")
       logging.info("User not authenticated. Displaying login prompt.")
+    
+      # Display the new image
+      st.image("https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/PASTO%20VERDE%20BANNER%20HUSKY.jpg", use_column_width=True)
+      
 
       # Display logo or image in the sidebar
       st.sidebar.markdown("---")
