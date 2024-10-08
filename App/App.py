@@ -102,10 +102,8 @@ def show_policy_banner():
                 font-style: italic;
                 margin-bottom: 15px;
             }
-            .policy-buttons {
-                display: flex;
-                justify-content: center;
-                gap: 10px;
+            .stButton > button {
+                width: 100%;
             }
             </style>
             <div class="policy-banner">
@@ -114,19 +112,16 @@ def show_policy_banner():
                 </div>
                 <img src="https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/refs/heads/main/Privacybanner.png" class="policy-image">
                 <p class="policy-caption">Al hacer clic en Aceptar, usted confirma que ha leído y está de acuerdo con nuestras política de privacidad y cookies.</p>
-                <div class="policy-buttons">
-                    <button id="accept-button" style="background-color: #4CAF50; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Aceptar</button>
-                    <button id="reject-button" style="background-color: #f44336; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Rechazar</button>
-                </div>
             </div>
             """,
             unsafe_allow_html=True
         )
         
-        # Use columns to center the buttons
-        col1, col2, col3 = st.columns([1,2,1])
+        # Use columns to create space between buttons
+        col1, col2, col3, col4 = st.columns([1,2,2,1])
         with col2:
-            accept = st.button("Aceptar", key="accept_policy")
+            accept = st.button("Aceptar", key="accept_policy", type="primary")
+        with col3:
             reject = st.button("Rechazar", key="reject_policy")
         
         if accept:
