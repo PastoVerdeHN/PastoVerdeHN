@@ -201,6 +201,7 @@ def place_order():
             total_price=total_price,
             plan_name=selected_plan,
             delivery_time=delivery_time_frame,
+            delivery_date=delivery_date
             additional_notes=additional_references
         )
         session.add(new_order)
