@@ -55,6 +55,7 @@ class Order(Base):
   product_id = Column(Integer, ForeignKey('products.id'))
   quantity = Column(Integer, nullable=False, default=1)
   date = Column(DateTime, nullable=False, default=datetime.utcnow)
+  delivery_date = Column(DateTime, nullable=False)
   delivery_address = Column(String, nullable=False)
   status = Column(Enum(OrderStatus), nullable=False, default=OrderStatus.pending)
   total_price = Column(Float, nullable=False)
@@ -67,6 +68,7 @@ class Order(Base):
   plan_name = Column(String)
   delivery_time = Column(String)
   additional_notes = Column(String)
+  
 
   def calculate_total_price(self):
       return self.quantity * self.product.price
