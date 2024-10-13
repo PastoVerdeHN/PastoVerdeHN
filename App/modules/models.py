@@ -67,6 +67,7 @@ class Order(Base):
   product = relationship("Product")
   plan_name = Column(String)
   delivery_time = Column(String)
+  phone_number = Column(String, nullable=True)
   additional_notes = Column(String)
   
 
