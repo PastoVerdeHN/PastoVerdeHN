@@ -184,7 +184,7 @@ def orders_page():
               "Total": f"L{order.total_price:.2f}" if order.total_price else "N/A",
               "Estado": order.status.value.capitalize() if order.status else "N/A",
               "Fecha de Creación": order.created_at.strftime('%Y-%m-%d %H:%M') if order.created_at else "N/A",
-              "Fecha de Entrega": order.delivery_date.strftime('%Y-%m-%d') if hasattr(order, 'delivery_date') and order.delivery_date else "N/A",
+              "Fecha de Entrega": order.date.strftime('%Y-%m-%d') if order.date else "N/A",  # Changed from delivery_date to date
               "Horario de Entrega": order.delivery_time if hasattr(order, 'delivery_time') else "N/A",
               "Dirección": order.delivery_address if hasattr(order, 'delivery_address') else "N/A",
               "Referencias": order.additional_notes if hasattr(order, 'additional_notes') else "N/A"
