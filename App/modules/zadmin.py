@@ -169,21 +169,37 @@ def orders_page():
   with get_db() as session:
       st.title("Gestión de Órdenes")
 
-      # Simplified query to test if any orders exist
-      orders = session.query(Order).all()  # Fetch all orders without filters
+      # Fetch all orders without filters
+      orders = session.query(Order).all()
       st.write(f"Total de órdenes encontradas: {len(orders)}")
 
       if orders:
           order_data = [{
               "ID": order.id,
               "Usuario": order.user.name if order.user else "N/A",
+              "Correo": order.user.email if order.user else "N/A",
               "Producto/Plan": order.plan_name if order.plan_name else "N/A",
               "Cantidad": order.quantity,
               "Total": f"L{order.total_price:.2f}" if order.total_price else "N/A",
               "Estado": order.status.value.capitalize() if order.status else "N/A",
-              "Fecha": order.created_at.strftime('%Y-%m-%d %H:%M') if order.created_at else "N/A"
+              "Fecha de Creación": order.created_at.strftime('%Y-%m-%d %H:%M') if order.created_at else "N/A",
+              "Fecha de Entrega": order.delivery_date.strftime('%Y-%m-%d') if hasattr(order, 'delivery_date') and order.delivery_date else "N/A",
+              "Horario de Entrega": order.delivery_time if hasattr(order, 'delivery_time') else "N/A",
+              "Dirección": order.delivery_address if hasattr(order, 'delivery_address') else "N/A",
+              "Referencias": order.additional_notes if hasattr(order, 'additional_notes') else "N/A"
           } for order in orders]
-          st.dataframe(pd.DataFrame(order_data))
+          
+          df = pd.DataFrame(order_data)
+          
+          # Allow sorting and filtering
+          st.dataframe(df, use_container_width=True)
+          
+          # Add export functionality
+          if st.button("Exportar a CSV"):
+              csv = df.to_csv(index=False)
+              b64 = base64.b64encode(csv.encode()).decode()
+              href = f'<a href="data:file/csv;base64,{b64}" download="ordenes.csv">Descargar CSV</a>'
+              st.markdown(href, unsafe_allow_html=True)
       else:
           st.info("No se encontraron órdenes.")
 
