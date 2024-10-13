@@ -178,6 +178,7 @@ def orders_page():
               "ID": order.id,
               "Usuario": order.user.name if order.user else "N/A",
               "Correo": order.user.email if order.user else "N/A",
+              "Teléfono": order.user.phone_number if order.user and hasattr(order.user, 'phone_number') else "N/A",
               "Producto/Plan": order.plan_name if order.plan_name else "N/A",
               "Cantidad": order.quantity,
               "Total": f"L{order.total_price:.2f}" if order.total_price else "N/A",
