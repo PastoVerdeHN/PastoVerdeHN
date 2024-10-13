@@ -165,9 +165,40 @@ def products_page():
                         session.commit()
                         st.success("Producto actualizado exitosamente.")
 
+def update_order_status(order_id, new_status):
+  with get_db() as session:
+      order = session.query(Order).filter(Order.id == order_id).first()
+      if order:
+          order.status = new_status
+          order.updated_at = datetime.utcnow()
+          session.commit()
+          return True
+      return False
+
 def orders_page():
   with get_db() as session:
       st.title("Gestión de Órdenes")
+      orders = session.query(Order).all()
+      
+      for order in orders:
+          with st.expander(f"Orden: {order.id}"):
+              st.write(f"Estado actual: {order.status.value.capitalize()}")
+              new_status = st.selectbox(
+                  "Actualizar estado",
+                  options=[status for status in OrderStatus],
+                  format_func=lambda x: x.value.capitalize(),
+                  key=f"status_{order.id}"
+              )
+              if st.button("Actualizar Estado", key=f"update_{order.id}"):
+                  if new_status != order.status:
+                      update_success = update_order_status(order.id, new_status)
+                      if update_success:
+                          st.success(f"Estado actualizado a {new_status.value.capitalize()}")
+                          st.experimental_rerun()
+                      else:
+                          st.error("Error al actualizar el estado")
+                  else:
+                      st.info("El estado seleccionado es el mismo que el actual")
 
       # Fetch all orders without filters
       orders = session.query(Order).all()
