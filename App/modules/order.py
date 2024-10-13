@@ -202,6 +202,7 @@ def place_order():
             plan_name=selected_plan,
             delivery_time=delivery_time_frame,
             delivery_date=delivery_date,
+            phone_number=user_phone,
             additional_notes=additional_references
         )
         session.add(new_order)
