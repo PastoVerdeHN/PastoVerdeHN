@@ -167,14 +167,6 @@ def products_page():
                         session.commit()
                         st.success("Producto actualizado exitosamente.")
 
-@contextmanager
-def get_db():
-  db = SessionLocal()
-  try:
-      yield db
-  finally:
-      db.close()
-
 def update_order_status(order_id, new_status):
   with get_db() as session:
       order = session.query(Order).filter(Order.id == order_id).first()
