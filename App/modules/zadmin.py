@@ -224,7 +224,6 @@ def orders_page():
                           update_success = update_order_status(order.id, new_status)
                           if update_success:
                               st.success(f"Estado actualizado a {new_status.value.capitalize()}")
-                              st.experimental_rerun()  # Refresh the page to show the updated status
                           else:
                               st.error("Error al actualizar el estado")
                       else:
