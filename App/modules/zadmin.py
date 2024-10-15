@@ -5,6 +5,8 @@ from sqlalchemy import func, or_
 from datetime import datetime, timedelta
 from contextlib import contextmanager
 from modules.models import SessionLocal, User, Product, Order, Subscription, UserType, OrderStatus
+import base64
+
 
 @contextmanager
 def get_db():
@@ -169,42 +171,66 @@ def update_order_status(order_id, new_status):
   with get_db() as session:
       order = session.query(Order).filter(Order.id == order_id).first()
       if order:
-          order.status = new_status
-          order.updated_at = datetime.utcnow()
-          session.commit()
-          return True
+          # Ensure new_status is an instance of OrderStatus
+          if isinstance(new_status, OrderStatus):
+              order.status = new_status
+              order.updated_at = datetime.utcnow()
+              session.commit()
+              return True
+          else:
+              st.error("Invalid status type. Must be an instance of OrderStatus.")
       return False
 
 def orders_page():
   with get_db() as session:
       st.title("Gestión de Órdenes")
-      orders = session.query(Order).all()
       
-      for order in orders:
-          with st.expander(f"Orden: {order.id}"):
-              st.write(f"Estado actual: {order.status.value.capitalize()}")
-              new_status = st.selectbox(
-                  "Actualizar estado",
-                  options=[status for status in OrderStatus],
-                  format_func=lambda x: x.value.capitalize(),
-                  key=f"status_{order.id}"
-              )
-              if st.button("Actualizar Estado", key=f"update_{order.id}"):
-                  if new_status != order.status:
-                      update_success = update_order_status(order.id, new_status)
-                      if update_success:
-                          st.success(f"Estado actualizado a {new_status.value.capitalize()}")
-                          st.experimental_rerun()
-                      else:
-                          st.error("Error al actualizar el estado")
-                  else:
-                      st.info("El estado seleccionado es el mismo que el actual")
-
-      # Fetch all orders without filters
-      orders = session.query(Order).all()
+      # Fetch all orders, ordering by creation date
+      orders = session.query(Order).order_by(Order.created_at.desc()).all()
       st.write(f"Total de órdenes encontradas: {len(orders)}")
-
+      
       if orders:
+          for order in orders:
+              with st.expander(f"Orden ID: {order.id} - Estado: {order.status.value.capitalize()}"):
+                  st.write(f"**Usuario:** {order.user.name if order.user else 'N/A'}")
+                  st.write(f"**Correo:** {order.user.email if order.user else 'N/A'}")
+                  st.write(f"**Teléfono:** {order.phone_number if order.phone_number else 'N/A'}")
+                  st.write(f"**Producto/Plan:** {order.plan_name if order.plan_name else 'N/A'}")
+                  st.write(f"**Cantidad:** {order.quantity}")
+                  st.write(f"**Total:** L{order.total_price:.2f}")
+                  st.write(f"**Fecha de Creación:** {order.created_at.strftime('%Y-%m-%d %H:%M') if order.created_at else 'N/A'}")
+                  st.write(f"**Fecha de Entrega:** {order.delivery_date.strftime('%Y-%m-%d') if order.delivery_date else 'N/A'}")
+                  st.write(f"**Horario de Entrega:** {order.delivery_time if order.delivery_time else 'N/A'}")
+                  st.write(f"**Dirección:** {order.delivery_address if order.delivery_address else 'N/A'}")
+                  st.write(f"**Referencias:** {order.additional_notes if order.additional_notes else 'N/A'}")
+                  st.write("---")
+                  
+                  # Display current status
+                  st.write(f"**Estado actual:** {order.status.value.capitalize()}")
+                  
+                  # Get list of possible statuses
+                  status_options = [status for status in OrderStatus]
+                  
+                  new_status = st.selectbox(
+                      "Actualizar estado",
+                      options=status_options,
+                      format_func=lambda x: x.value.capitalize(),
+                      index=status_options.index(order.status),
+                      key=f"status_select_{order.id}"
+                  )
+                  
+                  if st.button("Actualizar Estado", key=f"update_status_{order.id}"):
+                      if new_status != order.status:
+                          update_success = update_order_status(order.id, new_status)
+                          if update_success:
+                              st.success(f"Estado actualizado a {new_status.value.capitalize()}")
+                              st.experimental_rerun()  # Refresh the page to show the updated status
+                          else:
+                              st.error("Error al actualizar el estado")
+                      else:
+                          st.info("El estado seleccionado es el mismo que el actual")
+          
+          # Display orders in a dataframe
           order_data = [{
               "ID": order.id,
               "Usuario": order.user.name if order.user else "N/A",
@@ -215,10 +241,10 @@ def orders_page():
               "Total": f"L{order.total_price:.2f}" if order.total_price else "N/A",
               "Estado": order.status.value.capitalize() if order.status else "N/A",
               "Fecha de Creación": order.created_at.strftime('%Y-%m-%d %H:%M') if order.created_at else "N/A",
-              "Fecha de Entrega": order.date.strftime('%Y-%m-%d') if order.date else "N/A",  # Changed from delivery_date to date
-              "Horario de Entrega": order.delivery_time if hasattr(order, 'delivery_time') else "N/A",
-              "Dirección": order.delivery_address if hasattr(order, 'delivery_address') else "N/A",
-              "Referencias": order.additional_notes if hasattr(order, 'additional_notes') else "N/A"
+              "Fecha de Entrega": order.delivery_date.strftime('%Y-%m-%d') if order.delivery_date else "N/A",
+              "Horario de Entrega": order.delivery_time if order.delivery_time else "N/A",
+              "Dirección": order.delivery_address if order.delivery_address else "N/A",
+              "Referencias": order.additional_notes if order.additional_notes else "N/A"
           } for order in orders]
           
           df = pd.DataFrame(order_data)
