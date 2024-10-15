@@ -167,11 +167,18 @@ def products_page():
                         session.commit()
                         st.success("Producto actualizado exitosamente.")
 
+@contextmanager
+def get_db():
+  db = SessionLocal()
+  try:
+      yield db
+  finally:
+      db.close()
+
 def update_order_status(order_id, new_status):
   with get_db() as session:
       order = session.query(Order).filter(Order.id == order_id).first()
       if order:
-          # Ensure new_status is an instance of OrderStatus
           if isinstance(new_status, OrderStatus):
               order.status = new_status
               order.updated_at = datetime.utcnow()
@@ -224,6 +231,8 @@ def orders_page():
                           update_success = update_order_status(order.id, new_status)
                           if update_success:
                               st.success(f"Estado actualizado a {new_status.value.capitalize()}")
+                              # Use query parameters to force a page reload
+                              st.experimental_set_query_params(updated_order=order.id)
                           else:
                               st.error("Error al actualizar el estado")
                       else:
