@@ -296,6 +296,12 @@ def subscriptions_page():
       else:  # This else is correctly associated with the if subscriptions:
           st.info("No hay suscripciones para editar.")
 
+from sqlalchemy import func, distinct
+import streamlit as st
+import pandas as pd
+from datetime import datetime, timedelta
+import plotly.express as px
+
 def analytics_page():
     with get_db() as session:
         st.title("Analíticas")
@@ -390,8 +396,8 @@ def analytics_page():
             # 4. Mapa de Calor de Órdenes (inspired by the time-based charts in YouTube Dashboard)
             st.subheader("Mapa de Calor de Órdenes")
             heatmap_data = session.query(
-                func.date_part('dow', Order.created_at).label('Día de la Semana'),
-                func.date_part('hour', Order.created_at).label('Hora'),
+                func.extract('dow', Order.created_at).label('Día de la Semana'),
+                func.extract('hour', Order.created_at).label('Hora'),
                 func.count(Order.id).label('Cantidad de Órdenes')
             ).filter(Order.created_at.between(start_datetime, end_datetime)
             ).group_by('Día de la Semana', 'Hora').all()
