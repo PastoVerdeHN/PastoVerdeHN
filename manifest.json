@@ -1,0 +1,20 @@
+{
+  "name": "Pasto Verde Honduras",
+  "short_name": "Pasto Verde",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4CAF50",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/0e90c711cd10a26c7f992e3cc3e61c71b22316ff/Favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/PastoVerdeHN/PastoVerdeHN/0e90c711cd10a26c7f992e3cc3e61c71b22316ff/Favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
