@@ -181,82 +181,85 @@ def update_order_status(order_id, new_status):
       return False
 
 def orders_page():
-    with get_db() as session:
-        st.title("Gestión de Órdenes")
-        
-        start_date, end_date = date_range_selector()
-        
-        orders = session.query(Order).filter(
-            Order.created_at.between(start_date, end_date)
-        ).order_by(Order.created_at.desc()).all()
-        st.write(f"Total de órdenes encontradas: {len(orders)}")
-        
-        if orders:
-            for order in orders:
-                with st.expander(f"Orden ID: {order.id} - Estado: {order.status.value.capitalize()}"):
-                    st.write(f"**Usuario:** {order.user.name if order.user else 'N/A'}")
-                    st.write(f"**Correo:** {order.user.email if order.user else 'N/A'}")
-                    st.write(f"**Teléfono:** {order.phone_number if order.phone_number else 'N/A'}")
-                    st.write(f"**Producto/Plan:** {order.plan_name if order.plan_name else 'N/A'}")
-                    st.write(f"**Cantidad:** {order.quantity}")
-                    st.write(f"**Total:** L{order.total_price:.2f}")
-                    st.write(f"**Fecha de Creación:** {order.created_at.strftime('%Y-%m-%d %H:%M') if order.created_at else 'N/A'}")
-                    st.write(f"**Fecha de Entrega:** {order.delivery_date.strftime('%Y-%m-%d') if order.delivery_date else 'N/A'}")
-                    st.write(f"**Horario de Entrega:** {order.delivery_time if order.delivery_time else 'N/A'}")
-                    st.write(f"**Dirección:** {order.delivery_address if order.delivery_address else 'N/A'}")
-                    st.write(f"**Referencias:** {order.additional_notes if order.additional_notes else 'N/A'}")
-                    st.write("---")
-                    
-                    st.write(f"**Estado actual:** {order.status.value.capitalize()}")
-                    
-                    status_options = [status for status in OrderStatus]
-                    
-                    new_status = st.selectbox(
-                        "Actualizar estado",
-                        options=status_options,
-                        format_func=lambda x: x.value.capitalize(),
-                        index=status_options.index(order.status),
-                        key=f"status_select_{order.id}"
-                    )
-                    
-                    if st.button("Actualizar Estado", key=f"update_status_{order.id}"):
-                        if new_status != order.status:
-                            update_success = update_order_status(order.id, new_status)
-                            if update_success:
-                                st.success(f"Estado actualizado a {new_status.value.capitalize()}")
-                                st.experimental_set_query_params(updated_order=order.id)
-                            else:
-                                st.error("Error al actualizar el estado")
-                        else:
-                            st.info("El estado seleccionado es el mismo que el actual")
-            
-            order_data = [{
-                "ID": order.id,
-                "Usuario": order.user.name if order.user else "N/A",
-                "Correo": order.user.email if order.user else "N/A",
-                "Teléfono": order.phone_number if order.phone_number else "N/A",
-                "Producto/Plan": order.plan_name if order.plan_name else "N/A",
-                "Cantidad": order.quantity,
-                "Total": f"L{order.total_price:.2f}" if order.total_price else "N/A",
-                "Estado": order.status.value.capitalize() if order.status else "N/A",
-                "Fecha de Creación": order.created_at.strftime('%Y-%m-%d %H:%M') if order.created_at else "N/A",
-                "Fecha de Entrega": order.delivery_date.strftime('%Y-%m-%d') if order.delivery_date else "N/A",
-                "Horario de Entrega": order.delivery_time if order.delivery_time else "N/A",
-                "Dirección": order.delivery_address if order.delivery_address else "N/A",
-                "Referencias": order.additional_notes if order.additional_notes else "N/A"
-            } for order in orders]
-            
-            df = pd.DataFrame(order_data)
-            
-            st.dataframe(df, use_container_width=True)
-            
-            if st.button("Exportar a CSV"):
-                csv = df.to_csv(index=False)
-                b64 = base64.b64encode(csv.encode()).decode()
-                href = f'<a href="data:file/csv;base64,{b64}" download="ordenes.csv">Descargar CSV</a>'
-                st.markdown(href, unsafe_allow_html=True)
-        else:
-            st.info("No se encontraron órdenes en el período seleccionado.")
+  with get_db() as session:
+      st.title("Gestión de Órdenes")
+      
+      # Fetch all orders, ordering by creation date
+      orders = session.query(Order).order_by(Order.created_at.desc()).all()
+      st.write(f"Total de órdenes encontradas: {len(orders)}")
+      
+      if orders:
+          for order in orders:
+              with st.expander(f"Orden ID: {order.id} - Estado: {order.status.value.capitalize()}"):
+                  st.write(f"**Usuario:** {order.user.name if order.user else 'N/A'}")
+                  st.write(f"**Correo:** {order.user.email if order.user else 'N/A'}")
+                  st.write(f"**Teléfono:** {order.phone_number if order.phone_number else 'N/A'}")
+                  st.write(f"**Producto/Plan:** {order.plan_name if order.plan_name else 'N/A'}")
+                  st.write(f"**Cantidad:** {order.quantity}")
+                  st.write(f"**Total:** L{order.total_price:.2f}")
+                  st.write(f"**Fecha de Creación:** {order.created_at.strftime('%Y-%m-%d %H:%M') if order.created_at else 'N/A'}")
+                  st.write(f"**Fecha de Entrega:** {order.delivery_date.strftime('%Y-%m-%d') if order.delivery_date else 'N/A'}")
+                  st.write(f"**Horario de Entrega:** {order.delivery_time if order.delivery_time else 'N/A'}")
+                  st.write(f"**Dirección:** {order.delivery_address if order.delivery_address else 'N/A'}")
+                  st.write(f"**Referencias:** {order.additional_notes if order.additional_notes else 'N/A'}")
+                  st.write("---")
+                  
+                  # Display current status
+                  st.write(f"**Estado actual:** {order.status.value.capitalize()}")
+                  
+                  # Get list of possible statuses
+                  status_options = [status for status in OrderStatus]
+                  
+                  new_status = st.selectbox(
+                      "Actualizar estado",
+                      options=status_options,
+                      format_func=lambda x: x.value.capitalize(),
+                      index=status_options.index(order.status),
+                      key=f"status_select_{order.id}"
+                  )
+                  
+                  if st.button("Actualizar Estado", key=f"update_status_{order.id}"):
+                      if new_status != order.status:
+                          update_success = update_order_status(order.id, new_status)
+                          if update_success:
+                              st.success(f"Estado actualizado a {new_status.value.capitalize()}")
+                              # Use query parameters to force a page reload
+                              st.experimental_set_query_params(updated_order=order.id)
+                          else:
+                              st.error("Error al actualizar el estado")
+                      else:
+                          st.info("El estado seleccionado es el mismo que el actual")
+          
+          # Display orders in a dataframe
+          order_data = [{
+              "ID": order.id,
+              "Usuario": order.user.name if order.user else "N/A",
+              "Correo": order.user.email if order.user else "N/A",
+              "Teléfono": order.phone_number if order.phone_number else "N/A",
+              "Producto/Plan": order.plan_name if order.plan_name else "N/A",
+              "Cantidad": order.quantity,
+              "Total": f"L{order.total_price:.2f}" if order.total_price else "N/A",
+              "Estado": order.status.value.capitalize() if order.status else "N/A",
+              "Fecha de Creación": order.created_at.strftime('%Y-%m-%d %H:%M') if order.created_at else "N/A",
+              "Fecha de Entrega": order.delivery_date.strftime('%Y-%m-%d') if order.delivery_date else "N/A",
+              "Horario de Entrega": order.delivery_time if order.delivery_time else "N/A",
+              "Dirección": order.delivery_address if order.delivery_address else "N/A",
+              "Referencias": order.additional_notes if order.additional_notes else "N/A"
+          } for order in orders]
+          
+          df = pd.DataFrame(order_data)
+          
+          # Allow sorting and filtering
+          st.dataframe(df, use_container_width=True)
+          
+          # Add export functionality
+          if st.button("Exportar a CSV"):
+              csv = df.to_csv(index=False)
+              b64 = base64.b64encode(csv.encode()).decode()
+              href = f'<a href="data:file/csv;base64,{b64}" download="ordenes.csv">Descargar CSV</a>'
+              st.markdown(href, unsafe_allow_html=True)
+      else:
+          st.info("No se encontraron órdenes.")
 
 def subscriptions_page():
   with get_db() as session:
@@ -296,17 +299,11 @@ def subscriptions_page():
       else:  # This else is correctly associated with the if subscriptions:
           st.info("No hay suscripciones para editar.")
 
-from sqlalchemy import func, distinct
-import streamlit as st
-import pandas as pd
-from datetime import datetime, timedelta
-import plotly.express as px
-
 def analytics_page():
     with get_db() as session:
         st.title("Analíticas")
 
-        # Existing date range selection
+        # Selección de rango de fechas
         st.subheader("Seleccione el Rango de Fechas para el Análisis")
         col1, col2 = st.columns(2)
         with col1:
@@ -318,7 +315,6 @@ def analytics_page():
             start_datetime = datetime.combine(start_date, datetime.min.time())
             end_datetime = datetime.combine(end_date, datetime.max.time())
 
-            # Existing analytics (keep as is)
             # Ingresos a lo largo del tiempo
             sales_data = session.query(
                 func.date(Order.created_at).label('Fecha'),
@@ -335,88 +331,81 @@ def analytics_page():
                 title='Ingresos Totales a lo Largo del Tiempo',
                 labels={'Ingresos Totales': 'Ingresos Totales', 'Fecha': 'Fecha'}
             )
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, key=f"analytics_sales_over_time_{datetime.now().timestamp()}")  # Unique key
 
-            # Keep other existing analytics (Órdenes por Colonia, Órdenes por Estado, etc.)
-            # ...
-
-            # New analytics inspired by YouTube Dashboard
-
-            # 1. Métricas clave (similar to All-Time Statistics in YouTube Dashboard)
-            st.subheader("Métricas Clave")
-            col1, col2, col3, col4 = st.columns(4)
-
-            total_orders = session.query(func.count(Order.id)).filter(Order.created_at.between(start_datetime, end_datetime)).scalar()
-            total_revenue = session.query(func.sum(Order.total_price)).filter(Order.created_at.between(start_datetime, end_datetime)).scalar()
-            avg_order_value = total_revenue / total_orders if total_orders else 0
-            total_customers = session.query(func.count(distinct(Order.user_id))).filter(Order.created_at.between(start_datetime, end_datetime)).scalar()
-
-            col1.metric("Total de Órdenes", f"{total_orders:,}")
-            col2.metric("Ingresos Totales", f"${total_revenue:,.2f}")
-            col3.metric("Valor Promedio de Orden", f"${avg_order_value:.2f}")
-            col4.metric("Clientes Únicos", f"{total_customers:,}")
-
-            # 2. Tendencias semanales (similar to Weekly data in YouTube Dashboard)
-            st.subheader("Tendencias Semanales")
-            weekly_data = session.query(
-                func.date_trunc('week', Order.created_at).label('Semana'),
-                func.count(Order.id).label('Órdenes'),
-                func.sum(Order.total_price).label('Ingresos')
+            # Órdenes por Colonia
+            st.subheader("Órdenes por Colonia")
+            colonia_data = session.query(
+                func.substr(Order.delivery_address, 1, func.instr(Order.delivery_address, ',') - 1).label('Colonia'),
+                func.count(Order.id).label('Cantidad')
             ).filter(Order.created_at.between(start_datetime, end_datetime)
-            ).group_by(func.date_trunc('week', Order.created_at)).all()
+            ).group_by(func.substr(Order.delivery_address, 1, func.instr(Order.delivery_address, ',') - 1)).all()
 
-            weekly_df = pd.DataFrame(weekly_data, columns=['Semana', 'Órdenes', 'Ingresos'])
-            fig = px.line(
-                weekly_df,
-                x='Semana',
-                y=['Órdenes', 'Ingresos'],
-                title='Tendencias Semanales de Órdenes e Ingresos'
-            )
-            st.plotly_chart(fig, use_container_width=True)
-
-            # 3. Distribución de Productos (similar to Top Products in YouTube Dashboard)
-            st.subheader("Distribución de Productos")
-            product_data = session.query(
-                Order.plan_name.label('Producto'),
-                func.count(Order.id).label('Cantidad'),
-                func.sum(Order.total_price).label('Ingresos')
-            ).filter(Order.created_at.between(start_datetime, end_datetime)
-            ).group_by(Order.plan_name).order_by(func.sum(Order.total_price).desc()).limit(10).all()
-
-            product_df = pd.DataFrame(product_data, columns=['Producto', 'Cantidad', 'Ingresos'])
+            colonia_df = pd.DataFrame(colonia_data, columns=['Colonia', 'Cantidad'])
+            colonia_df = colonia_df[colonia_df['Colonia'].notna() & (colonia_df['Colonia'] != "")]
             fig = px.bar(
-                product_df,
-                x='Producto',
-                y=['Cantidad', 'Ingresos'],
-                title='Top 10 Productos por Cantidad e Ingresos',
-                barmode='group'
+                colonia_df,
+                x='Colonia',
+                y='Cantidad',
+                title='Órdenes por Colonia'
             )
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, key=f"analytics_orders_by_colonia_{datetime.now().timestamp()}")  # Unique key
 
-            # 4. Mapa de Calor de Órdenes (inspired by the time-based charts in YouTube Dashboard)
-            st.subheader("Mapa de Calor de Órdenes")
-            heatmap_data = session.query(
-                func.date_part('dow', Order.created_at).label('Día de la Semana'),
-                func.date_part('hour', Order.created_at).label('Hora'),
-                func.count(Order.id).label('Cantidad de Órdenes')
+            # Órdenes por Estado
+            st.subheader("Órdenes por Estado")
+            orders_by_status = session.query(
+                Order.status,
+                func.count(Order.id).label('Cantidad')
             ).filter(Order.created_at.between(start_datetime, end_datetime)
-            ).group_by('Día de la Semana', 'Hora').all()
+            ).group_by(Order.status).all()
 
-            heatmap_df = pd.DataFrame(heatmap_data, columns=['Día de la Semana', 'Hora', 'Cantidad de Órdenes'])
-            heatmap_df = heatmap_df.pivot(index='Hora', columns='Día de la Semana', values='Cantidad de Órdenes')
-            
-            fig = px.imshow(
-                heatmap_df,
-                labels=dict(x="Día de la Semana", y="Hora del Día", color="Cantidad de Órdenes"),
-                x=['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'],
-                y=[f"{i:02d}:00" for i in range(24)],
-                title="Mapa de Calor de Órdenes por Día y Hora"
+            status_df = pd.DataFrame(orders_by_status, columns=['Estado', 'Cantidad'])
+            status_df['Estado'] = status_df['Estado'].apply(lambda x: x.value.capitalize())
+            fig = px.pie(
+                status_df,
+                names='Estado',
+                values='Cantidad',
+                title='Distribución de Órdenes por Estado'
             )
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, key=f"analytics_orders_by_status_{datetime.now().timestamp()}")  # Unique key
 
+            # Productos/Planes Más Vendidos
+            st.subheader("Productos/Planes Más Vendidos")
+            top_products_data = session.query(
+                Order.plan_name.label('Producto'),
+                func.count(Order.id).label('Cantidad Vendida')
+            ).filter(Order.created_at.between(start_datetime, end_datetime)
+            ).group_by(Order.plan_name).order_by(func.count(Order.id).desc()).all()
+
+            top_products_df = pd.DataFrame(top_products_data, columns=['Producto', 'Cantidad Vendida'])
+            fig = px.bar(
+                top_products_df,
+                x='Producto',
+                y='Cantidad Vendida',
+                title='Top Productos/Planes'
+            )
+            st.plotly_chart(fig, key=f"analytics_top_products_{datetime.now().timestamp()}")  # Unique key
+
+            # Demografía por Colonia
+            st.subheader("Demografía de Clientes por Colonia")
+            demographics_data = session.query(
+                func.substr(User.address, 1, func.instr(User.address, ',') - 1).label('Colonia'),
+                func.count(User.id).label('Cantidad de Clientes')
+            ).join(Order, Order.user_id == User.id
+            ).filter(Order.created_at.between(start_datetime, end_datetime)
+            ).group_by(func.substr(User.address, 1, func.instr(User.address, ',') - 1)).all()
+
+            demographics_df = pd.DataFrame(demographics_data, columns=['Colonia', 'Cantidad de Clientes'])
+            demographics_df = demographics_df[demographics_df['Colonia'].notna() & (demographics_df['Colonia'] != "")]
+            fig = px.bar(
+                demographics_df,
+                x='Colonia',
+                y='Cantidad de Clientes',
+                title='Cantidad de Clientes por Colonia'
+            )
+            st.plotly_chart(fig, key=f"analytics_demographics_by_colonia_{datetime.now().timestamp()}")  # Unique key
         else:
             st.warning("Por favor, seleccione un rango de fechas válido.")
-
 
 # Routing de páginas
 if page == "Resumen":
