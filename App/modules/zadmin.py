@@ -318,19 +318,54 @@ def analytics_page():
             start_datetime = datetime.combine(start_date, datetime.min.time())
             end_datetime = datetime.combine(end_date, datetime.max.time())
 
-            # ... (keep existing code for other analytics)
+            # Existing analytics (keep as is)
+            # Ingresos a lo largo del tiempo
+            sales_data = session.query(
+                func.date(Order.created_at).label('Fecha'),
+                func.sum(Order.total_price).label('Ingresos Totales')
+            ).filter(Order.created_at.between(start_datetime, end_datetime)
+            ).group_by(func.date(Order.created_at)).all()
 
-            # 2. Tendencias semanales (updated for SQLite compatibility)
+            sales_df = pd.DataFrame(sales_data, columns=['Fecha', 'Ingresos Totales'])
+            st.subheader("Ingresos a lo Largo del Tiempo")
+            fig = px.line(
+                sales_df,
+                x='Fecha',
+                y='Ingresos Totales',
+                title='Ingresos Totales a lo Largo del Tiempo',
+                labels={'Ingresos Totales': 'Ingresos Totales', 'Fecha': 'Fecha'}
+            )
+            st.plotly_chart(fig, use_container_width=True)
+
+            # Keep other existing analytics (Órdenes por Colonia, Órdenes por Estado, etc.)
+            # ...
+
+            # New analytics inspired by YouTube Dashboard
+
+            # 1. Métricas clave (similar to All-Time Statistics in YouTube Dashboard)
+            st.subheader("Métricas Clave")
+            col1, col2, col3, col4 = st.columns(4)
+
+            total_orders = session.query(func.count(Order.id)).filter(Order.created_at.between(start_datetime, end_datetime)).scalar()
+            total_revenue = session.query(func.sum(Order.total_price)).filter(Order.created_at.between(start_datetime, end_datetime)).scalar()
+            avg_order_value = total_revenue / total_orders if total_orders else 0
+            total_customers = session.query(func.count(distinct(Order.user_id))).filter(Order.created_at.between(start_datetime, end_datetime)).scalar()
+
+            col1.metric("Total de Órdenes", f"{total_orders:,}")
+            col2.metric("Ingresos Totales", f"${total_revenue:,.2f}")
+            col3.metric("Valor Promedio de Orden", f"${avg_order_value:.2f}")
+            col4.metric("Clientes Únicos", f"{total_customers:,}")
+
+            # 2. Tendencias semanales (similar to Weekly data in YouTube Dashboard)
             st.subheader("Tendencias Semanales")
             weekly_data = session.query(
-                func.strftime('%Y-%W', Order.created_at).label('Semana'),
+                func.date_trunc('week', Order.created_at).label('Semana'),
                 func.count(Order.id).label('Órdenes'),
                 func.sum(Order.total_price).label('Ingresos')
             ).filter(Order.created_at.between(start_datetime, end_datetime)
-            ).group_by('Semana').order_by('Semana').all()
+            ).group_by(func.date_trunc('week', Order.created_at)).all()
 
             weekly_df = pd.DataFrame(weekly_data, columns=['Semana', 'Órdenes', 'Ingresos'])
-            weekly_df['Semana'] = pd.to_datetime(weekly_df['Semana'].apply(lambda x: f'{x}-1'), format='%Y-%W-%w')
             fig = px.line(
                 weekly_df,
                 x='Semana',
@@ -339,13 +374,30 @@ def analytics_page():
             )
             st.plotly_chart(fig, use_container_width=True)
 
-            # ... (keep existing code for other analytics)
+            # 3. Distribución de Productos (similar to Top Products in YouTube Dashboard)
+            st.subheader("Distribución de Productos")
+            product_data = session.query(
+                Order.plan_name.label('Producto'),
+                func.count(Order.id).label('Cantidad'),
+                func.sum(Order.total_price).label('Ingresos')
+            ).filter(Order.created_at.between(start_datetime, end_datetime)
+            ).group_by(Order.plan_name).order_by(func.sum(Order.total_price).desc()).limit(10).all()
 
-            # 4. Mapa de Calor de Órdenes (updated for SQLite compatibility)
+            product_df = pd.DataFrame(product_data, columns=['Producto', 'Cantidad', 'Ingresos'])
+            fig = px.bar(
+                product_df,
+                x='Producto',
+                y=['Cantidad', 'Ingresos'],
+                title='Top 10 Productos por Cantidad e Ingresos',
+                barmode='group'
+            )
+            st.plotly_chart(fig, use_container_width=True)
+
+            # 4. Mapa de Calor de Órdenes (inspired by the time-based charts in YouTube Dashboard)
             st.subheader("Mapa de Calor de Órdenes")
             heatmap_data = session.query(
-                func.cast(func.strftime('%w', Order.created_at), Integer).label('Día de la Semana'),
-                func.cast(func.strftime('%H', Order.created_at), Integer).label('Hora'),
+                func.date_part('dow', Order.created_at).label('Día de la Semana'),
+                func.date_part('hour', Order.created_at).label('Hora'),
                 func.count(Order.id).label('Cantidad de Órdenes')
             ).filter(Order.created_at.between(start_datetime, end_datetime)
             ).group_by('Día de la Semana', 'Hora').all()
@@ -356,7 +408,7 @@ def analytics_page():
             fig = px.imshow(
                 heatmap_df,
                 labels=dict(x="Día de la Semana", y="Hora del Día", color="Cantidad de Órdenes"),
-                x=['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                x=['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'],
                 y=[f"{i:02d}:00" for i in range(24)],
                 title="Mapa de Calor de Órdenes por Día y Hora"
             )
@@ -364,6 +416,8 @@ def analytics_page():
 
         else:
             st.warning("Por favor, seleccione un rango de fechas válido.")
+
+
 # Routing de páginas
 if page == "Resumen":
     overview_page()
