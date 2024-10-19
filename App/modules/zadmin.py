@@ -181,85 +181,82 @@ def update_order_status(order_id, new_status):
       return False
 
 def orders_page():
-  with get_db() as session:
-      st.title("Gestión de Órdenes")
-      
-      # Fetch all orders, ordering by creation date
-      orders = session.query(Order).order_by(Order.created_at.desc()).all()
-      st.write(f"Total de órdenes encontradas: {len(orders)}")
-      
-      if orders:
-          for order in orders:
-              with st.expander(f"Orden ID: {order.id} - Estado: {order.status.value.capitalize()}"):
-                  st.write(f"**Usuario:** {order.user.name if order.user else 'N/A'}")
-                  st.write(f"**Correo:** {order.user.email if order.user else 'N/A'}")
-                  st.write(f"**Teléfono:** {order.phone_number if order.phone_number else 'N/A'}")
-                  st.write(f"**Producto/Plan:** {order.plan_name if order.plan_name else 'N/A'}")
-                  st.write(f"**Cantidad:** {order.quantity}")
-                  st.write(f"**Total:** L{order.total_price:.2f}")
-                  st.write(f"**Fecha de Creación:** {order.created_at.strftime('%Y-%m-%d %H:%M') if order.created_at else 'N/A'}")
-                  st.write(f"**Fecha de Entrega:** {order.delivery_date.strftime('%Y-%m-%d') if order.delivery_date else 'N/A'}")
-                  st.write(f"**Horario de Entrega:** {order.delivery_time if order.delivery_time else 'N/A'}")
-                  st.write(f"**Dirección:** {order.delivery_address if order.delivery_address else 'N/A'}")
-                  st.write(f"**Referencias:** {order.additional_notes if order.additional_notes else 'N/A'}")
-                  st.write("---")
-                  
-                  # Display current status
-                  st.write(f"**Estado actual:** {order.status.value.capitalize()}")
-                  
-                  # Get list of possible statuses
-                  status_options = [status for status in OrderStatus]
-                  
-                  new_status = st.selectbox(
-                      "Actualizar estado",
-                      options=status_options,
-                      format_func=lambda x: x.value.capitalize(),
-                      index=status_options.index(order.status),
-                      key=f"status_select_{order.id}"
-                  )
-                  
-                  if st.button("Actualizar Estado", key=f"update_status_{order.id}"):
-                      if new_status != order.status:
-                          update_success = update_order_status(order.id, new_status)
-                          if update_success:
-                              st.success(f"Estado actualizado a {new_status.value.capitalize()}")
-                              # Use query parameters to force a page reload
-                              st.experimental_set_query_params(updated_order=order.id)
-                          else:
-                              st.error("Error al actualizar el estado")
-                      else:
-                          st.info("El estado seleccionado es el mismo que el actual")
-          
-          # Display orders in a dataframe
-          order_data = [{
-              "ID": order.id,
-              "Usuario": order.user.name if order.user else "N/A",
-              "Correo": order.user.email if order.user else "N/A",
-              "Teléfono": order.phone_number if order.phone_number else "N/A",
-              "Producto/Plan": order.plan_name if order.plan_name else "N/A",
-              "Cantidad": order.quantity,
-              "Total": f"L{order.total_price:.2f}" if order.total_price else "N/A",
-              "Estado": order.status.value.capitalize() if order.status else "N/A",
-              "Fecha de Creación": order.created_at.strftime('%Y-%m-%d %H:%M') if order.created_at else "N/A",
-              "Fecha de Entrega": order.delivery_date.strftime('%Y-%m-%d') if order.delivery_date else "N/A",
-              "Horario de Entrega": order.delivery_time if order.delivery_time else "N/A",
-              "Dirección": order.delivery_address if order.delivery_address else "N/A",
-              "Referencias": order.additional_notes if order.additional_notes else "N/A"
-          } for order in orders]
-          
-          df = pd.DataFrame(order_data)
-          
-          # Allow sorting and filtering
-          st.dataframe(df, use_container_width=True)
-          
-          # Add export functionality
-          if st.button("Exportar a CSV"):
-              csv = df.to_csv(index=False)
-              b64 = base64.b64encode(csv.encode()).decode()
-              href = f'<a href="data:file/csv;base64,{b64}" download="ordenes.csv">Descargar CSV</a>'
-              st.markdown(href, unsafe_allow_html=True)
-      else:
-          st.info("No se encontraron órdenes.")
+    with get_db() as session:
+        st.title("Gestión de Órdenes")
+        
+        start_date, end_date = date_range_selector()
+        
+        orders = session.query(Order).filter(
+            Order.created_at.between(start_date, end_date)
+        ).order_by(Order.created_at.desc()).all()
+        st.write(f"Total de órdenes encontradas: {len(orders)}")
+        
+        if orders:
+            for order in orders:
+                with st.expander(f"Orden ID: {order.id} - Estado: {order.status.value.capitalize()}"):
+                    st.write(f"**Usuario:** {order.user.name if order.user else 'N/A'}")
+                    st.write(f"**Correo:** {order.user.email if order.user else 'N/A'}")
+                    st.write(f"**Teléfono:** {order.phone_number if order.phone_number else 'N/A'}")
+                    st.write(f"**Producto/Plan:** {order.plan_name if order.plan_name else 'N/A'}")
+                    st.write(f"**Cantidad:** {order.quantity}")
+                    st.write(f"**Total:** L{order.total_price:.2f}")
+                    st.write(f"**Fecha de Creación:** {order.created_at.strftime('%Y-%m-%d %H:%M') if order.created_at else 'N/A'}")
+                    st.write(f"**Fecha de Entrega:** {order.delivery_date.strftime('%Y-%m-%d') if order.delivery_date else 'N/A'}")
+                    st.write(f"**Horario de Entrega:** {order.delivery_time if order.delivery_time else 'N/A'}")
+                    st.write(f"**Dirección:** {order.delivery_address if order.delivery_address else 'N/A'}")
+                    st.write(f"**Referencias:** {order.additional_notes if order.additional_notes else 'N/A'}")
+                    st.write("---")
+                    
+                    st.write(f"**Estado actual:** {order.status.value.capitalize()}")
+                    
+                    status_options = [status for status in OrderStatus]
+                    
+                    new_status = st.selectbox(
+                        "Actualizar estado",
+                        options=status_options,
+                        format_func=lambda x: x.value.capitalize(),
+                        index=status_options.index(order.status),
+                        key=f"status_select_{order.id}"
+                    )
+                    
+                    if st.button("Actualizar Estado", key=f"update_status_{order.id}"):
+                        if new_status != order.status:
+                            update_success = update_order_status(order.id, new_status)
+                            if update_success:
+                                st.success(f"Estado actualizado a {new_status.value.capitalize()}")
+                                st.experimental_set_query_params(updated_order=order.id)
+                            else:
+                                st.error("Error al actualizar el estado")
+                        else:
+                            st.info("El estado seleccionado es el mismo que el actual")
+            
+            order_data = [{
+                "ID": order.id,
+                "Usuario": order.user.name if order.user else "N/A",
+                "Correo": order.user.email if order.user else "N/A",
+                "Teléfono": order.phone_number if order.phone_number else "N/A",
+                "Producto/Plan": order.plan_name if order.plan_name else "N/A",
+                "Cantidad": order.quantity,
+                "Total": f"L{order.total_price:.2f}" if order.total_price else "N/A",
+                "Estado": order.status.value.capitalize() if order.status else "N/A",
+                "Fecha de Creación": order.created_at.strftime('%Y-%m-%d %H:%M') if order.created_at else "N/A",
+                "Fecha de Entrega": order.delivery_date.strftime('%Y-%m-%d') if order.delivery_date else "N/A",
+                "Horario de Entrega": order.delivery_time if order.delivery_time else "N/A",
+                "Dirección": order.delivery_address if order.delivery_address else "N/A",
+                "Referencias": order.additional_notes if order.additional_notes else "N/A"
+            } for order in orders]
+            
+            df = pd.DataFrame(order_data)
+            
+            st.dataframe(df, use_container_width=True)
+            
+            if st.button("Exportar a CSV"):
+                csv = df.to_csv(index=False)
+                b64 = base64.b64encode(csv.encode()).decode()
+                href = f'<a href="data:file/csv;base64,{b64}" download="ordenes.csv">Descargar CSV</a>'
+                st.markdown(href, unsafe_allow_html=True)
+        else:
+            st.info("No se encontraron órdenes en el período seleccionado.")
 
 def subscriptions_page():
   with get_db() as session:
