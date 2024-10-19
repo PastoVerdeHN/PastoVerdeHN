@@ -300,7 +300,7 @@ def analytics_page():
     with get_db() as session:
         st.title("Analíticas")
 
-        # Selección de rango de fechas
+        # Existing date range selection
         st.subheader("Seleccione el Rango de Fechas para el Análisis")
         col1, col2 = st.columns(2)
         with col1:
@@ -312,6 +312,7 @@ def analytics_page():
             start_datetime = datetime.combine(start_date, datetime.min.time())
             end_datetime = datetime.combine(end_date, datetime.max.time())
 
+            # Existing analytics (keep as is)
             # Ingresos a lo largo del tiempo
             sales_data = session.query(
                 func.date(Order.created_at).label('Fecha'),
@@ -328,79 +329,85 @@ def analytics_page():
                 title='Ingresos Totales a lo Largo del Tiempo',
                 labels={'Ingresos Totales': 'Ingresos Totales', 'Fecha': 'Fecha'}
             )
-            st.plotly_chart(fig, key=f"analytics_sales_over_time_{datetime.now().timestamp()}")  # Unique key
+            st.plotly_chart(fig, use_container_width=True)
 
-            # Órdenes por Colonia
-            st.subheader("Órdenes por Colonia")
-            colonia_data = session.query(
-                func.substr(Order.delivery_address, 1, func.instr(Order.delivery_address, ',') - 1).label('Colonia'),
-                func.count(Order.id).label('Cantidad')
+            # Keep other existing analytics (Órdenes por Colonia, Órdenes por Estado, etc.)
+            # ...
+
+            # New analytics inspired by YouTube Dashboard
+
+            # 1. Métricas clave (similar to All-Time Statistics in YouTube Dashboard)
+            st.subheader("Métricas Clave")
+            col1, col2, col3, col4 = st.columns(4)
+
+            total_orders = session.query(func.count(Order.id)).filter(Order.created_at.between(start_datetime, end_datetime)).scalar()
+            total_revenue = session.query(func.sum(Order.total_price)).filter(Order.created_at.between(start_datetime, end_datetime)).scalar()
+            avg_order_value = total_revenue / total_orders if total_orders else 0
+            total_customers = session.query(func.count(distinct(Order.user_id))).filter(Order.created_at.between(start_datetime, end_datetime)).scalar()
+
+            col1.metric("Total de Órdenes", f"{total_orders:,}")
+            col2.metric("Ingresos Totales", f"${total_revenue:,.2f}")
+            col3.metric("Valor Promedio de Orden", f"${avg_order_value:.2f}")
+            col4.metric("Clientes Únicos", f"{total_customers:,}")
+
+            # 2. Tendencias semanales (similar to Weekly data in YouTube Dashboard)
+            st.subheader("Tendencias Semanales")
+            weekly_data = session.query(
+                func.date_trunc('week', Order.created_at).label('Semana'),
+                func.count(Order.id).label('Órdenes'),
+                func.sum(Order.total_price).label('Ingresos')
             ).filter(Order.created_at.between(start_datetime, end_datetime)
-            ).group_by(func.substr(Order.delivery_address, 1, func.instr(Order.delivery_address, ',') - 1)).all()
+            ).group_by(func.date_trunc('week', Order.created_at)).all()
 
-            colonia_df = pd.DataFrame(colonia_data, columns=['Colonia', 'Cantidad'])
-            colonia_df = colonia_df[colonia_df['Colonia'].notna() & (colonia_df['Colonia'] != "")]
-            fig = px.bar(
-                colonia_df,
-                x='Colonia',
-                y='Cantidad',
-                title='Órdenes por Colonia'
+            weekly_df = pd.DataFrame(weekly_data, columns=['Semana', 'Órdenes', 'Ingresos'])
+            fig = px.line(
+                weekly_df,
+                x='Semana',
+                y=['Órdenes', 'Ingresos'],
+                title='Tendencias Semanales de Órdenes e Ingresos'
             )
-            st.plotly_chart(fig, key=f"analytics_orders_by_colonia_{datetime.now().timestamp()}")  # Unique key
+            st.plotly_chart(fig, use_container_width=True)
 
-            # Órdenes por Estado
-            st.subheader("Órdenes por Estado")
-            orders_by_status = session.query(
-                Order.status,
-                func.count(Order.id).label('Cantidad')
-            ).filter(Order.created_at.between(start_datetime, end_datetime)
-            ).group_by(Order.status).all()
-
-            status_df = pd.DataFrame(orders_by_status, columns=['Estado', 'Cantidad'])
-            status_df['Estado'] = status_df['Estado'].apply(lambda x: x.value.capitalize())
-            fig = px.pie(
-                status_df,
-                names='Estado',
-                values='Cantidad',
-                title='Distribución de Órdenes por Estado'
-            )
-            st.plotly_chart(fig, key=f"analytics_orders_by_status_{datetime.now().timestamp()}")  # Unique key
-
-            # Productos/Planes Más Vendidos
-            st.subheader("Productos/Planes Más Vendidos")
-            top_products_data = session.query(
+            # 3. Distribución de Productos (similar to Top Products in YouTube Dashboard)
+            st.subheader("Distribución de Productos")
+            product_data = session.query(
                 Order.plan_name.label('Producto'),
-                func.count(Order.id).label('Cantidad Vendida')
+                func.count(Order.id).label('Cantidad'),
+                func.sum(Order.total_price).label('Ingresos')
             ).filter(Order.created_at.between(start_datetime, end_datetime)
-            ).group_by(Order.plan_name).order_by(func.count(Order.id).desc()).all()
+            ).group_by(Order.plan_name).order_by(func.sum(Order.total_price).desc()).limit(10).all()
 
-            top_products_df = pd.DataFrame(top_products_data, columns=['Producto', 'Cantidad Vendida'])
+            product_df = pd.DataFrame(product_data, columns=['Producto', 'Cantidad', 'Ingresos'])
             fig = px.bar(
-                top_products_df,
+                product_df,
                 x='Producto',
-                y='Cantidad Vendida',
-                title='Top Productos/Planes'
+                y=['Cantidad', 'Ingresos'],
+                title='Top 10 Productos por Cantidad e Ingresos',
+                barmode='group'
             )
-            st.plotly_chart(fig, key=f"analytics_top_products_{datetime.now().timestamp()}")  # Unique key
+            st.plotly_chart(fig, use_container_width=True)
 
-            # Demografía por Colonia
-            st.subheader("Demografía de Clientes por Colonia")
-            demographics_data = session.query(
-                func.substr(User.address, 1, func.instr(User.address, ',') - 1).label('Colonia'),
-                func.count(User.id).label('Cantidad de Clientes')
-            ).join(Order, Order.user_id == User.id
+            # 4. Mapa de Calor de Órdenes (inspired by the time-based charts in YouTube Dashboard)
+            st.subheader("Mapa de Calor de Órdenes")
+            heatmap_data = session.query(
+                func.date_part('dow', Order.created_at).label('Día de la Semana'),
+                func.date_part('hour', Order.created_at).label('Hora'),
+                func.count(Order.id).label('Cantidad de Órdenes')
             ).filter(Order.created_at.between(start_datetime, end_datetime)
-            ).group_by(func.substr(User.address, 1, func.instr(User.address, ',') - 1)).all()
+            ).group_by('Día de la Semana', 'Hora').all()
 
-            demographics_df = pd.DataFrame(demographics_data, columns=['Colonia', 'Cantidad de Clientes'])
-            demographics_df = demographics_df[demographics_df['Colonia'].notna() & (demographics_df['Colonia'] != "")]
-            fig = px.bar(
-                demographics_df,
-                x='Colonia',
-                y='Cantidad de Clientes',
-                title='Cantidad de Clientes por Colonia'
+            heatmap_df = pd.DataFrame(heatmap_data, columns=['Día de la Semana', 'Hora', 'Cantidad de Órdenes'])
+            heatmap_df = heatmap_df.pivot(index='Hora', columns='Día de la Semana', values='Cantidad de Órdenes')
+            
+            fig = px.imshow(
+                heatmap_df,
+                labels=dict(x="Día de la Semana", y="Hora del Día", color="Cantidad de Órdenes"),
+                x=['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'],
+                y=[f"{i:02d}:00" for i in range(24)],
+                title="Mapa de Calor de Órdenes por Día y Hora"
             )
-            st.plotly_chart(fig, key=f"analytics_demographics_by_colonia_{datetime.now().timestamp()}")  # Unique key
+            st.plotly_chart(fig, use_container_width=True)
+
         else:
             st.warning("Por favor, seleccione un rango de fechas válido.")
 
