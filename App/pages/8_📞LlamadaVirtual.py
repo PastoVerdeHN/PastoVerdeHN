@@ -4,12 +4,25 @@ import streamlit.components.v1 as components
 # Streamlit app layout
 st.title("Llamada Virtual - Atención al Cliente")
 
+# Add custom CSS to move the widget to the top
+st.markdown("""
+    <style>
+        .widget-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
 # Inform users in Spanish about the virtual call
 st.markdown("""
-    **¡Bienvenido a nuestro Asistente de Llamada Virtual!**  
-    Puedes usar el chat a continuación para interactuar con nuestro representante de atención al cliente.  
-    No dudes en hacer cualquier pregunta relacionada con nuestros servicios.
-""")
+    <div class="widget-container">
+        **¡Bienvenido a nuestro Asistente de Llamada Virtual!**  
+        Puedes usar el chat a continuación para interactuar con nuestro representante de atención al cliente.  
+        No dudes en hacer cualquier pregunta relacionada con nuestros servicios.
+    </div>
+""", unsafe_allow_html=True)
 
 # Embedding Eleven Labs Virtual Call widget using st.components.v1.html
 components.html("""
