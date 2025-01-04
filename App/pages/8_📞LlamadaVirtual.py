@@ -4,28 +4,17 @@ import streamlit.components.v1 as components
 # Streamlit app layout
 st.title("Llamada Virtual - Atención al Cliente")
 
-# Add custom CSS to move the widget to the top
-st.markdown("""
-    <style>
-        .widget-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-    </style>
-""", unsafe_allow_html=True)
-
 # Inform users in Spanish about the virtual call
 st.markdown("""
-    <div class="widget-container">
-        **¡Bienvenido a nuestro Asistente de Llamada Virtual!**  
-        Puedes usar el chat a continuación para interactuar con nuestro representante de atención al cliente.  
-        No dudes en hacer cualquier pregunta relacionada con nuestros servicios.
-    </div>
+    **¡Bienvenido a nuestro Asistente de Llamada Virtual!**  
+    Puedes usar el chat a continuación para interactuar con nuestro representante de atención al cliente.  
+    No dudes en hacer cualquier pregunta relacionada con nuestros servicios.
 """, unsafe_allow_html=True)
 
-# Embedding Eleven Labs Virtual Call widget using st.components.v1.html
+# Embed the Eleven Labs Virtual Call widget at the top
 components.html("""
-    <elevenlabs-convai agent-id="m5tRR9UgIevQCBy90gvh"></elevenlabs-convai>
-    <script src="https://elevenlabs.io/convai-widget/index.js" async type="text/javascript"></script>
+    <div style="position: absolute; top: 0; left: 0; width: 100%; z-index: 9999;">
+        <elevenlabs-convai agent-id="m5tRR9UgIevQCBy90gvh"></elevenlabs-convai>
+        <script src="https://elevenlabs.io/convai-widget/index.js" async type="text/javascript"></script>
+    </div>
 """, height=600)
