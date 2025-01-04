@@ -11,10 +11,22 @@ st.markdown("""
     No dudes en hacer cualquier pregunta relacionada con nuestros servicios.
 """, unsafe_allow_html=True)
 
-# Embed the Eleven Labs Virtual Call widget at the top
+# Embed the Eleven Labs Virtual Call widget with JavaScript to position it at the top
 components.html("""
-    <div style="position: absolute; top: 0; left: 0; width: 100%; z-index: 9999;">
-        <elevenlabs-convai agent-id="m5tRR9UgIevQCBy90gvh"></elevenlabs-convai>
-        <script src="https://elevenlabs.io/convai-widget/index.js" async type="text/javascript"></script>
-    </div>
+    <script>
+        window.onload = function() {
+            setTimeout(function() {
+                var widget = document.querySelector("elevenlabs-convai");
+                if (widget) {
+                    widget.style.position = "fixed";
+                    widget.style.top = "0";
+                    widget.style.left = "0";
+                    widget.style.width = "100%";
+                    widget.style.zIndex = "9999";
+                }
+            }, 500);  // Delay to ensure widget is loaded
+        }
+    </script>
+    <elevenlabs-convai agent-id="m5tRR9UgIevQCBy90gvh"></elevenlabs-convai>
+    <script src="https://elevenlabs.io/convai-widget/index.js" async type="text/javascript"></script>
 """, height=600)
