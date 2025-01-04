@@ -10,7 +10,7 @@ st.markdown("""
     No dudes en hacer cualquier pregunta relacionada con nuestros servicios.
 """)
 
-# Eleven Labs Embedded Widget
+# Embedding Eleven Labs Virtual Call widget using markdown with unsafe_allow_html
 st.markdown("""
     <elevenlabs-convai agent-id="m5tRR9UgIevQCBy90gvh"></elevenlabs-convai>
     <script src="https://elevenlabs.io/convai-widget/index.js" async type="text/javascript"></script>
